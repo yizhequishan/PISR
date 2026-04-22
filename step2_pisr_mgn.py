@@ -18,6 +18,35 @@ import sympy as sp
 
 
 BASE_OUT_DIR = r"D:\keyan\cylinder_flow_pisr\outputs_mgn"
+DEFAULT_LAMBDA_DIV = 0.1
+X_SYM, Y_SYM = sp.symbols("x_D y_D")
+PISR_JULIA_OBJ = """
+function pisr_objective(tree, dataset::Dataset{T,L}, options) where {T,L}
+    prediction, flag = eval_tree_array(tree, dataset.X, options)
+    flag || return L(Inf)
+
+    diffs = prediction .- dataset.y
+    mse = sum(diffs .^ 2) / L(length(diffs))
+
+    div_penalty = L(0.0)
+    count = 0
+    @inbounds for ix in 2:(N_X - 1)
+        for iy in 1:N_Y
+            idx_c = (ix - 1) * N_Y + iy
+            idx_p = (ix - 2) * N_Y + iy
+            idx_n = ix * N_Y + iy
+            dudx = (prediction[idx_n] - prediction[idx_p]) / (L(2.0) * L(DX_D))
+            dvdy_val = L(DVDY_DATA[idx_c])
+            div_val = dudx + dvdy_val
+            div_penalty += div_val^2
+            count += 1
+        end
+    end
+    count > 0 && (div_penalty /= L(count))
+
+    return mse + L(LAMBDA_DIV) * div_penalty
+end
+"""
 
 
 def parse_args():
@@ -47,6 +76,17 @@ def parse_args():
         action="store_true",
         help="Only write the prepared run snapshot, without fitting PySR models.",
     )
+    parser.add_argument(
+        "--lambda-div",
+        type=float,
+        default=DEFAULT_LAMBDA_DIV,
+        help="Weight of divergence penalty in Strategy B.",
+    )
+    parser.add_argument(
+        "--skip-baseline",
+        action="store_true",
+        help="Skip Strategy A and only run Strategy B. Requires --out-subdir.",
+    )
     args = parser.parse_args()
 
     if (args.eta_min is None) != (args.eta_max is None):
@@ -57,6 +97,13 @@ def parse_args():
         parser.error(
             "--out-subdir is required when using an eta window to avoid "
             "overwriting outputs_mgn/."
+        )
+    if args.lambda_div < 0:
+        parser.error("--lambda-div must be non-negative.")
+    if args.skip_baseline and not args.out_subdir:
+        parser.error(
+            "--skip-baseline requires --out-subdir to avoid mixing B-only outputs "
+            "with existing Strategy A files."
         )
 
     return args
@@ -100,6 +147,115 @@ def ensure_numpy_array(values, n_points):
     if arr.shape == ():
         return np.full(n_points, float(arr))
     return arr.reshape(-1)
+
+
+def validate_dataset_alignment(X, y, dvdy_flat, n_x_wake, n_y):
+    expected_rows = n_x_wake * n_y
+    if X.ndim != 2 or X.shape[1] != 2:
+        raise ValueError(f"Expected X to have shape (n_points, 2), got {X.shape}.")
+
+    lengths = {
+        "X": int(len(X)),
+        "y": int(len(y)),
+        "dvdy_flat": int(len(dvdy_flat)),
+    }
+    if any(length != expected_rows for length in lengths.values()):
+        details = ", ".join(f"{name}={length}" for name, length in lengths.items())
+        raise ValueError(
+            f"Dataset alignment mismatch: expected {expected_rows} rows from "
+            f"n_x_wake={n_x_wake}, n_y={n_y}, got {details}."
+        )
+
+
+def inject_physics_globals(dvdy_flat, n_x_wake, n_y, dx_D, lambda_div):
+    from pysr import jl
+
+    expected_rows = n_x_wake * n_y
+    if len(dvdy_flat) != expected_rows:
+        raise ValueError(
+            f"dvdy_flat has {len(dvdy_flat)} rows, expected {expected_rows} "
+            f"from n_x_wake={n_x_wake}, n_y={n_y}."
+        )
+
+    jl.seval("global DVDY_DATA, N_X, N_Y, DX_D, LAMBDA_DIV")
+    jl.DVDY_DATA = np.ascontiguousarray(dvdy_flat, dtype=np.float64)
+    jl.N_X = int(n_x_wake)
+    jl.N_Y = int(n_y)
+    jl.DX_D = float(dx_D)
+    jl.LAMBDA_DIV = float(lambda_div)
+
+
+def evaluate_expression_metrics(expr, X, y, dvdy_flat):
+    unexpected = expr.free_symbols - {X_SYM, Y_SYM}
+    if unexpected:
+        raise ValueError(
+            "Expected closed-form f(x_D, y_D); found auxiliary symbols: "
+            f"{sorted(str(s) for s in unexpected)}"
+        )
+
+    pred_func = sp.lambdify([X_SYM, Y_SYM], expr, modules="numpy")
+    pred_vals = ensure_numpy_array(pred_func(X[:, 0], X[:, 1]), len(X))
+    dudx_expr = sp.diff(expr, X_SYM)
+    dudx_func = sp.lambdify([X_SYM, Y_SYM], dudx_expr, modules="numpy")
+    dudx_vals = ensure_numpy_array(dudx_func(X[:, 0], X[:, 1]), len(X))
+
+    div = dudx_vals + dvdy_flat
+    mse = float(np.mean((pred_vals - y) ** 2))
+    div_rms = float(np.sqrt(np.mean(div**2)))
+    div_max = float(np.max(np.abs(div)))
+    return {
+        "mse": mse,
+        "div_rms": div_rms,
+        "div_max": div_max,
+        "has_x_D": bool(X_SYM in expr.free_symbols),
+    }
+
+
+def evaluate_pareto_front(
+    eqs,
+    X,
+    y,
+    dvdy_flat,
+    *,
+    strategy_label,
+    include_combined_loss=False,
+):
+    results = []
+    for eq_idx, row in eqs.iterrows():
+        expr = row["sympy_format"]
+        try:
+            metrics = evaluate_expression_metrics(expr, X, y, dvdy_flat)
+            result = {
+                "equation_index": int(eq_idx),
+                "complexity": int(row["complexity"]),
+                "mse": metrics["mse"],
+                "div_rms": metrics["div_rms"],
+                "div_max": metrics["div_max"],
+                "has_x_D": metrics["has_x_D"],
+                "equation": str(row["equation"]),
+                "sympy": str(expr),
+            }
+            if include_combined_loss:
+                result["combined_loss"] = float(row["loss"])
+                result["has_dvdy"] = False
+                print(
+                    f"  complexity={row['complexity']:>2d}  combined={row['loss']:.6f}  "
+                    f"MSE={metrics['mse']:.6f}  div_rms={metrics['div_rms']:.4f}  "
+                    f"div_max={metrics['div_max']:.4f}  "
+                    f"x_D={'X' if metrics['has_x_D'] else '.'}  dvdy=."
+                )
+            else:
+                print(
+                    f"  complexity={row['complexity']:>2d}  MSE={metrics['mse']:.6f}  "
+                    f"div_rms={metrics['div_rms']:.4f}  div_max={metrics['div_max']:.4f}  "
+                    f"x_D={'X' if metrics['has_x_D'] else '.'}  "
+                    f"{'PASS' if metrics['div_rms'] < 0.5 else 'FAIL'}"
+                )
+            results.append(result)
+        except Exception as exc:
+            print(f"  complexity={row['complexity']:>2d}  ERROR ({strategy_label}): {exc}")
+
+    return pd.DataFrame(results)
 
 
 def prepare_dataset(
@@ -167,6 +323,7 @@ def prepare_dataset(
         dvdy[:, 0] = (v_wake_run[:, 1] - v_wake_run[:, 0]) / dy_D
         dvdy[:, -1] = (v_wake_run[:, -1] - v_wake_run[:, -2]) / dy_D
     dvdy_flat = dvdy.flatten()
+    validate_dataset_alignment(X, y, dvdy_flat, n_x_wake, n_y_run)
 
     meta_run = dict(meta_full)
     meta_run["n_y_full"] = n_y_full
@@ -251,92 +408,26 @@ def run_strategy_a(X, y, dvdy_flat, run_out_dir):
         )
 
     print("\n--- Divergence Post-hoc Filtering ---")
-    x_sym, y_sym = sp.symbols("x_D y_D")
-    results_a = []
-    for eq_idx, row in eqs.iterrows():
-        expr = row["sympy_format"]
-        has_x = x_sym in expr.free_symbols
-        dudx_expr = sp.diff(expr, x_sym)
-        dudx_func = sp.lambdify([x_sym, y_sym], dudx_expr, modules="numpy")
-        try:
-            dudx_vals = ensure_numpy_array(dudx_func(X[:, 0], X[:, 1]), len(X))
-            div = dudx_vals + dvdy_flat
-            div_rms = float(np.sqrt(np.mean(div**2)))
-            div_max = float(np.max(np.abs(div)))
-
-            results_a.append(
-                {
-                    "equation_index": int(eq_idx),
-                    "complexity": int(row["complexity"]),
-                    "mse": float(row["loss"]),
-                    "div_rms": div_rms,
-                    "div_max": div_max,
-                    "has_x_D": bool(has_x),
-                    "equation": str(row["equation"]),
-                    "sympy": str(expr),
-                }
-            )
-            print(
-                f"  complexity={row['complexity']:>2d}  MSE={row['loss']:.6f}  "
-                f"div_rms={div_rms:.4f}  div_max={div_max:.4f}  "
-                f"x_D={'X' if has_x else '.'}  "
-                f"{'PASS' if div_rms < 0.5 else 'FAIL'}"
-            )
-        except Exception as exc:
-            print(f"  complexity={row['complexity']:>2d}  ERROR in divergence eval: {exc}")
-
-    results_a_df = pd.DataFrame(results_a)
+    results_a_df = evaluate_pareto_front(
+        eqs,
+        X,
+        y,
+        dvdy_flat,
+        strategy_label="A",
+        include_combined_loss=False,
+    )
     results_a_df.to_csv(os.path.join(run_out_dir, "results_strategy_a.csv"), index=False)
     with open(os.path.join(run_out_dir, "pysr_model_a.pkl"), "wb") as f:
         pickle.dump(model_a, f)
     print("Strategy A results saved")
 
 
-def run_strategy_b(X, y, dvdy_flat, n_x_wake, n_y, dx_D, run_out_dir):
+def run_strategy_b(X, y, dvdy_flat, run_out_dir):
     from pysr import PySRRegressor
 
     print("\n" + "=" * 60)
     print("Strategy B: full_objective with divergence penalty")
     print("=" * 60)
-
-    X_ext = np.column_stack([X, dvdy_flat])
-
-    full_obj_julia = f"""
-function my_custom_objective(tree, dataset::Dataset{{T,L}}, options) where {{T,L}}
-    prediction, flag = eval_tree_array(tree, dataset.X, options)
-    if !flag
-        return L(Inf)
-    end
-
-    diffs = prediction .- dataset.y
-    mse = sum(diffs .^ 2) / length(diffs)
-
-    n_y = {n_y}
-    n_x = {n_x_wake}
-    dx_D = {dx_D:.10f}
-    lambda_div = 0.1
-
-    div_penalty = L(0.0)
-    count = 0
-    for ix in 2:(n_x-1)
-        for iy in 1:n_y
-            idx_c = (ix - 1) * n_y + iy
-            idx_p = (ix - 2) * n_y + iy
-            idx_n = ix * n_y + iy
-            dudx = (prediction[idx_n] - prediction[idx_p]) / (2 * dx_D)
-            dvdy_val = dataset.X[3, idx_c]
-            div_val = dudx + dvdy_val
-            div_penalty += div_val^2
-            count += 1
-        end
-    end
-    if count > 0
-        div_penalty = div_penalty / count
-    end
-
-    return mse + lambda_div * div_penalty
-end
-"""
 
     model_b = PySRRegressor(
         niterations=30,
@@ -346,7 +437,7 @@ end
         population_size=40,
         maxsize=25,
         extra_sympy_mappings={"square": lambda x: x**2},
-        loss_function=full_obj_julia,
+        loss_function=PISR_JULIA_OBJ,
         temp_equation_file=True,
         delete_tempfiles=False,
         verbosity=0,
@@ -354,7 +445,7 @@ end
     )
 
     print("Fitting u*(x/D, y/D) with divergence penalty ...")
-    model_b.fit(X_ext, y, variable_names=["x_D", "y_D", "dvdy"])
+    model_b.fit(X, y, variable_names=["x_D", "y_D"])
 
     print("\n--- Pareto Front (Strategy B) ---")
     eqs_b = model_b.equations_
@@ -364,62 +455,14 @@ end
             f"equation: {row['equation']}"
         )
 
-    x_sym, y_sym, dvdy_sym = sp.symbols("x_D y_D dvdy")
-    results_b = []
-    for eq_idx, row in eqs_b.iterrows():
-        expr = row["sympy_format"]
-        free = expr.free_symbols
-        has_x = x_sym in free
-        has_dvdy = dvdy_sym in free
-
-        try:
-            if has_dvdy:
-                pred_func = sp.lambdify([x_sym, y_sym, dvdy_sym], expr, modules="numpy")
-                pred_vals = ensure_numpy_array(
-                    pred_func(X[:, 0], X[:, 1], dvdy_flat), len(X)
-                )
-                dudx_expr = sp.diff(expr, x_sym)
-                dudx_func = sp.lambdify(
-                    [x_sym, y_sym, dvdy_sym], dudx_expr, modules="numpy"
-                )
-                dudx_vals = ensure_numpy_array(
-                    dudx_func(X[:, 0], X[:, 1], dvdy_flat), len(X)
-                )
-            else:
-                pred_func = sp.lambdify([x_sym, y_sym], expr, modules="numpy")
-                pred_vals = ensure_numpy_array(pred_func(X[:, 0], X[:, 1]), len(X))
-                dudx_expr = sp.diff(expr, x_sym)
-                dudx_func = sp.lambdify([x_sym, y_sym], dudx_expr, modules="numpy")
-                dudx_vals = ensure_numpy_array(dudx_func(X[:, 0], X[:, 1]), len(X))
-
-            div = dudx_vals + dvdy_flat
-            div_rms = float(np.sqrt(np.mean(div**2)))
-            div_max = float(np.max(np.abs(div)))
-            mse_pure = float(np.mean((pred_vals - y) ** 2))
-
-            results_b.append(
-                {
-                    "equation_index": int(eq_idx),
-                    "complexity": int(row["complexity"]),
-                    "combined_loss": float(row["loss"]),
-                    "mse": mse_pure,
-                    "div_rms": div_rms,
-                    "div_max": div_max,
-                    "has_x_D": bool(has_x),
-                    "has_dvdy": bool(has_dvdy),
-                    "equation": str(row["equation"]),
-                    "sympy": str(expr),
-                }
-            )
-            print(
-                f"  complexity={row['complexity']:>2d}  combined={row['loss']:.6f}  "
-                f"MSE={mse_pure:.6f}  div_rms={div_rms:.4f}  div_max={div_max:.4f}  "
-                f"x_D={'X' if has_x else '.'}  dvdy={'v' if has_dvdy else '.'}"
-            )
-        except Exception as exc:
-            print(f"  complexity={row['complexity']:>2d}  ERROR: {exc}")
-
-    results_b_df = pd.DataFrame(results_b)
+    results_b_df = evaluate_pareto_front(
+        eqs_b,
+        X,
+        y,
+        dvdy_flat,
+        strategy_label="B",
+        include_combined_loss=True,
+    )
     results_b_df.to_csv(os.path.join(run_out_dir, "results_strategy_b.csv"), index=False)
     with open(os.path.join(run_out_dir, "pysr_model_b.pkl"), "wb") as f:
         pickle.dump(model_b, f)
@@ -429,6 +472,14 @@ end
 def main():
     args = parse_args()
     run_out_dir, out_subdir = resolve_run_out_dir(BASE_OUT_DIR, args.out_subdir)
+    if args.skip_baseline:
+        stale_a_path = os.path.join(run_out_dir, "results_strategy_a.csv")
+        if os.path.exists(stale_a_path):
+            raise ValueError(
+                f"--skip-baseline requires a clean output directory; found existing "
+                f"{stale_a_path}."
+            )
+
     df_full, meta_full, v_wake_full = load_base_inputs(BASE_OUT_DIR)
 
     dataset = prepare_dataset(
@@ -448,19 +499,27 @@ def main():
         print("=" * 60)
         return
 
-    run_strategy_a(
-        X=dataset["X"],
-        y=dataset["y"],
+    if args.skip_baseline:
+        print("Skipping Strategy A (--skip-baseline).")
+    else:
+        run_strategy_a(
+            X=dataset["X"],
+            y=dataset["y"],
+            dvdy_flat=dataset["dvdy_flat"],
+            run_out_dir=run_out_dir,
+        )
+
+    inject_physics_globals(
         dvdy_flat=dataset["dvdy_flat"],
-        run_out_dir=run_out_dir,
+        n_x_wake=dataset["n_x_wake"],
+        n_y=dataset["n_y"],
+        dx_D=dataset["dx_D"],
+        lambda_div=args.lambda_div,
     )
     run_strategy_b(
         X=dataset["X"],
         y=dataset["y"],
         dvdy_flat=dataset["dvdy_flat"],
-        n_x_wake=dataset["n_x_wake"],
-        n_y=dataset["n_y"],
-        dx_D=dataset["dx_D"],
         run_out_dir=run_out_dir,
     )
 
