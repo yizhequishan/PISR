@@ -522,7 +522,8 @@ def main():
         ax_scatter.grid(True, alpha=0.3)
 
     fig.suptitle(
-        rf"Pure Mathematical Self-Check for Euler Sensitivity ($\Delta D/D={SELF_CHECK_DELTA_FRAC:.0%}$)",
+        f"Pure Mathematical Self-Check for Euler Sensitivity "
+        f"(Delta D/D={SELF_CHECK_DELTA_FRAC:.0%})",
         fontsize=13,
         y=1.02,
     )

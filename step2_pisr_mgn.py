@@ -54,6 +54,12 @@ def parse_args():
         description="Run Step 2 PISR on the full wake or an eta-windowed subset."
     )
     parser.add_argument(
+        "--base-out-dir",
+        type=str,
+        default=BASE_OUT_DIR,
+        help="Directory containing wake_data.csv, meta.json, and v_mean_wake.npy.",
+    )
+    parser.add_argument(
         "--eta-min",
         type=float,
         default=None,
@@ -69,7 +75,7 @@ def parse_args():
         "--out-subdir",
         type=str,
         default=None,
-        help="Relative subdirectory under outputs_mgn/ for this run.",
+        help="Relative subdirectory under --base-out-dir for this run.",
     )
     parser.add_argument(
         "--prepare-only",
@@ -110,23 +116,24 @@ def parse_args():
 
 
 def resolve_run_out_dir(base_out_dir, out_subdir):
+    base_out_dir = os.path.abspath(base_out_dir)
     if not out_subdir:
         return base_out_dir, ""
 
     if os.path.isabs(out_subdir):
-        raise ValueError("--out-subdir must be a relative path inside outputs_mgn/.")
+        raise ValueError("--out-subdir must be a relative path inside --base-out-dir.")
 
     normalized = os.path.normpath(out_subdir)
     if normalized in ("", ".") or normalized.startswith(".."):
         raise ValueError(
-            "--out-subdir must stay inside outputs_mgn/ and cannot use parent traversal."
+            "--out-subdir must stay inside --base-out-dir and cannot use parent traversal."
         )
 
     run_out_dir = os.path.join(base_out_dir, normalized)
     abs_base = os.path.abspath(base_out_dir)
     abs_run = os.path.abspath(run_out_dir)
     if os.path.commonpath([abs_base, abs_run]) != abs_base:
-        raise ValueError("--out-subdir resolves outside outputs_mgn/.")
+        raise ValueError("--out-subdir resolves outside --base-out-dir.")
 
     os.makedirs(run_out_dir, exist_ok=True)
     return run_out_dir, normalized.replace("\\", "/")
@@ -471,7 +478,8 @@ def run_strategy_b(X, y, dvdy_flat, run_out_dir):
 
 def main():
     args = parse_args()
-    run_out_dir, out_subdir = resolve_run_out_dir(BASE_OUT_DIR, args.out_subdir)
+    base_out_dir = os.path.abspath(args.base_out_dir)
+    run_out_dir, out_subdir = resolve_run_out_dir(base_out_dir, args.out_subdir)
     if args.skip_baseline:
         stale_a_path = os.path.join(run_out_dir, "results_strategy_a.csv")
         if os.path.exists(stale_a_path):
@@ -480,7 +488,7 @@ def main():
                 f"{stale_a_path}."
             )
 
-    df_full, meta_full, v_wake_full = load_base_inputs(BASE_OUT_DIR)
+    df_full, meta_full, v_wake_full = load_base_inputs(base_out_dir)
 
     dataset = prepare_dataset(
         df_full=df_full,
@@ -488,7 +496,7 @@ def main():
         meta_full=meta_full,
         eta_min=args.eta_min,
         eta_max=args.eta_max,
-        source_out_dir=BASE_OUT_DIR,
+        source_out_dir=base_out_dir,
         out_subdir=out_subdir,
     )
     save_run_snapshot(run_out_dir, dataset["df"], dataset["v_wake"], dataset["meta"])
