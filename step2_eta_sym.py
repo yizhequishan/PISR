@@ -1,7 +1,7 @@
 """
 Compatibility wrapper for the symmetric eta-window Step 2 run.
 
-This script forwards to step2_pisr_mgn.py with:
+This script forwards to step2_pisr.py with:
   --eta-min -1
   --eta-max 1
   --out-subdir eta_sym
@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 def main():
-    script_path = Path(__file__).resolve().with_name("step2_pisr_mgn.py")
+    script_path = Path(__file__).resolve().with_name("step2_pisr.py")
     cmd = [
         sys.executable,
         str(script_path),
@@ -24,7 +24,7 @@ def main():
         "--out-subdir",
         "eta_sym",
     ]
-    print("Forwarding to step2_pisr_mgn.py --eta-min -1 --eta-max 1 --out-subdir eta_sym")
+    print("Forwarding to step2_pisr.py --eta-min -1 --eta-max 1 --out-subdir eta_sym")
     completed = subprocess.run(cmd, cwd=str(script_path.parent))
     raise SystemExit(completed.returncode)
 

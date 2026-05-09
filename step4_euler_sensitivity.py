@@ -4,7 +4,7 @@ Step 4: Euler Operator Sensitivity Analysis
   via Euler operator: S_R = -(2/D) * [xi * df/dxi + eta * df/deta]
 
 This script can run on the default outputs_mgn/ directory or on a self-contained
-sub-run directory created by step2_pisr_mgn.py.
+sub-run directory created by step2_pisr.py.
 """
 import argparse
 import json
@@ -107,6 +107,61 @@ def compute_euler_sensitivity(sympy_expr_str, X_data, D_val):
     return euler_vals, S_R_vals, S_R_integrated, S_R_max, euler_expr
 
 
+def compute_translation_sensitivity(sympy_expr_str, X_data, D_val):
+    """Translation operator sensitivities: S_cx = -(1/D) df/dxi, S_cy = -(1/D) df/deta.
+
+    These are the c_x and c_y geometric sensitivities derived by chain rule from
+    xi = (x - c_x)/D and eta = (y - c_y)/D. They are siblings of the Euler scaling
+    sensitivity S_R and obey the identity S_R = 2 (xi*S_cx + eta*S_cy).
+    """
+    expr = sp.sympify(sympy_expr_str)
+    unsupported = expr.free_symbols - SUPPORTED_EULER_SYMBOLS
+    if unsupported:
+        raise ValueError(
+            "Translation analysis only supports closed-form f(x_D, y_D); "
+            f"found auxiliary symbols: {sorted(str(s) for s in unsupported)}"
+        )
+
+    df_dxi_expr = sp.diff(expr, xi_sym)
+    df_deta_expr = sp.diff(expr, eta_sym)
+    tx_func = sp.lambdify([xi_sym, eta_sym], df_dxi_expr, modules="numpy")
+    ty_func = sp.lambdify([xi_sym, eta_sym], df_deta_expr, modules="numpy")
+
+    tx_vals = ensure_numpy_array(tx_func(X_data[:, 0], X_data[:, 1]), len(X_data))
+    ty_vals = ensure_numpy_array(ty_func(X_data[:, 0], X_data[:, 1]), len(X_data))
+
+    S_cx_vals = -(1.0 / D_val) * tx_vals
+    S_cy_vals = -(1.0 / D_val) * ty_vals
+
+    return {
+        "S_cx_vals": S_cx_vals,
+        "S_cy_vals": S_cy_vals,
+        "S_cx_integrated": float(np.mean(np.abs(S_cx_vals))),
+        "S_cy_integrated": float(np.mean(np.abs(S_cy_vals))),
+        "S_cx_max": float(np.max(np.abs(S_cx_vals))),
+        "S_cy_max": float(np.max(np.abs(S_cy_vals))),
+        "df_dxi_expr": df_dxi_expr,
+        "df_deta_expr": df_deta_expr,
+        "has_xi_dep": bool(xi_sym in df_dxi_expr.free_symbols)
+        or bool(df_dxi_expr != 0),
+    }
+
+
+def verify_euler_decomposition(S_R_vals, S_cx_vals, S_cy_vals, X_data):
+    """Math identity: S_R = 2 (xi * S_cx + eta * S_cy). Should hold to machine precision."""
+    xi = X_data[:, 0]
+    eta = X_data[:, 1]
+    S_R_recon = 2.0 * (xi * S_cx_vals + eta * S_cy_vals)
+    diff = S_R_vals - S_R_recon
+    rel_l2 = float(np.linalg.norm(diff) / max(np.linalg.norm(S_R_vals), 1e-12))
+    max_abs = float(np.max(np.abs(diff)))
+    return {
+        "S_R_reconstructed": S_R_recon,
+        "rel_l2": rel_l2,
+        "max_abs": max_abs,
+    }
+
+
 def compute_self_consistency(sympy_expr_str, X_data, D_val, delta_frac):
     _, formula_func, _, euler_func = build_formula_tools(sympy_expr_str)
 
@@ -194,11 +249,15 @@ def main():
         print(f"\n--- Strategy {label} ---")
         for _, row in res_df.iterrows():
             try:
-                _, _, S_R_int, S_R_max, euler_expr = compute_euler_sensitivity(
+                _, S_R_vals, S_R_int, S_R_max, euler_expr = compute_euler_sensitivity(
                     row["sympy"], X, D
                 )
                 self_check = compute_self_consistency(
                     row["sympy"], X, D, SELF_CHECK_DELTA_FRAC
+                )
+                trans = compute_translation_sensitivity(row["sympy"], X, D)
+                ident = verify_euler_decomposition(
+                    S_R_vals, trans["S_cx_vals"], trans["S_cy_vals"], X
                 )
 
                 sensitivity_rows.append(
@@ -212,6 +271,12 @@ def main():
                         "div_rms": row["div_rms"],
                         "S_R_integrated": S_R_int,
                         "S_R_max": S_R_max,
+                        "S_cx_integrated": trans["S_cx_integrated"],
+                        "S_cy_integrated": trans["S_cy_integrated"],
+                        "S_cx_max": trans["S_cx_max"],
+                        "S_cy_max": trans["S_cy_max"],
+                        "identity_rel_l2": ident["rel_l2"],
+                        "identity_max_abs": ident["max_abs"],
                         "self_check_delta_frac": SELF_CHECK_DELTA_FRAC,
                         "self_check_rel_l2": self_check["rel_l2"],
                         "self_check_rmse": self_check["rmse"],
@@ -220,13 +285,16 @@ def main():
                         "equation": row["equation"],
                         "sympy": row["sympy"],
                         "euler_expr": str(euler_expr),
+                        "df_dxi_expr": str(trans["df_dxi_expr"]),
+                        "df_deta_expr": str(trans["df_deta_expr"]),
                     }
                 )
+                degenerate_flag = "[xi-DEGEN]" if trans["S_cx_integrated"] < 1e-10 else ""
                 print(
                     f"  C={row['complexity']:>2.0f}  MSE={row['mse']:.6f}  "
-                    f"|S_R|_mean={S_R_int:.4f}  |S_R|_max={S_R_max:.4f}  "
-                    f"self-check relL2={self_check['rel_l2']:.3e}  "
-                    f"Euler: {euler_expr}"
+                    f"|S_R|={S_R_int:.4f}  |S_cx|={trans['S_cx_integrated']:.4e}  "
+                    f"|S_cy|={trans['S_cy_integrated']:.4f}  "
+                    f"identity relL2={ident['rel_l2']:.2e}  {degenerate_flag}"
                 )
             except Exception as exc:
                 skipped_rows.append(
@@ -289,12 +357,21 @@ def main():
         row = sens_df.loc[idx]
         _, S_R_vals, _, _, _ = compute_euler_sensitivity(row["sympy"], X, D)
         self_check = compute_self_consistency(row["sympy"], X, D, SELF_CHECK_DELTA_FRAC)
+        trans = compute_translation_sensitivity(row["sympy"], X, D)
+        ident = verify_euler_decomposition(
+            S_R_vals, trans["S_cx_vals"], trans["S_cy_vals"], X
+        )
         selected.append(
             {
                 "strategy": label,
                 "row": row,
                 "selection_metric": metric,
                 "S_R_2d": S_R_vals.reshape(n_x, n_y),
+                "S_cx_2d": trans["S_cx_vals"].reshape(n_x, n_y),
+                "S_cy_2d": trans["S_cy_vals"].reshape(n_x, n_y),
+                "S_R_recon_2d": ident["S_R_reconstructed"].reshape(n_x, n_y),
+                "identity_rel_l2": ident["rel_l2"],
+                "identity_max_abs": ident["max_abs"],
                 "self_check": self_check,
             }
         )
@@ -532,6 +609,92 @@ def main():
     plt.close()
     print("Fig 11: self-consistency validation saved")
 
+    # ---- Fig 12: Three-panel heatmap (S_R, S_cx, S_cy) per strategy ----
+    fig, axes = plt.subplots(
+        len(selected), 3, figsize=(18, 5 * len(selected)), squeeze=False
+    )
+    for row_idx, item in enumerate(selected):
+        row = item["row"]
+        sr_lim = float(np.max(np.abs(item["S_R_2d"])))
+        scx_lim = float(np.max(np.abs(item["S_cx_2d"])))
+        scy_lim = float(np.max(np.abs(item["S_cy_2d"])))
+        sr_lim = max(sr_lim, 1e-12)
+        scx_lim = max(scx_lim, 1e-12)
+        scy_lim = max(scy_lim, 1e-12)
+
+        panels = [
+            ("S_R_2d", sr_lim, r"$S_R = -\frac{2}{D}\,\mathcal{E}[f]$", "Radius R"),
+            ("S_cx_2d", scx_lim, r"$S_{c_x} = -\frac{1}{D}\,\partial f/\partial \xi$", "Center c_x"),
+            ("S_cy_2d", scy_lim, r"$S_{c_y} = -\frac{1}{D}\,\partial f/\partial \eta$", "Center c_y"),
+        ]
+        for col_idx, (key, lim, eq_label, param_label) in enumerate(panels):
+            ax = axes[row_idx, col_idx]
+            im = ax.pcolormesh(
+                x_vals,
+                y_vals,
+                item[key].T,
+                cmap="RdBu_r",
+                vmin=-lim,
+                vmax=lim,
+                shading="auto",
+            )
+            ax.set_xlabel("x/D")
+            ax.set_ylabel("y/D")
+            ax.set_aspect("equal")
+            cbar = plt.colorbar(im, ax=ax)
+            cbar.set_label(eq_label, fontsize=10)
+            mean_abs = float(np.mean(np.abs(item[key])))
+            ax.set_title(
+                f"Strategy {item['strategy']} (C={row['complexity']:.0f}) -- "
+                f"{param_label}\n"
+                rf"$\bar{{|S|}}={mean_abs:.4f}$, $|S|_\max={lim:.4f}$"
+            )
+
+    fig.suptitle(
+        "Geometric Sensitivity Fields: Radius vs Cylinder-Center Translations",
+        fontsize=13,
+        y=1.005,
+    )
+    fig.tight_layout()
+    fig.savefig(
+        os.path.join(fig_dir, "12_three_param_sensitivity_heatmap.png"),
+        bbox_inches="tight",
+    )
+    plt.close()
+    print("Fig 12: three-parameter sensitivity heatmap saved")
+
+    # ---- Fig 13: Math identity parity S_R == 2*(xi*S_cx + eta*S_cy) ----
+    fig, axes = plt.subplots(1, len(selected), figsize=(7 * len(selected), 6), squeeze=False)
+    axes = axes[0]
+    for ax, item in zip(axes, selected):
+        S_R_flat = item["S_R_2d"].flatten()
+        S_R_recon_flat = item["S_R_recon_2d"].flatten()
+        ax.scatter(S_R_flat, S_R_recon_flat, s=14, alpha=0.35, edgecolors="none")
+        lim = max(np.max(np.abs(S_R_flat)), np.max(np.abs(S_R_recon_flat)), 1e-8)
+        ax.plot([-lim, lim], [-lim, lim], "k--", linewidth=1, label="y=x")
+        ax.set_xlabel(r"$S_R$ (Euler operator)")
+        ax.set_ylabel(r"$2(\xi S_{c_x} + \eta S_{c_y})$ (translation decomposition)")
+        ax.set_title(
+            f"Strategy {item['strategy']} (C={item['row']['complexity']:.0f})\n"
+            f"identity rel L2 = {item['identity_rel_l2']:.2e}, "
+            f"max abs = {item['identity_max_abs']:.2e}"
+        )
+        ax.legend(loc="upper left")
+        ax.grid(True, alpha=0.3)
+        ax.set_aspect("equal")
+    fig.suptitle(
+        r"Math Identity: $S_R = 2(\xi\,S_{c_x} + \eta\,S_{c_y})$",
+        fontsize=13,
+        y=1.02,
+    )
+    fig.tight_layout()
+    fig.savefig(
+        os.path.join(fig_dir, "13_euler_translation_identity.png"),
+        bbox_inches="tight",
+    )
+    plt.close()
+    print("Fig 13: Euler-translation identity parity saved")
+
     print("\n" + "=" * 60)
     print("EULER OPERATOR SENSITIVITY SUMMARY")
     print("=" * 60)
@@ -567,7 +730,7 @@ def main():
     print("4. |S_R| peaks at intermediate y/D: maximum sensitivity in the shear layer")
     print("   region, consistent with wake width scaling with D")
 
-    print("\n--- Integrated Sensitivity Ranking ---")
+    print("\n--- Integrated Sensitivity Ranking (best per strategy by MSE) ---")
     for label in ["A", "B"]:
         sub = sens_df[sens_df["strategy"] == label].sort_values("mse")
         if sub.empty:
@@ -575,8 +738,38 @@ def main():
             continue
         best = sub.iloc[0]
         print(
-            f"  Strategy {label}: |S_R|_mean = {best['S_R_integrated']:.4f}, "
-            f"|S_R|_max = {best['S_R_max']:.4f}"
+            f"  Strategy {label}: |S_R|_mean ={best['S_R_integrated']:.4f}, "
+            f"|S_cx|_mean ={best['S_cx_integrated']:.4e}, "
+            f"|S_cy|_mean ={best['S_cy_integrated']:.4f}"
+        )
+
+    print("\n--- xi-Degeneracy Audit (S_cx_mean across full Pareto front) ---")
+    for label in ["A", "B"]:
+        sub = sens_df[sens_df["strategy"] == label].sort_values("complexity")
+        if sub.empty:
+            continue
+        n_total = len(sub)
+        n_degen = int((sub["S_cx_integrated"] < 1e-10).sum())
+        max_scx = float(sub["S_cx_integrated"].max())
+        print(
+            f"  Strategy {label}: {n_degen}/{n_total} formulas have |S_cx| < 1e-10 "
+            f"(structurally xi-degenerate). Max |S_cx|_mean = {max_scx:.4e}."
+        )
+        if n_degen / max(n_total, 1) > 0.5:
+            print(
+                f"  WARNING: >50% of Strategy {label} Pareto front is xi-degenerate. "
+                "This makes c_x sensitivity structurally zero. Consider re-running "
+                "Step 2 with stream-function objective or Sobolev xi-grad penalty."
+            )
+
+    print("\n--- Math Identity Check: S_R == 2(xi*S_cx + eta*S_cy) ---")
+    for item in selected:
+        rel_l2 = item["identity_rel_l2"]
+        max_abs = item["identity_max_abs"]
+        status = "PASS" if rel_l2 < 1e-10 else ("WARN" if rel_l2 < 1e-6 else "FAIL")
+        print(
+            f"  Strategy {item['strategy']}: rel_L2 = {rel_l2:.4e}, "
+            f"max_abs = {max_abs:.4e}  [{status}]"
         )
 
     print(f"\n--- Zero-Extra-Compute Self-Check (delta_D/D = {SELF_CHECK_DELTA_FRAC:.0%}) ---")

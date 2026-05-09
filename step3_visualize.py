@@ -1,5 +1,5 @@
 """
-Step 3 (MeshGraphNets): Visualization and Validation
+Step 3: Visualization and Validation
   1. Pareto front comparison (Strategy A vs B)
   2. CFD ground truth u* vs SR reconstructed u*
   3. Divergence heatmap
@@ -8,7 +8,7 @@ Step 3 (MeshGraphNets): Visualization and Validation
   6. Best formula LaTeX output
 
 This script can run on the default outputs_mgn/ directory or on a self-contained
-sub-run directory created by step2_pisr_mgn.py.
+sub-run directory created by step2_pisr.py.
 """
 import argparse
 import json

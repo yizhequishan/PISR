@@ -1,0 +1,94 @@
+D:\keyan\Anaconda\envs\deeplearning\lib\site-packages\pysr\sr.py:1270: UserWarning: `extra_sympy_mappings` cannot be pickled and will be removed from the serialized instance. When loading the model, please redefine `extra_sympy_mappings` at runtime.
+  warnings.warn(warn_msg)
+D:\keyan\Anaconda\envs\deeplearning\lib\site-packages\pysr\sr.py:1270: UserWarning: `extra_sympy_mappings` cannot be pickled and will be removed from the serialized instance. When loading the model, please redefine `extra_sympy_mappings` at runtime.
+  warnings.warn(warn_msg)
+Run dir   : D:\keyan\cylinder_flow_pisr\outputs_mgn\comsol\eta_sym_psi
+Input dir : D:\keyan\cylinder_flow_pisr\outputs_mgn\comsol\eta_sym
+Grid      : n_x=16, n_y=64, dx/D=0.12766, dy/D=0.06032
+||u*||_RMS = 1.5039e+00
+||v*||_RMS = 1.5367e-01
+lambda_v   = 1.0
+
+============================================================
+Strategy A (psi-fit, u-loss only (no v constraint))
+============================================================
+Fitting psi(x_D, y_D) for psi-fit, u-loss only (no v constraint) ...
+
+--- Pareto Front (psi formulas, Strategy A) ---
+  C= 1  loss=0.37389  psi: y_D
+  C= 3  loss=0.14515  psi: y_D * 1.4782797
+  C= 4  loss=0.08184  psi: y_D + sin(y_D)
+  C= 6  loss=0.05929  psi: sin(y_D * 0.57724017) / 0.31875908
+  C= 8  loss=0.02752  psi: sin(y_D) + (cos(cos(y_D)) * y_D)
+  C=10  loss=0.02119  psi: sin(y_D) + (cos(cos(y_D / 1.0605955)) * y_D)
+  C=12  loss=0.01691  psi: (cos(cos(y_D / 1.0599583)) * y_D) + sin(y_D + -0.08646824)
+  C=14  loss=0.01691  psi: (sin(y_D + -0.086512804) + (y_D * cos(cos(y_D / 1.0599077)))) + -2.6468866
+  C=15  loss=0.01541  psi: y_D + sin(((y_D + -0.083675444) + ((cos(y_D) * y_D) * -0.37319285)) / 1.0559814)
+  C=16  loss=0.01510  psi: sin((y_D + -0.09330546) / ((square(sin(y_D * 0.7399837)) * -0.7352654) + 1.6621273)) + y_D
+  C=17  loss=0.01015  psi: sin(((y_D + -0.060615696) / 0.7357181) - (sin(sin(y_D)) * cos(x_D * -0.1763522))) + y_D
+  C=19  loss=0.00890  psi: sin(((y_D + -0.08773361) - (sin(sin(y_D + y_D) * -0.37222818) * cos(x_D))) * 0.9551348) + y_D
+  C=22  loss=0.00606  psi: (sin(((((-11.371196 / exp(x_D)) + -0.11042971) * (y_D * cos(y_D))) + (y_D + -0.08628887)) / 1.0622928) + y_D) - 28.29324
+
+--- Strategy A: derived u/v Pareto ---
+  C= 1  MSE_u=0.37680  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 3  MSE_u=0.18236  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 4  MSE_u=0.08370  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 6  MSE_u=0.06571  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 8  MSE_u=0.02966  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=10  MSE_u=0.02129  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=12  MSE_u=0.01666  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=14  MSE_u=0.01666  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=15  MSE_u=0.01508  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=16  MSE_u=0.01480  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=17  MSE_u=0.01030  MSE_v=0.01475  u_has_x_D=X  psi_has_x_D=X
+  C=19  MSE_u=0.01093  MSE_v=0.01632  u_has_x_D=X  psi_has_x_D=X
+  C=22  MSE_u=0.00796  MSE_v=0.00599  u_has_x_D=X  psi_has_x_D=X
+Saved D:\keyan\cylinder_flow_pisr\outputs_mgn\comsol\eta_sym_psi\results_strategy_a.csv and D:\keyan\cylinder_flow_pisr\outputs_mgn\comsol\eta_sym_psi\pysr_model_a.pkl
+
+============================================================
+Strategy B (psi-fit, joint u+v (lambda_v=1.0))
+============================================================
+Fitting psi(x_D, y_D) for psi-fit, joint u+v (lambda_v=1.0) ...
+
+--- Pareto Front (psi formulas, Strategy B) ---
+  C= 1  loss=0.39437  psi: y_D
+  C= 3  loss=0.16540  psi: y_D / 0.6763867
+  C= 4  loss=0.09848  psi: sin(y_D) + y_D
+  C= 6  loss=0.08412  psi: sin(y_D * 0.87114626) + y_D
+  C= 8  loss=0.04382  psi: (cos(cos(y_D)) * sin(y_D)) + y_D
+  C= 9  loss=0.04272  psi: (sin(y_D) * cos(sin(cos(y_D)))) + y_D
+  C=10  loss=0.03851  psi: y_D + (cos(cos(y_D)) * sin(y_D + -0.12363747))
+  C=11  loss=0.03448  psi: sin(y_D) + (y_D * cos(cos(x_D) * cos(y_D)))
+  C=12  loss=0.02498  psi: cos(cos(y_D) * exp(sin(x_D))) * (y_D + sin(y_D))
+  C=13  loss=0.02205  psi: cos(sin(cos(y_D) * exp(sin(x_D)))) * (y_D + sin(y_D))
+  C=14  loss=0.01627  psi: y_D + (sin(y_D) * cos(cos(y_D) * exp(cos(x_D * 0.40456975))))
+  C=16  loss=0.01415  psi: (y_D + sin(y_D)) * cos(cos(cos(x_D * 0.669792)) * (cos(y_D) + 0.085215695))
+  C=17  loss=0.01040  psi: cos(-0.081991106 - (cos(y_D) * sin(exp(sin(x_D))))) * (y_D + sin(y_D + -0.06913586))
+  C=19  loss=0.00740  psi: cos(-0.069256596 - (cos(y_D) * sin(exp(sin(x_D * 0.9470146))))) * (sin(y_D + -0.096696794) + y_D)
+  C=21  loss=0.00688  psi: cos((cos(y_D) - -0.0905766) * sin(exp(sin(x_D * 0.9448909)))) * (0.98667824 * (y_D + sin(y_D + -0.09597849)))
+  C=23  loss=0.00681  psi: (cos(sin(exp(sin(x_D * 0.945126))) * (-0.091639966 - cos(y_D))) * 0.986566) * ((y_D + sin(y_D + -0.09367876)) - -0.04034699)
+  C=24  loss=0.00668  psi: ((cos((cos(y_D) - -0.09156642) * sin(exp(sin(sin(x_D * 0.9489203))))) * (y_D + sin(y_D + -0.09681554))) * 0.98780763) - -0.44109404
+
+--- Strategy B: derived u/v Pareto ---
+  C= 1  MSE_u=0.37680  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 3  MSE_u=0.18238  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 4  MSE_u=0.08370  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 6  MSE_u=0.07604  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 8  MSE_u=0.02517  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C= 9  MSE_u=0.02459  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=10  MSE_u=0.01949  MSE_v=0.02361  u_has_x_D=.  psi_has_x_D=.
+  C=11  MSE_u=0.02697  MSE_v=0.01551  u_has_x_D=X  psi_has_x_D=X
+  C=12  MSE_u=0.02356  MSE_v=0.01208  u_has_x_D=X  psi_has_x_D=X
+  C=13  MSE_u=0.02176  MSE_v=0.00519  u_has_x_D=X  psi_has_x_D=X
+  C=14  MSE_u=0.01329  MSE_v=0.00507  u_has_x_D=X  psi_has_x_D=X
+  C=16  MSE_u=0.01107  MSE_v=0.00574  u_has_x_D=X  psi_has_x_D=X
+  C=17  MSE_u=0.00868  MSE_v=0.00373  u_has_x_D=X  psi_has_x_D=X
+  C=19  MSE_u=0.00720  MSE_v=0.00344  u_has_x_D=X  psi_has_x_D=X
+  C=21  MSE_u=0.00628  MSE_v=0.00303  u_has_x_D=X  psi_has_x_D=X
+  C=23  MSE_u=0.00646  MSE_v=0.00281  u_has_x_D=X  psi_has_x_D=X
+  C=24  MSE_u=0.00558  MSE_v=0.00336  u_has_x_D=X  psi_has_x_D=X
+Saved D:\keyan\cylinder_flow_pisr\outputs_mgn\comsol\eta_sym_psi\results_strategy_b.csv and D:\keyan\cylinder_flow_pisr\outputs_mgn\comsol\eta_sym_psi\pysr_model_b.pkl
+
+============================================================
+Stream-function PISR done! Outputs in D:\keyan\cylinder_flow_pisr\outputs_mgn\comsol\eta_sym_psi
+============================================================
