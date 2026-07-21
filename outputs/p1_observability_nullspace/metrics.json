@@ -1,0 +1,52 @@
+{
+  "grid_size": 41,
+  "n_observations_per_component": 1681,
+  "dictionary_size": 7,
+  "u_only": {
+    "rank": 3,
+    "nullity": 4,
+    "condition_nonzero": 18.500480843324294,
+    "coefficient_error_without_gauge": 0.3301269448340277
+  },
+  "u_plus_v": {
+    "rank": 6,
+    "nullity": 1,
+    "condition_nonzero": 21.731017177532838,
+    "coefficient_error_without_gauge": 6.078263964135752e-15
+  },
+  "x_only_perturbation": {
+    "max_abs_change_in_u": 0.0,
+    "rms_change_in_v": 0.20446002014195555
+  },
+  "noise_relative": 0.001,
+  "existing_pysr": [
+    {
+      "model": "u-fit A",
+      "n_formulas": 9,
+      "xi_present": 1,
+      "xi_degenerate": 8,
+      "degeneracy_rate": 0.8888888888888888
+    },
+    {
+      "model": "u-fit B",
+      "n_formulas": 12,
+      "xi_present": 1,
+      "xi_degenerate": 11,
+      "degeneracy_rate": 0.9166666666666666
+    },
+    {
+      "model": "psi-fit u-only",
+      "n_formulas": 15,
+      "xi_present": 6,
+      "xi_degenerate": 9,
+      "degeneracy_rate": 0.6
+    },
+    {
+      "model": "psi-fit u+v",
+      "n_formulas": 15,
+      "xi_present": 10,
+      "xi_degenerate": 5,
+      "degeneracy_rate": 0.3333333333333333
+    }
+  ]
+}

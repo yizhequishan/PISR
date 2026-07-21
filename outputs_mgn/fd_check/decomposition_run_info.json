@@ -1,0 +1,23 @@
+{
+  "D0_m": 0.1,
+  "dR_m": 0.001,
+  "U_in": {
+    "R-": 0.744597311369927,
+    "base": 0.7299456031423919,
+    "R+": 0.7154377048098567
+  },
+  "Uprime_per_m": -14.579803280035163,
+  "Umax_times_D": {
+    "R-": 0.14999880000000002,
+    "base": 0.15000000000000002,
+    "R+": 0.15000119999999997
+  },
+  "psi_strategy": "B",
+  "psi_complexity": 21,
+  "psi_sympy": "y_D - sin(-y_D + y_D/((x_D - 1.7832861)/(cos(0.71782035*y_D) - 0.3375839) - 0.68956524) + 0.054244295)",
+  "base_grid_dir": "D:\\keyan\\cylinder_flow_pisr\\outputs_mgn\\comsol\\eta_sym",
+  "base_grid_revision": "dense_xi_v1",
+  "n_x_wake": 33,
+  "n_y": 64,
+  "psi_run_dir": "D:\\keyan\\cylinder_flow_pisr\\outputs_mgn\\comsol\\eta_sym_psi"
+}

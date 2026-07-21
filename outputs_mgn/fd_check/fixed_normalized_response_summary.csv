@@ -1,0 +1,4 @@
+param,quantity,mean_abs,max_abs,rms
+R,intrinsic response M (not total sensitivity),27.005114233925408,112.33683819519143,40.62807962547557
+cx,intrinsic response M (not total sensitivity),1.3656155691502927,6.5632686340862385,1.7130067287267396
+cy,intrinsic response M (not total sensitivity),11.683371156308052,33.01763263328639,14.692736364603189

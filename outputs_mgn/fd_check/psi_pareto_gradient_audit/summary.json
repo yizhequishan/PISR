@@ -1,0 +1,70 @@
+{
+  "candidate_count": 30,
+  "valid_candidate_count": 30,
+  "failed_candidate_count": 0,
+  "grid_shape": [
+    33,
+    64
+  ],
+  "diameter_m": 0.1,
+  "primary_metric": "epsilon_K_R_u",
+  "recorded_selected": {
+    "candidate": "B-E14-C21",
+    "strategy": "B",
+    "equation_index": 14,
+    "complexity": 21,
+    "metric": "epsilon_K_R_u",
+    "value": 0.16873118508917204,
+    "epsilon_K_R_u": 0.16873118508917204,
+    "actual_closure_R_u": 0.4584564346502638,
+    "original_mse_u": 0.0039548457417802,
+    "dense_balanced_field_score": 0.13476663358924865,
+    "psi_sympy": "y_D + sin(y_D - y_D/((x_D - 1.7832861)/(cos(y_D*(-0.71782035)) - 0.3375839) - 1*0.68956524) - 0.054244295)"
+  },
+  "min_epsilon_K_R_u": {
+    "candidate": "A-E12-C19",
+    "strategy": "A",
+    "equation_index": 12,
+    "complexity": 19,
+    "metric": "epsilon_K_R_u",
+    "value": 0.14450233852724348,
+    "epsilon_K_R_u": 0.14450233852724348,
+    "actual_closure_R_u": 0.39262467625539615,
+    "original_mse_u": 0.007319323028221,
+    "dense_balanced_field_score": 0.06854564298146025,
+    "psi_sympy": "y_D - sin((-0.23876113*y_D + cos((1.0178413 - y_D)/0.61216843)/(x_D*x_D))/0.22388345)"
+  },
+  "min_original_mse_u": {
+    "candidate": "A-E14-C23",
+    "strategy": "A",
+    "equation_index": 14,
+    "complexity": 23,
+    "metric": "original_mse_u",
+    "value": 0.0025616056165845,
+    "epsilon_K_R_u": 0.14638370991131683,
+    "actual_closure_R_u": 0.3977365162305582,
+    "original_mse_u": 0.0025616056165845,
+    "dense_balanced_field_score": 80.87551348198224,
+    "psi_sympy": "y_D - (-x_D + sin((-0.24169861*y_D + 0.017377434 + cos(1.6117003 - y_D/0.60632783)/(x_D*x_D))/0.22832063))"
+  },
+  "min_dense_balanced_field_score": {
+    "candidate": "A-E13-C21",
+    "strategy": "A",
+    "equation_index": 13,
+    "complexity": 21,
+    "metric": "dense_balanced_field_score",
+    "value": 0.0593613182969581,
+    "epsilon_K_R_u": 0.14704972362383376,
+    "actual_closure_R_u": 0.3995461299774618,
+    "original_mse_u": 0.0025714136035681,
+    "dense_balanced_field_score": 0.0593613182969581,
+    "psi_sympy": "y_D - sin((-0.2419661*y_D + cos((0.9743969 - y_D)/0.60498)/(x_D*x_D))/0.2287793 + 0.07629843)"
+  },
+  "argmin_epsilon_differs_from_recorded": true,
+  "epsilon_improvement_factor": 1.167670965112863,
+  "epsilon_improvement_percentage_points": 2.422884656192856,
+  "closure_improvement_percentage_points": 6.583175839486765,
+  "best_epsilon_original_mse_ratio_vs_recorded": 1.8507227604094474,
+  "spearman_original_mse_u_vs_epsilon_K_R_u": 0.9444021049125283,
+  "note": "Retrospective in-sample audit: K_emp=S-M is used for both ranking and reporting. Independent held-out validation is still required."
+}

@@ -1,0 +1,67 @@
+{
+  "truth": "sin(x)*cos(y) + 0.05*sin(6*x)",
+  "settings": {
+    "n_train": 512,
+    "test_grid": 151,
+    "niterations": 35,
+    "populations": 12,
+    "population_size": 40,
+    "maxsize": 25,
+    "lambda_grad": 1.0,
+    "seed": 20260716,
+    "value_scale": 0.18084156813815166,
+    "dx_scale": 0.5705641714140441,
+    "dy_scale": 0.07175753068362418
+  },
+  "selected": {
+    "value_only_by_value_mse": {
+      "complexity": 23,
+      "expression": "sin(sin(x/cos(sin(sin(cos((0.0011811666 - x)/(0.45107633*cos(cos(cos(x)/0.45493218)))))))))*cos(y)",
+      "value_mse": 4.9508452395791057e-05,
+      "gradient_mse": 0.0028784794167198394,
+      "gradient_rel_l2": 0.09626586633179762,
+      "normalized_h1_score": 0.008035467158322696
+    },
+    "analytic_derivative_by_h1": {
+      "complexity": 24,
+      "expression": "sin(cos(sin(sin(cos(cos(x + x*1.0271096)))*0.8549579)*1.4960434)*0.82760924*(x + x))*cos(y)",
+      "value_mse": 5.659784707545093e-05,
+      "gradient_mse": 0.0009097761401246627,
+      "gradient_rel_l2": 0.05412003026830596,
+      "normalized_h1_score": 0.004271790348156939
+    }
+  },
+  "controlled_ranking_inversion": {
+    "field_preferred": {
+      "name": "drop_low_amplitude_ripple",
+      "value_mse": 0.0012984188145396965,
+      "gradient_mse": 0.021628461338285464
+    },
+    "gradient_preferred": {
+      "name": "retain_ripple_add_bias",
+      "value_mse": 0.0016,
+      "gradient_mse": 0.0
+    }
+  },
+  "search_candidates_value_gradient_spearman": {
+    "statistic": 0.9047619047619048,
+    "pvalue": 2.869816788726501e-12
+  },
+  "strongest_search_ranking_inversion": {
+    "score": 0.7682090865086547,
+    "field_preferred": {
+      "source": "value_only",
+      "complexity": 16,
+      "expression": "sin(sin(x/cos(sin(sin(cos(x/0.43157014))))))*cos(y)/1.0096102",
+      "value_mse": 6.164361311777548e-05,
+      "gradient_mse": 0.005328848752887752
+    },
+    "gradient_preferred": {
+      "source": "analytic_derivative",
+      "complexity": 13,
+      "expression": "cos(sin(sin(x*(-1.7312273))))*1.256544*x*cos(y)",
+      "value_mse": 0.0001619903266165012,
+      "gradient_mse": 0.002387950403224251
+    }
+  }
+}

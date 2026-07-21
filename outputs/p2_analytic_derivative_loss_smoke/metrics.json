@@ -1,0 +1,67 @@
+{
+  "truth": "sin(x)*cos(y) + 0.05*sin(6*x)",
+  "settings": {
+    "n_train": 64,
+    "test_grid": 31,
+    "niterations": 2,
+    "populations": 2,
+    "population_size": 16,
+    "maxsize": 12,
+    "lambda_grad": 1.0,
+    "seed": 20260716,
+    "value_scale": 0.17949782999281783,
+    "dx_scale": 0.6199529899641039,
+    "dy_scale": 0.08390769797419181
+  },
+  "selected": {
+    "value_only_by_value_mse": {
+      "complexity": 5,
+      "expression": "sin(sin(sin(sin(x))))",
+      "value_mse": 0.006992854613066203,
+      "gradient_mse": 0.07886525053463883,
+      "gradient_rel_l2": 0.5044633225530373,
+      "normalized_h1_score": 0.5907071506682904
+    },
+    "analytic_derivative_by_h1": {
+      "complexity": 5,
+      "expression": "sin(sin(sin(sin(x))))",
+      "value_mse": 0.006992854613066203,
+      "gradient_mse": 0.07886525053463883,
+      "gradient_rel_l2": 0.5044633225530373,
+      "normalized_h1_score": 0.5907071506682904
+    }
+  },
+  "controlled_ranking_inversion": {
+    "field_preferred": {
+      "name": "drop_low_amplitude_ripple",
+      "value_mse": 0.0012671475942301592,
+      "gradient_mse": 0.022191343303857136
+    },
+    "gradient_preferred": {
+      "name": "retain_ripple_add_bias",
+      "value_mse": 0.0016000000000000003,
+      "gradient_mse": 0.0
+    }
+  },
+  "search_candidates_value_gradient_spearman": {
+    "statistic": 0.3788819875776398,
+    "pvalue": 0.28027453148964043
+  },
+  "strongest_search_ranking_inversion": {
+    "score": 0.2073411833976381,
+    "field_preferred": {
+      "source": "value_only",
+      "complexity": 6,
+      "expression": "sin(sin(sin(sin(sin(x)))))",
+      "value_mse": 0.007296997701662439,
+      "gradient_mse": 0.08240335296689731
+    },
+    "gradient_preferred": {
+      "source": "value_only",
+      "complexity": 3,
+      "expression": "sin(sin(x))",
+      "value_mse": 0.010810318446720493,
+      "gradient_mse": 0.07573523510712227
+    }
+  }
+}

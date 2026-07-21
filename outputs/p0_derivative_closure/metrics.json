@@ -1,0 +1,134 @@
+{
+  "input": "D:\\keyan\\cylinder_flow_pisr\\outputs_mgn\\fd_check\\fd_sensitivity_fields.npz",
+  "symbolic_csv": "D:\\keyan\\cylinder_flow_pisr\\outputs_mgn\\comsol\\eta_sym_psi\\sensitivity_results.csv",
+  "symbolic_strategy": "B",
+  "symbolic_complexity": 21,
+  "symbolic_expression": "-(-0.71782035*y_D*(x_D - 1.7832861)*sin(0.71782035*y_D)/(((x_D - 1.7832861)/(cos(0.71782035*y_D) - 0.3375839) - 0.68956524)**2*(cos(0.71782035*y_D) - 0.3375839)**2) - 1 + 1/((x_D - 1.7832861)/(cos(0.71782035*y_D) - 0.3375839) - 0.68956524))*cos(-y_D + y_D/((x_D - 1.7832861)/(cos(0.71782035*y_D) - 0.3375839) - 0.68956524) + 0.054244295) + 1",
+  "baseline": {
+    "D": 0.1,
+    "cx": 0.2,
+    "cy": 0.2
+  },
+  "metrics": [
+    {
+      "parameter": "R",
+      "k_source": "exact_discrete_path",
+      "valid_fraction": 0.84765625,
+      "rel_l2": 1.7042230184806962e-16,
+      "correlation": 1.0,
+      "rmse": 2.979851224721991e-15,
+      "max_abs": 1.4210854715202004e-14,
+      "sign_agreement": 1.0
+    },
+    {
+      "parameter": "R",
+      "k_source": "baseline_matched_fd",
+      "valid_fraction": 0.84765625,
+      "rel_l2": 0.14878797340493374,
+      "correlation": 0.9889869965104366,
+      "rmse": 2.601572798669583,
+      "max_abs": 11.050185104587882,
+      "sign_agreement": 0.9539170506912442
+    },
+    {
+      "parameter": "R",
+      "k_source": "baseline_data_gradient",
+      "valid_fraction": 0.84765625,
+      "rel_l2": 0.19959905199039735,
+      "correlation": 0.9803896004398969,
+      "rmse": 3.490009658813155,
+      "max_abs": 13.406341093813674,
+      "sign_agreement": 0.9389400921658986
+    },
+    {
+      "parameter": "R",
+      "k_source": "symbolic_analytic_gradient",
+      "valid_fraction": 0.84765625,
+      "rel_l2": 0.3778420233646081,
+      "correlation": 0.9269837907482322,
+      "rmse": 6.60660608303605,
+      "max_abs": 28.99015331950288,
+      "sign_agreement": 0.8951612903225806
+    },
+    {
+      "parameter": "cx",
+      "k_source": "exact_discrete_path",
+      "valid_fraction": 0.875,
+      "rel_l2": 6.737971986432244e-17,
+      "correlation": 1.0,
+      "rmse": 2.125888276495627e-16,
+      "max_abs": 8.881784197001252e-16,
+      "sign_agreement": 1.0
+    },
+    {
+      "parameter": "cx",
+      "k_source": "baseline_matched_fd",
+      "valid_fraction": 0.875,
+      "rel_l2": 0.061001227732656475,
+      "correlation": 0.9981645077678674,
+      "rmse": 0.19246413483140765,
+      "max_abs": 1.0922155919521614,
+      "sign_agreement": 0.9854910714285714
+    },
+    {
+      "parameter": "cx",
+      "k_source": "baseline_data_gradient",
+      "valid_fraction": 0.875,
+      "rel_l2": 0.06158706334522248,
+      "correlation": 0.9981293457040806,
+      "rmse": 0.19431249671717316,
+      "max_abs": 1.1087142774958503,
+      "sign_agreement": 0.9854910714285714
+    },
+    {
+      "parameter": "cx",
+      "k_source": "symbolic_analytic_gradient",
+      "valid_fraction": 0.875,
+      "rel_l2": 0.35391833234592635,
+      "correlation": 0.936847411884825,
+      "rmse": 1.1166428638856343,
+      "max_abs": 5.968086641230417,
+      "sign_agreement": 0.9017857142857143
+    },
+    {
+      "parameter": "cy",
+      "k_source": "exact_discrete_path",
+      "valid_fraction": 0.96875,
+      "rel_l2": 1.6045814896030961e-16,
+      "correlation": 0.9999999999999997,
+      "rmse": 9.138016866193593e-16,
+      "max_abs": 3.552713678800501e-15,
+      "sign_agreement": 1.0
+    },
+    {
+      "parameter": "cy",
+      "k_source": "baseline_matched_fd",
+      "valid_fraction": 0.96875,
+      "rel_l2": 0.10011046265844743,
+      "correlation": 0.9949836341452748,
+      "rmse": 0.570124423211202,
+      "max_abs": 3.22766642009886,
+      "sign_agreement": 0.9818548387096774
+    },
+    {
+      "parameter": "cy",
+      "k_source": "baseline_data_gradient",
+      "valid_fraction": 0.96875,
+      "rel_l2": 0.10249352099450715,
+      "correlation": 0.9947452583003471,
+      "rmse": 0.5836958294683088,
+      "max_abs": 3.301850216652891,
+      "sign_agreement": 0.9818548387096774
+    },
+    {
+      "parameter": "cy",
+      "k_source": "symbolic_analytic_gradient",
+      "valid_fraction": 0.96875,
+      "rel_l2": 0.4359084393104972,
+      "correlation": 0.9114382089462851,
+      "rmse": 2.482478263862283,
+      "max_abs": 13.001278197478733,
+      "sign_agreement": 0.8931451612903226
+    }
+  ]
+}

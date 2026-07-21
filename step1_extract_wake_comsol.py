@@ -8,7 +8,9 @@ The expected source is the wide COMSOL text export currently named
     x y [u, v, p, spf.U, x, y] for each saved time step
 
 The script time-averages u and v, interpolates them onto the same regular wake
-grid used by the MeshGraphNets pipeline, and writes:
+grid used by the MeshGraphNets pipeline, and writes.  The default x grid is
+deliberately dense enough that the SR window has 33 xi columns (rather than
+the legacy 16), with dimensionless x/y spacings that are approximately equal:
 
     wake_data.csv
     v_mean_wake.npy
@@ -30,6 +32,10 @@ from scipy.interpolate import griddata
 REPO_ROOT = Path(__file__).resolve().parent
 DEFAULT_SOURCE = REPO_ROOT / "cylinder_flow_result"
 DEFAULT_OUT_DIR = REPO_ROOT / "outputs_mgn" / "comsol"
+DEFAULT_N_X_GRID = 97
+DEFAULT_N_Y_GRID = 64
+DEFAULT_MIN_WAKE_X_POINTS = 32
+DENSE_XI_GRID_REVISION = "dense_xi_v1"
 
 
 def parse_args():
@@ -97,14 +103,27 @@ def parse_args():
     parser.add_argument(
         "--n-x-grid",
         type=int,
-        default=48,
-        help="Number of x points in the regular interpolation grid.",
+        default=DEFAULT_N_X_GRID,
+        help=(
+            "Number of x points in the full regular interpolation grid. "
+            "The default 97 gives 33 points in xi=[3, 5] and Delta xi=0.0625 "
+            "for the standard xi=[2, 8] domain."
+        ),
     )
     parser.add_argument(
         "--n-y-grid",
         type=int,
-        default=64,
+        default=DEFAULT_N_Y_GRID,
         help="Number of y points in the regular interpolation grid.",
+    )
+    parser.add_argument(
+        "--min-wake-x-points",
+        type=int,
+        default=DEFAULT_MIN_WAKE_X_POINTS,
+        help=(
+            "Reject an under-resolved SR wake grid with fewer x points than "
+            "this value. Lower explicitly only for smoke tests."
+        ),
     )
     parser.add_argument(
         "--margin",
@@ -123,6 +142,8 @@ def parse_args():
         parser.error("--diameter must be positive.")
     if args.n_x_grid < 3 or args.n_y_grid < 3:
         parser.error("--n-x-grid and --n-y-grid must both be at least 3.")
+    if args.min_wake_x_points < 3:
+        parser.error("--min-wake-x-points must be at least 3.")
     if not 0 <= args.time_start_frac < 1:
         parser.error("--time-start-frac must be in [0, 1).")
 
@@ -248,6 +269,7 @@ def interpolate_wake(mesh_pos, u_mean_nodes, v_mean_nodes, args):
     print(f"  x/D: [{(wake_x_lo - cyl_cx) / D:.2f}, {(wake_x_hi - cyl_cx) / D:.2f}]")
     print(f"  y/D: [{(wake_y_lo - cyl_cy) / D:.2f}, {(wake_y_hi - cyl_cy) / D:.2f}]")
     print(f"Regular grid: {args.n_x_grid} x {args.n_y_grid}")
+    print(f"  Delta xi={dx / D:.6f}, Delta eta={dy / D:.6f}")
 
     u_grid = griddata(mesh_pos, u_mean_nodes, grid_points, method="linear").reshape(
         args.n_x_grid, args.n_y_grid
@@ -277,6 +299,15 @@ def interpolate_wake(mesh_pos, u_mean_nodes, v_mean_nodes, args):
     if len(ix_sr) < 3:
         print("WARNING: SR region still too small, using the middle half of x-grid.")
         ix_sr = np.arange(args.n_x_grid // 4, 3 * args.n_x_grid // 4)
+
+    if len(ix_sr) < args.min_wake_x_points:
+        raise ValueError(
+            "Under-resolved SR wake grid: "
+            f"xi=[3, 5] contains only {len(ix_sr)} x points, but "
+            f"--min-wake-x-points={args.min_wake_x_points}. Increase "
+            "--n-x-grid (97 is the standard dense-xi setting) or lower the "
+            "minimum explicitly for a smoke test."
+        )
 
     print(f"\nSR wake sub-region: {len(ix_sr)} x-positions, indices {ix_sr[0]}..{ix_sr[-1]}")
     print(
@@ -342,9 +373,18 @@ def write_outputs(
         "cyl_cy": cyl_cy,
         "dx": float(dx),
         "dy": float(dy),
+        "dx_over_D": float(dx / D),
+        "dy_over_D": float(dy / D),
+        "xi_eta_spacing_ratio": float(dx / dy),
         "wake_ix": ix_sr.tolist(),
         "n_x_wake": int(len(ix_sr)),
         "n_y": int(len(y_grid)),
+        "n_x_full": int(len(x_grid)),
+        "n_y_full": int(len(y_grid)),
+        "wake_x_D_min": float((x_grid[ix_sr[0]] - cyl_cx) / D),
+        "wake_x_D_max": float((x_grid[ix_sr[-1]] - cyl_cx) / D),
+        "min_wake_x_points": int(args.min_wake_x_points),
+        "grid_revision": DENSE_XI_GRID_REVISION,
         "data_source": "comsol_export",
         "source_file": str(source_path),
         "source_metadata": metadata,

@@ -18,13 +18,15 @@ import argparse
 import json
 import os
 import pickle
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import sympy as sp
 
 
-DEFAULT_BASE_OUT_DIR = r"D:\keyan\cylinder_flow_pisr\outputs_mgn"
+REPO_ROOT = Path(__file__).resolve().parent
+DEFAULT_BASE_OUT_DIR = str(REPO_ROOT / "outputs_mgn")
 DEFAULT_LAMBDA_V = 1.0
 DEFAULT_NITERATIONS = 30
 X_SYM, Y_SYM = sp.symbols("x_D y_D")
@@ -161,7 +163,7 @@ def prepare_psi_dataset(df, meta, v_mean_wake):
     v_star = v_mean_wake.astype(np.float64).flatten()  # row-major like df_sorted
 
     # The wake_data.csv ordering must match v_mean_wake.npy reshape ordering.
-    # Verify by matching x_D layout: 16 chunks of 64 same-x rows.
+    # Verify by matching x_D layout: n_x chunks of n_y same-x rows.
     x_arr = df_sorted["x_D"].values.reshape(n_x, n_y)
     if not np.allclose(x_arr.std(axis=1), 0.0):
         raise ValueError(

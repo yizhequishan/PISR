@@ -1,0 +1,33 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Editors and local agent state
+.idea/
+.obsidian/workspace.json
+.claude/settings.local.json
+.claude/worktrees/
+
+# Runtime logs and scratch files
+*.log
+*.err.log
+未命名/
+Clippings/
+
+# Large COMSOL exports (keep outside normal Git history)
+cylinder_flow_result
+H_D.txt
+R[+-].txt
+cx[+-].txt
+cy[+-].txt
+
+# Local Codex scratch artifacts
+.codex_tmp/
+
+# Generated experiment artifacts. Existing tracked reference results remain tracked.
+outputs_mgn/**/seed_*/
+outputs_mgn/**/*_rerun.log
+outputs_mgn/**/*_run.log
