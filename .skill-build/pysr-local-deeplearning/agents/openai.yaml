@@ -1,4 +1,0 @@
-interface:
-  display_name: "PySR Local Runner"
-  short_description: "Run PySR locally via deeplearning conda and Julia."
-  default_prompt: "Use $pysr-local-deeplearning to run or debug a PySR task on this machine using the local deeplearning conda environment."

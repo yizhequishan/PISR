@@ -31,3 +31,8 @@ cy[+-].txt
 outputs_mgn/**/seed_*/
 outputs_mgn/**/*_rerun.log
 outputs_mgn/**/*_run.log
+
+.claude/
+.idea/
+.obsidian/
+.skill-build/
