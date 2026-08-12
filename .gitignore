@@ -27,6 +27,13 @@ cy[+-].txt
 # Local Codex scratch artifacts
 .codex_tmp/
 
+# Temporary reference pages and document-rendering QA artifacts
+_arxiv_abs.html
+nilss_abs.html
+springer_tmp.html
+reports/_lo_profile*/
+reports/_qa_*/
+
 # Generated experiment artifacts. Existing tracked reference results remain tracked.
 outputs_mgn/**/seed_*/
 outputs_mgn/**/*_rerun.log
