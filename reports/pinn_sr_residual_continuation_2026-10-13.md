@@ -73,9 +73,9 @@ SR 相对普通续训，x 动量残差高约 **15.24%**，y 动量残差高约 *
 
 三组最大硬速度边界误差均小于 `4.1e-15`，分段 Gauss 通量相对误差小于 `1.6e-15`。各动量分量与出口仍未通过原项目 `<0.01` 的严格筛查。升阻力已保存为未认证应力积分；没有 CFD 真值，不能根据系数变化判断更准确。
 
-![开发集空间诊断与冻结符号权重](../outputs_pinn/cylinder/sr_residual_continuation_20261013_v3/figures/baseline_and_sr_weights.png)
+![开发集空间诊断与冻结符号权重](assets/pinn/cylinder/sr_residual_continuation_20261013_v3/figures/baseline_and_sr_weights.png)
 
-![同起点续训对照](../outputs_pinn/cylinder/sr_residual_continuation_20261013_v3/figures/continuation_comparison.png)
+![同起点续训对照](assets/pinn/cylinder/sr_residual_continuation_20261013_v3/figures/continuation_comparison.png)
 
 ## 对后续优化的含义
 
@@ -87,4 +87,4 @@ SR 相对普通续训，x 动量残差高约 **15.24%**，y 动量残差高约 *
 
 通用代码新增冻结空间权重和限时训练接口；普通配置行为保持兼容。新增 17 项训练/计时/权重测试和 9 项实验契约测试通过，原有 67 项 PINN 相关回归测试通过。全一权重与普通训练在同 checkpoint、同采样下得到逐位相同参数；真实三组训练—保存—重载—独立审计完整运行。图已视觉检查。
 
-方法与复现命令见 [实验说明](../docs/pinn_sr_residual_continuation.md)。一键入口为 `scripts/Run-PinnSRContinuation.ps1`，原始比较见 [comparison.json](../outputs_pinn/cylinder/sr_residual_continuation_20261013_v3/comparison.json)。本轮是单 checkpoint、单续训种子的短预算试验，结论仅适用于该设置。
+方法与复现命令见 [实验说明](../docs/pinn_sr_residual_continuation.md)。一键入口为 `scripts/Run-PinnSRContinuation.ps1`，原始比较见 [comparison.json](assets/pinn/cylinder/sr_residual_continuation_20261013_v3/comparison.json)。本轮是单 checkpoint、单续训种子的短预算试验，结论仅适用于该设置。

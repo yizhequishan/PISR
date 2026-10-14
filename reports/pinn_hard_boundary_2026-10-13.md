@@ -23,7 +23,7 @@ Re=20 稳态，训练 seed=42，4×64 tanh，float64，2048 内部点／每段 2
 
 最终硬边界入口速度最大绝对误差 `4.44e-16`，上下壁面为零，圆柱为 `4.02e-15`；连续性 RMS `4.41e-16`。Gauss 积分与流函数端点差相符，原密集积分的剩余流量误差属于数值积分误差。圆柱常数最终为 `C=1.96343230225`。
 
-![最终同预算对照](../outputs_pinn/cylinder/hard_boundary_inlet_refined_20261013/comparison.png)
+![最终同预算对照](assets/pinn/cylinder/hard_boundary_inlet_refined_20261013/comparison.png)
 
 ## 2. 保留未达标阶段与完整预算
 
@@ -56,7 +56,7 @@ Re=20 稳态，训练 seed=42，4×64 tanh，float64，2048 内部点／每段 2
 
 因此，字面意义的零背景和原始 Poiseuille 都是**不可满足指定边界的负对照**。若零背景额外保留非齐次边界 lifting，它就不是总背景为零的同一个消融。原始 Poiseuille 必须补上圆柱修正；这项修正完全可以解析构造，无需 SR。
 
-![首轮四组消融](../outputs_pinn/cylinder/hard_boundary_trial_20261013/comparison.png)
+![首轮四组消融](assets/pinn/cylinder/hard_boundary_trial_20261013/comparison.png)
 
 ## 4. 构造与实现
 
@@ -78,10 +78,10 @@ A 在入口、上下壁面二阶消失；B 在圆柱二阶消失。圆柱不接�
 
 67 项 PINN 回归测试通过，覆盖任意神经权重下的精确边界、分段通量、三阶导数及反传、两种推理上下文、Adam/L-BFGS、checkpoint 重载、并行目录隔离、训练加密不改变均匀审计、warm start 线程恢复。9-23 原流函数 checkpoint 在 257 个存档点上的重载最大差异为 `1.776e-15`。
 
-- [首轮四组原始结果](../outputs_pinn/cylinder/hard_boundary_trial_20261013/comparison.json)
-- [圆柱精修原始结果](../outputs_pinn/cylinder/hard_boundary_refined_20261013/comparison.json)
-- [最终结果与全部验收分项](../outputs_pinn/cylinder/hard_boundary_inlet_refined_20261013/comparison.json)
-- [最终硬边界 checkpoint](../outputs_pinn/cylinder/hard_boundary_inlet_refined_20261013/cylinder_poiseuille/checkpoint_last.pt)；[同预算纯神经 checkpoint](../outputs_pinn/cylinder/hard_boundary_inlet_refined_20261013/soft/checkpoint_last.pt)
+- [首轮四组原始结果](assets/pinn/cylinder/hard_boundary_trial_20261013/comparison.json)
+- [圆柱精修原始结果](assets/pinn/cylinder/hard_boundary_refined_20261013/comparison.json)
+- [最终结果与全部验收分项](assets/pinn/cylinder/hard_boundary_inlet_refined_20261013/comparison.json)
+- 最终硬边界 checkpoint（本地运行产物：`outputs_pinn/cylinder/hard_boundary_inlet_refined_20261013/cylinder_poiseuille/checkpoint_last.pt`）；同预算纯神经 checkpoint（本地运行产物：`outputs_pinn/cylinder/hard_boundary_inlet_refined_20261013/soft/checkpoint_last.pt`）
 - [轻量证据、配置一致性与哈希核对](pinn_hard_boundary_2026-10-13.json)
 
 每轮均保留进程启动时的 `source/` 快照、原配置、训练历史和 checkpoint 哈希。持续开发时，首轮部分 `environment.json` 读取的磁盘哈希对应较新文件，而已运行进程仍使用启动时导入的模块；原记录未改写，差异明确记入 `execution_source_manifest.json`，复现以对应轮次的源码快照为准。

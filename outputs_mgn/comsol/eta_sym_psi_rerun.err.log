@@ -1,4 +1,0 @@
-D:\keyan\Anaconda\envs\deeplearning\lib\site-packages\pysr\sr.py:1270: UserWarning: `extra_sympy_mappings` cannot be pickled and will be removed from the serialized instance. When loading the model, please redefine `extra_sympy_mappings` at runtime.
-  warnings.warn(warn_msg)
-D:\keyan\Anaconda\envs\deeplearning\lib\site-packages\pysr\sr.py:1270: UserWarning: `extra_sympy_mappings` cannot be pickled and will be removed from the serialized instance. When loading the model, please redefine `extra_sympy_mappings` at runtime.
-  warnings.warn(warn_msg)

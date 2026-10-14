@@ -1,0 +1,176 @@
+{
+  "checkpoint_progress": {
+    "adam_steps": 10000,
+    "lbfgs_steps": 1000,
+    "closure_evaluations": 2056,
+    "status": "training_finished",
+    "elapsed_seconds": 532.5590744
+  },
+  "independent_sampling_seed": 20260923,
+  "interior_points": 20000,
+  "pde_residuals": {
+    "continuity": {
+      "rms": 0.12938166304148677,
+      "max_abs": 2.4981232487461273,
+      "p99_abs": 0.5345022738924677
+    },
+    "momentum_x": {
+      "rms": 0.08703921356376952,
+      "max_abs": 1.7360998549587576,
+      "p99_abs": 0.3542589594925339
+    },
+    "momentum_y": {
+      "rms": 0.041281423166073555,
+      "max_abs": 0.7434098749740261,
+      "p99_abs": 0.18228082118967057
+    }
+  },
+  "boundary_errors": {
+    "inlet_velocity_error": {
+      "rms": 0.004943324318342793,
+      "max_abs": 0.017214891438558144,
+      "p99_abs": 0.016090683004186278
+    },
+    "bottom_velocity": {
+      "rms": 0.0027591818835360255,
+      "max_abs": 0.01598367653963323,
+      "p99_abs": 0.00928453546222178
+    },
+    "top_velocity": {
+      "rms": 0.0032963481941395423,
+      "max_abs": 0.016506196140899078,
+      "p99_abs": 0.013327765514669269
+    },
+    "cylinder_velocity": {
+      "rms": 0.003233911351996363,
+      "max_abs": 0.009061554107549746,
+      "p99_abs": 0.008614865469058925
+    },
+    "outlet_traction": {
+      "rms": 0.002948788169653189,
+      "max_abs": 0.006169296802137682,
+      "p99_abs": 0.006129104733429964
+    }
+  },
+  "prescribed_inlet_flux": 4.1,
+  "cross_section_fluxes": [
+    {
+      "x": 0.0,
+      "flux": 4.091513906612957,
+      "relative_error_vs_prescribed_inlet": -0.002069778874888424
+    },
+    {
+      "x": 1.0,
+      "flux": 2.8459150352304037,
+      "relative_error_vs_prescribed_inlet": -0.305874381651121
+    },
+    {
+      "x": 1.5,
+      "flux": 2.2098319157104824,
+      "relative_error_vs_prescribed_inlet": -0.4610166059242725
+    },
+    {
+      "x": 2.0,
+      "flux": 1.8629124199632825,
+      "relative_error_vs_prescribed_inlet": -0.5456311170821262
+    },
+    {
+      "x": 2.5,
+      "flux": 1.785053166391881,
+      "relative_error_vs_prescribed_inlet": -0.5646211789288095
+    },
+    {
+      "x": 3.0,
+      "flux": 1.7056177016525949,
+      "relative_error_vs_prescribed_inlet": -0.5839956825237573
+    },
+    {
+      "x": 4.0,
+      "flux": 1.5957461473046577,
+      "relative_error_vs_prescribed_inlet": -0.6107936226086201
+    },
+    {
+      "x": 6.0,
+      "flux": 1.4231620237670417,
+      "relative_error_vs_prescribed_inlet": -0.6528873112763313
+    },
+    {
+      "x": 10.0,
+      "flux": 1.164789768803105,
+      "relative_error_vs_prescribed_inlet": -0.7159049344382671
+    },
+    {
+      "x": 16.0,
+      "flux": 0.8212060565412198,
+      "relative_error_vs_prescribed_inlet": -0.7997058398679951
+    },
+    {
+      "x": 22.0,
+      "flux": 0.38255652842571747,
+      "relative_error_vs_prescribed_inlet": -0.906693529652264
+    }
+  ],
+  "max_flux_relative_error": 0.906693529652264,
+  "wall_normal_leakage": 0.07447166778041198,
+  "cylinder_normal_leakage": 0.0003627641789633646,
+  "net_boundary_outflow": -3.6341229462278646,
+  "pressure_drop_front_minus_back": 0.19650056781885306,
+  "force_quadrature_refinement": [
+    {
+      "surface_points": 256,
+      "time": 0.0,
+      "Cd": 0.9126710522658583,
+      "Cl": 0.2831329687359152,
+      "Cd_pressure": 0.2942137961548322,
+      "Cd_viscous": 0.6184572561110262,
+      "Cl_pressure": 0.08945216396354964,
+      "Cl_viscous": 0.19368080477236554
+    },
+    {
+      "surface_points": 512,
+      "time": 0.0,
+      "Cd": 0.9126710522658585,
+      "Cl": 0.2831329687359152,
+      "Cd_pressure": 0.29421379615483223,
+      "Cd_viscous": 0.6184572561110263,
+      "Cl_pressure": 0.08945216396354977,
+      "Cl_viscous": 0.1936808047723654
+    },
+    {
+      "surface_points": 1024,
+      "time": 0.0,
+      "Cd": 0.9126710522658585,
+      "Cl": 0.2831329687359151,
+      "Cd_pressure": 0.2942137961548322,
+      "Cd_viscous": 0.6184572561110264,
+      "Cl_pressure": 0.0894521639635497,
+      "Cl_viscous": 0.1936808047723654
+    },
+    {
+      "surface_points": 2048,
+      "time": 0.0,
+      "Cd": 0.9126710522658583,
+      "Cl": 0.2831329687359151,
+      "Cd_pressure": 0.2942137961548322,
+      "Cd_viscous": 0.6184572561110262,
+      "Cl_pressure": 0.08945216396354967,
+      "Cl_viscous": 0.1936808047723654
+    }
+  ],
+  "screening_thresholds": {
+    "maximum_cross_section_flux_relative_error": 0.01,
+    "noslip_velocity_component_rms": 0.01,
+    "pde_component_rms": 0.01,
+    "inlet_velocity_component_rms": 0.01,
+    "outlet_traction_component_rms": 0.01
+  },
+  "screening_passes": {
+    "flux": false,
+    "pde": false,
+    "noslip": true,
+    "inlet": true,
+    "outlet": true
+  },
+  "all_screening_passed": false,
+  "interpretation": "Necessary numerical screening only, not an independent CFD accuracy certificate. Force quadrature convergence does not establish wall-gradient accuracy."
+}

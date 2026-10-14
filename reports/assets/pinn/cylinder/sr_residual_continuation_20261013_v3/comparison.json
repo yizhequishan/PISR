@@ -1,0 +1,426 @@
+{
+  "protocol": {
+    "checkpoint": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_refined_20261013\\cylinder_poiseuille\\checkpoint_last.pt",
+    "checkpoint_sha256": "4d3f901918f6608540c806a1cdd383b4f15ccaef1ca4096a2b0095c1172f7cd4",
+    "source_progress": {
+      "adam_steps": 500,
+      "lbfgs_steps": 300,
+      "closure_evaluations": 614,
+      "status": "training_finished",
+      "elapsed_seconds": 859.3753722
+    },
+    "baseline_config": {
+      "case": "cylinder",
+      "reynolds": 20.0,
+      "transient": false,
+      "t_end": 1.0,
+      "channel_length": 22.0,
+      "channel_height": 4.1,
+      "cylinder_x": 2.0,
+      "cylinder_y": 2.0,
+      "ramp_time": 2.0,
+      "hidden_layers": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "architecture": "hard_streamfunction",
+      "hard_background": "cylinder_poiseuille",
+      "hard_inlet_length": 1.0,
+      "hard_cylinder_length": 1.0,
+      "hard_train_cylinder_constant": true,
+      "symbolic_expression": "",
+      "symbolic_coefficients": {},
+      "symbolic_coefficient_radius": 0.1,
+      "symbolic_window": [
+        3.0,
+        4.9,
+        -1.9,
+        1.9
+      ],
+      "symbolic_taper": [
+        0.4,
+        0.4
+      ],
+      "symbolic_source": "",
+      "seed": 42,
+      "dtype": "float64",
+      "device": "cpu",
+      "threads": 1,
+      "n_interior": 2048,
+      "cylinder_refine_fraction": 0.5,
+      "cylinder_refine_radius": 1.5,
+      "inlet_refine_fraction": 0.0,
+      "inlet_refine_width": 1.0,
+      "n_boundary": 256,
+      "n_initial": 512,
+      "n_gauge": 128,
+      "data_batch_size": 512,
+      "adam_steps": 500,
+      "learning_rate": 0.001,
+      "lbfgs_steps": 300,
+      "lbfgs_history": 50,
+      "resample_every": 100,
+      "log_every": 100,
+      "checkpoint_every": 1000,
+      "weight_pde": 1.0,
+      "weight_boundary": 10.0,
+      "weight_initial": 10.0,
+      "weight_gauge": 1.0,
+      "weight_data": 1.0,
+      "weight_regularization": 0.0001,
+      "eval_grid": 121,
+      "eval_times": 3,
+      "eval_batch_size": 1024
+    },
+    "source_sha256": {
+      "pinn\\__init__.py": "04cfe72875941764bacc7f299fad918b4c40e5d546198e140b56cf0f2189006a",
+      "pinn\\config.py": "e48e10cc1f51a5ffa072eca892d172db9785603bf2f75f9bfaa857d1ead87678",
+      "pinn\\data.py": "f412237c69bb96ecbe3cc3ced155d241d2c98d20b8788c529fddeb5f2a54564b",
+      "pinn\\evaluation.py": "83fa304372e5f98be83fa1cca83d38de21a7242f647fb948d43354f5c69d9957",
+      "pinn\\losses.py": "0e8aef911b1c06eced311afe5be4d173ad3d9c922ced814368cc5488e9b427b6",
+      "pinn\\model.py": "34cb3ca3f0e9bb52133ce28c7f612e8b65b62563450303f1353561b12b2cf199",
+      "pinn\\physics.py": "f371b3c40fc6fc281c3bd4854ec20d9e8a3b40c110e6f9b78cd885c111b44dd2",
+      "pinn\\problems.py": "f0b73f3bcd1c574da8cb3f9e54e4964fc1e92de6cc0dd7309044f6d3253ab99b",
+      "pinn\\train.py": "10b22b825b5505acf63ea8dd44fa1c8c2a48db734d8f8013f98cd82b45141c86",
+      "scripts\\pinn_sr_residual_trial.py": "1dab246bd9cc20f8c665d92f8d105cf3f724b52a9e492bf6c837ac93357f1529",
+      "scripts\\pinn_sr_weight_search.py": "4932113983663bb9de51d1ef52bf26ace0f76f0cc01c5b6d1607cbf10300838a",
+      "scripts\\audit_pinn_cylinder.py": "c26ec5734a05a553b168d45d97db191d388156ee7b8348459eae9bcca22f0906",
+      "scripts\\run_hard_boundary_trial.py": "111ccb6035ec9dc825aa640ddc8369b6eff6645f7f79cca5cb9ed3649f5da639"
+    },
+    "seeds": {
+      "fit": 2026101311,
+      "selection": 2026101312,
+      "continuation": 2026101313,
+      "test": 2026101314
+    },
+    "reference_data": null,
+    "method": "Frozen symbolic spatial weighting of the original momentum residuals",
+    "target": "log1p((r_x**2+r_y**2)/median_fit_residual_energy)",
+    "input_features": {
+      "x_D": "x",
+      "y_D": "2*y/channel_height-1"
+    },
+    "fit_distribution": "4000 uniform fluid points plus 1500 uniform inlet-slab points",
+    "selection_distribution": "6000 independent uniform fluid points plus 1500 inlet-slab points",
+    "test_distribution": "20000 fresh uniform fluid points, used only after expression freeze",
+    "success_criterion": "Both global momentum RMS components lower than ordinary; outlet no worse; exact velocity boundaries and flux retained",
+    "gate": {
+      "relative_selection_mse_below": 0.95,
+      "spearman_above": 0.3
+    },
+    "budget": "Same per-arm wall-time cap including SR labeling/import/search/selection for SR; equal common audit excluded",
+    "inference_limit": "Single checkpoint and continuation seed; no independent CFD accuracy or generalization claim"
+  },
+  "selection": {
+    "index": 5,
+    "complexity": 12,
+    "expression": "6.116762468661275*exp(0.188034758013656*(-x_D - 4.446206289981752)*tanh(x_D))",
+    "mse": 0.7946847487778986,
+    "relative_mse": 0.22604306198072463,
+    "spearman": 0.8376606501415227,
+    "status": "finite",
+    "score_cap": 7.920742548751966,
+    "score_mean": 1.6694271822690545,
+    "residual_energy_scale": 0.002024650506351312,
+    "fit_target_mean": 1.6773741423707704,
+    "gate_passed": true,
+    "fit_total_seconds": 182.6531561,
+    "weight_rule": "normalize_batch(0.5 + 0.5*clip(score/score_mean,0,10)); score=clip(expression,0,score_cap)"
+  },
+  "baseline_momentum_rms": [
+    0.083188062080654,
+    0.1701023469027328
+  ],
+  "baseline_outlet_traction_rms": 0.03006150661187096,
+  "runs": {
+    "ordinary": {
+      "momentum_rms": [
+        0.07468040492177763,
+        0.08992368465534467
+      ],
+      "outlet_traction_rms": 0.030030277374831806,
+      "maximum_velocity_boundary_error": 3.873280642353949e-15,
+      "flux_relative_error": 1.2997732971221347e-15,
+      "progress": {
+        "adam_steps": 100,
+        "lbfgs_steps": 131,
+        "closure_evaluations": 271,
+        "status": "budget_finished",
+        "elapsed_seconds": 301.79803780000003
+      },
+      "budget": {
+        "kind": "ordinary",
+        "checkpoint_sha256": "4d3f901918f6608540c806a1cdd383b4f15ccaef1ca4096a2b0095c1172f7cd4",
+        "optimizer_reset": true,
+        "total_seconds_cap": 300.0,
+        "preparation_seconds_charged": 0.0,
+        "runner_setup_seconds": 0.0042717000000003225,
+        "training_seconds_cap": 299.9957283,
+        "inlet_weight_rule": null,
+        "time_limit_note": "Stop at an optimizer-step boundary; final serialization and audit are reported separately",
+        "actual_training_seconds": 301.79803780000003,
+        "train_call_wall_seconds": 301.81244150000003,
+        "total_charged_seconds": 301.81671320000004
+      },
+      "regions": {
+        "inlet_x_lt_1": {
+          "n": 887,
+          "fraction": 0.04435,
+          "momentum_rms": [
+            0.23780905836712443,
+            0.384604151882779
+          ],
+          "squared_residual_share": [
+            0.44971469881693,
+            0.8112848625097686
+          ]
+        },
+        "near_cylinder": {
+          "n": 1165,
+          "fraction": 0.05825,
+          "momentum_rms": [
+            0.11592775859453341,
+            0.10075697585828036
+          ],
+          "squared_residual_share": [
+            0.14036456359398866,
+            0.07313040688982084
+          ]
+        },
+        "near_wake": {
+          "n": 1854,
+          "fraction": 0.0927,
+          "momentum_rms": [
+            0.06312522480813484,
+            0.05739770813527956
+          ],
+          "squared_residual_share": [
+            0.06623267285744602,
+            0.037767709708009245
+          ]
+        },
+        "remaining": {
+          "n": 16094,
+          "fraction": 0.8047,
+          "momentum_rms": [
+            0.048805850886363765,
+            0.02796368449838921
+          ],
+          "squared_residual_share": [
+            0.3436880647316299,
+            0.07781702089240362
+          ]
+        }
+      },
+      "forces_uncertified": {
+        "surface_points": 2048,
+        "time": 0.0,
+        "Cd": 4.630784943365488,
+        "Cl": 0.0021103749912385755,
+        "Cd_pressure": 2.9706084947137965,
+        "Cd_viscous": 1.6601764486516917,
+        "Cl_pressure": -0.019144973522786334,
+        "Cl_viscous": 0.02125534851402491
+      }
+    },
+    "inlet": {
+      "momentum_rms": [
+        0.07653086644530778,
+        0.06901334290202107
+      ],
+      "outlet_traction_rms": 0.030044023945089572,
+      "maximum_velocity_boundary_error": 4.039284835747616e-15,
+      "flux_relative_error": 1.5164021799758237e-15,
+      "progress": {
+        "adam_steps": 100,
+        "lbfgs_steps": 118,
+        "closure_evaluations": 243,
+        "status": "budget_finished",
+        "elapsed_seconds": 301.1671505
+      },
+      "budget": {
+        "kind": "inlet",
+        "checkpoint_sha256": "4d3f901918f6608540c806a1cdd383b4f15ccaef1ca4096a2b0095c1172f7cd4",
+        "optimizer_reset": true,
+        "total_seconds_cap": 300.0,
+        "preparation_seconds_charged": 0.0,
+        "runner_setup_seconds": 0.0031262999999999153,
+        "training_seconds_cap": 299.9968737,
+        "inlet_weight_rule": "normalize_batch(1+4*exp(-x**2))",
+        "time_limit_note": "Stop at an optimizer-step boundary; final serialization and audit are reported separately",
+        "actual_training_seconds": 301.1671505,
+        "train_call_wall_seconds": 301.179318,
+        "total_charged_seconds": 301.18244430000004
+      },
+      "regions": {
+        "inlet_x_lt_1": {
+          "n": 887,
+          "fraction": 0.04435,
+          "momentum_rms": [
+            0.1673225079785398,
+            0.24903400500424067
+          ],
+          "squared_residual_share": [
+            0.2119966971577493,
+            0.5774904428098675
+          ]
+        },
+        "near_cylinder": {
+          "n": 1165,
+          "fraction": 0.05825,
+          "momentum_rms": [
+            0.1502704155296644,
+            0.12580625295303255
+          ],
+          "squared_residual_share": [
+            0.22457925866468922,
+            0.19356830874370856
+          ]
+        },
+        "near_wake": {
+          "n": 1854,
+          "fraction": 0.0927,
+          "momentum_rms": [
+            0.09943075335092869,
+            0.07145557338499417
+          ],
+          "squared_residual_share": [
+            0.15647607127530694,
+            0.09937698629293658
+          ]
+        },
+        "remaining": {
+          "n": 16094,
+          "fraction": 0.8047,
+          "momentum_rms": [
+            0.05442382660888537,
+            0.02769227762348318
+          ],
+          "squared_residual_share": [
+            0.40694797290226,
+            0.12956426215349492
+          ]
+        }
+      },
+      "forces_uncertified": {
+        "surface_points": 2048,
+        "time": 0.0,
+        "Cd": 4.89638966773353,
+        "Cl": 0.004386212337483743,
+        "Cd_pressure": 3.166453363136205,
+        "Cd_viscous": 1.7299363045973246,
+        "Cl_pressure": -0.003200631218221939,
+        "Cl_viscous": 0.007586843555705682
+      }
+    },
+    "sr": {
+      "momentum_rms": [
+        0.08605944282847315,
+        0.09059308069214615
+      ],
+      "outlet_traction_rms": 0.0300662457273343,
+      "maximum_velocity_boundary_error": 3.6529361701792935e-15,
+      "flux_relative_error": 1.2997732971221347e-15,
+      "progress": {
+        "adam_steps": 100,
+        "lbfgs_steps": 37,
+        "closure_evaluations": 75,
+        "status": "budget_finished",
+        "elapsed_seconds": 119.01707619999999
+      },
+      "budget": {
+        "kind": "sr",
+        "checkpoint_sha256": "4d3f901918f6608540c806a1cdd383b4f15ccaef1ca4096a2b0095c1172f7cd4",
+        "optimizer_reset": true,
+        "total_seconds_cap": 300.0,
+        "preparation_seconds_charged": 182.6531561,
+        "runner_setup_seconds": 0.7929265999999995,
+        "training_seconds_cap": 116.55391730000001,
+        "inlet_weight_rule": null,
+        "time_limit_note": "Stop at an optimizer-step boundary; final serialization and audit are reported separately",
+        "actual_training_seconds": 119.01707619999999,
+        "train_call_wall_seconds": 119.0355538,
+        "total_charged_seconds": 302.4816365
+      },
+      "regions": {
+        "inlet_x_lt_1": {
+          "n": 887,
+          "fraction": 0.04435,
+          "momentum_rms": [
+            0.25633157187810246,
+            0.35971489061989687
+          ],
+          "squared_residual_share": [
+            0.3934601612108482,
+            0.6992305575278939
+          ]
+        },
+        "near_cylinder": {
+          "n": 1165,
+          "fraction": 0.05825,
+          "momentum_rms": [
+            0.15292236701813383,
+            0.1216885647370189
+          ],
+          "squared_residual_share": [
+            0.18392505431478856,
+            0.10510065205491721
+          ]
+        },
+        "near_wake": {
+          "n": 1854,
+          "fraction": 0.0927,
+          "momentum_rms": [
+            0.09122822488249596,
+            0.0729399589223736
+          ],
+          "squared_residual_share": [
+            0.10416963033901645,
+            0.0600925600378191
+          ]
+        },
+        "remaining": {
+          "n": 16094,
+          "fraction": 0.8047,
+          "momentum_rms": [
+            0.05413758163315611,
+            0.037185172885604315
+          ],
+          "squared_residual_share": [
+            0.31844515413535507,
+            0.13557623037936928
+          ]
+        }
+      },
+      "forces_uncertified": {
+        "surface_points": 2048,
+        "time": 0.0,
+        "Cd": 4.480687770266195,
+        "Cl": -0.03598072801441713,
+        "Cd_pressure": 2.871107346967173,
+        "Cd_viscous": 1.6095804232990218,
+        "Cl_pressure": -0.023431486090548913,
+        "Cl_viscous": -0.012549241923868215
+      }
+    }
+  },
+  "sampling_sequence_prefix_matches": true,
+  "checks": {
+    "momentum_x_better": false,
+    "momentum_y_better": false,
+    "outlet_no_worse": false,
+    "exact_velocity_boundaries": true,
+    "flux_below_one_percent": true
+  },
+  "sr_passes_predeclared_criterion": false,
+  "all_three_arms_complete": true,
+  "sr_vs_simple_inlet": {
+    "momentum_rms_ratio": [
+      1.1245063178524823,
+      1.3126893566185027
+    ],
+    "outlet_traction_ratio": 1.0007396406781375
+  }
+}

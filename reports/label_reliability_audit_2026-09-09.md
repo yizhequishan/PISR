@@ -39,7 +39,7 @@ R 仍沿 `Umax·D≈0.15` 的入口控制路径变化；本次没有把它重新
 
 以上是**对平均协议的敏感性**，不是统计误差真值、置信区间或参数差分截断误差。不能据此把 cx 既有拟合误差全部归因于标签噪声。但 cx/v、R/v 的标签明显依赖平均窗口，直接把它们当作稳定的 10% 精度参照是不充分的。
 
-![不同时间平均窗口下的 M 变化](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/mean_window_sensitivity.png)
+![不同时间平均窗口下的 M 变化](../outputs/a0_label_reliability_2026-09-09/mean_window_sensitivity.png)
 
 ## 3. 当前时序具有强周期性，普通统计块没有建立独立性
 
@@ -72,7 +72,7 @@ cx 正负算例的自相关第一次过零约在 0.09 s，但在 1–2 s 滞后�
 
 因此本次**没有选择某一个块长作为“有效统计块”，也没有认证随机标准误**。对于这组近周期时序，完整周期平均的稳定性比直接套用独立块公式更有解释力。若后续要报告概率区间，需明确误差总体是随机初相位、共同随机起点、独立运行还是其他采样机制，并建立相应协方差模型。
 
-![条件统计块标准误：依赖未验证的假设](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/batch_uncertainty.png)
+![条件统计块标准误：依赖未验证的假设](../outputs/a0_label_reliability_2026-09-09/batch_uncertainty.png)
 
 ## 4. 完整周期平均明显更稳定，但尚不是新的真值
 
@@ -108,7 +108,7 @@ cx 正负算例的自相关第一次过零约在 0.09 s，但在 1–2 s 滞后�
 
 基准场自身也随平均协议变化：周期平均相对旧平均，u 场变化约 0.53%，v 场约 8.69%。因此若采用周期统计目标，应同时更新基准场、空间导数、K、扰动均场和 M/T，保持整条链的一致性。
 
-![cx 的近周期信号及周期差异](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/cycle_phase_diagnostic.png)
+![cx 的近周期信号及周期差异](../outputs/a0_label_reliability_2026-09-09/cycle_phase_diagnostic.png)
 
 ## 5. 二阶空间导数对求导方式非常敏感
 
@@ -174,18 +174,18 @@ $env:MKL_NUM_THREADS='1'
 
 实际完成的独立数值检查：二次构造场的一二阶导数、带时间/分量尾维的仿射场插值、统计块方差展开恒等式、带非网格端点的线性信号时间积分、正弦周期交叉事件。两套完整脚本均成功完成；三张图已检查排版。数值自检仅验证实现，不认证物理灵敏度。
 
-- [主审计脚本](D:/keyan/cylinder_flow_pisr/experiments/a0_label_reliability.py)
-- [周期平均及相位审计脚本](D:/keyan/cylinder_flow_pisr/experiments/a0_cycle_average_diagnostic.py)
-- [原始来源与审计清单](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/audit_manifest.json)
-- [原始时序重建结果](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/raw_reproduction.csv)
-- [时窗敏感性](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/mean_window_sensitivity.csv)
-- [条件统计块标准误](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/batch_mean_diagnostics.csv)
-- [自相关与频谱尺度](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/temporal_scales.csv)
-- [周期平均 M 指标](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/cycle_mean_responses.csv)
-- [周期相位与时间抽稀检查](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/cycle_mean_phase_robustness.csv)
-- [周期定义、事件及来源清单](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/cycle_mean_manifest.json)
-- [空间导数方法敏感性](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/gradient_method_sensitivity.csv)
-- [空间抽稀敏感性](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/gradient_resampling_sensitivity.csv)
-- [样条求解器异常记录](D:/keyan/cylinder_flow_pisr/outputs/a0_label_reliability_2026-09-09/spline_fit_failures.json)
+- [主审计脚本](../experiments/a0_label_reliability.py)
+- [周期平均及相位审计脚本](../experiments/a0_cycle_average_diagnostic.py)
+- [原始来源与审计清单](../outputs/a0_label_reliability_2026-09-09/audit_manifest.json)
+- [原始时序重建结果](../outputs/a0_label_reliability_2026-09-09/raw_reproduction.csv)
+- [时窗敏感性](../outputs/a0_label_reliability_2026-09-09/mean_window_sensitivity.csv)
+- [条件统计块标准误](../outputs/a0_label_reliability_2026-09-09/batch_mean_diagnostics.csv)
+- [自相关与频谱尺度](../outputs/a0_label_reliability_2026-09-09/temporal_scales.csv)
+- [周期平均 M 指标](../outputs/a0_label_reliability_2026-09-09/cycle_mean_responses.csv)
+- [周期相位与时间抽稀检查](../outputs/a0_label_reliability_2026-09-09/cycle_mean_phase_robustness.csv)
+- [周期定义、事件及来源清单](../outputs/a0_label_reliability_2026-09-09/cycle_mean_manifest.json)
+- [空间导数方法敏感性](../outputs/a0_label_reliability_2026-09-09/gradient_method_sensitivity.csv)
+- [空间抽稀敏感性](../outputs/a0_label_reliability_2026-09-09/gradient_resampling_sensitivity.csv)
+- [样条求解器异常记录](../outputs/a0_label_reliability_2026-09-09/spline_fit_failures.json)
 
-方法文献及原计划见[文献与 A0 行动方案](D:/keyan/cylinder_flow_pisr/reports/a0_literature_action_plan_2026-09-09.md)。本次未修改主流程、旧训练数据和历史结果。
+方法文献及原计划见文献与 A0 行动方案（本地历史文档：`reports/a0_literature_action_plan_2026-09-09.md`）。本次未修改主流程、旧训练数据和历史结果。

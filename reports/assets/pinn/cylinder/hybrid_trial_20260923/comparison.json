@@ -1,0 +1,260 @@
+{
+  "kind": "single_seed_matched_update_budget_trial",
+  "seed": 42,
+  "reference_data": null,
+  "runs": {
+    "uvp": {
+      "run_directory": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hybrid_trial_20260923\\uvp",
+      "parameters": 12867,
+      "initial_loss": 8.708194368875022,
+      "final_loss": 0.025889190059146316,
+      "validation_loss": 0.02604895569571474,
+      "pde_rms": {
+        "continuity": 0.14158177751406234,
+        "momentum_x": 0.048199760269402675,
+        "momentum_y": 0.04611731606910648
+      },
+      "max_flux_relative_error": 0.9684646930787898,
+      "boundary_errors": {
+        "inlet_velocity_error": {
+          "rms": 0.005714473677430967,
+          "max_abs": 0.013164088298578402,
+          "p99_abs": 0.013051599774905338
+        },
+        "bottom_velocity": {
+          "rms": 0.007062397509819418,
+          "max_abs": 0.03400788020606225,
+          "p99_abs": 0.032357533684289015
+        },
+        "top_velocity": {
+          "rms": 0.005002480786214722,
+          "max_abs": 0.020631269642879507,
+          "p99_abs": 0.019564171706098317
+        },
+        "cylinder_velocity": {
+          "rms": 0.011485952350404444,
+          "max_abs": 0.022471515944613385,
+          "p99_abs": 0.022224048680205933
+        },
+        "outlet_traction": {
+          "rms": 0.0013916628383232824,
+          "max_abs": 0.0021689824756692742,
+          "p99_abs": 0.002165000681119519
+        }
+      },
+      "screening_passes": {
+        "flux": false,
+        "pde": false,
+        "noslip": false,
+        "inlet": true,
+        "outlet": true
+      },
+      "progress": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "closure_evaluations": 609,
+        "status": "training_finished",
+        "elapsed_seconds": 98.2370041
+      },
+      "wake_regions": {
+        "plateau": {
+          "points": 3525,
+          "pde_rms": {
+            "continuity": 0.028491233908949233,
+            "momentum_x": 0.01878121034318189,
+            "momentum_y": 0.011299859272281974
+          }
+        },
+        "taper": {
+          "points": 4332,
+          "pde_rms": {
+            "continuity": 0.02702697593938925,
+            "momentum_x": 0.01524243664472635,
+            "momentum_y": 0.011890713086618585
+          }
+        }
+      }
+    },
+    "streamfunction": {
+      "run_directory": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hybrid_trial_20260923\\streamfunction",
+      "parameters": 12802,
+      "initial_loss": 7.340912591876943,
+      "final_loss": 0.043192905288367986,
+      "validation_loss": 0.07019124991263095,
+      "pde_rms": {
+        "continuity": 1.593436795277062e-16,
+        "momentum_x": 0.20461440120078944,
+        "momentum_y": 0.12832876494277326
+      },
+      "max_flux_relative_error": 0.15613257581986043,
+      "boundary_errors": {
+        "inlet_velocity_error": {
+          "rms": 0.012253507694277741,
+          "max_abs": 0.028364012761661783,
+          "p99_abs": 0.027808622756345745
+        },
+        "bottom_velocity": {
+          "rms": 0.01737632793450183,
+          "max_abs": 0.07797002379692632,
+          "p99_abs": 0.07416526674017006
+        },
+        "top_velocity": {
+          "rms": 0.014217107597505298,
+          "max_abs": 0.09211277439553442,
+          "p99_abs": 0.07398928469273454
+        },
+        "cylinder_velocity": {
+          "rms": 0.01095854403910478,
+          "max_abs": 0.035708990758526425,
+          "p99_abs": 0.03482391193539203
+        },
+        "outlet_traction": {
+          "rms": 0.024495591421051965,
+          "max_abs": 0.05473186502421348,
+          "p99_abs": 0.05441335489738045
+        }
+      },
+      "screening_passes": {
+        "flux": false,
+        "pde": false,
+        "noslip": false,
+        "inlet": false,
+        "outlet": false
+      },
+      "progress": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "closure_evaluations": 612,
+        "status": "training_finished",
+        "elapsed_seconds": 169.64961799999998
+      },
+      "wake_regions": {
+        "plateau": {
+          "points": 3525,
+          "pde_rms": {
+            "continuity": 6.94745628230851e-17,
+            "momentum_x": 0.028512361295944574,
+            "momentum_y": 0.0262418149341729
+          }
+        },
+        "taper": {
+          "points": 4332,
+          "pde_rms": {
+            "continuity": 7.358039985807754e-17,
+            "momentum_x": 0.028403119592277527,
+            "momentum_y": 0.023619771147619723
+          }
+        }
+      }
+    },
+    "hybrid_streamfunction": {
+      "run_directory": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hybrid_trial_20260923_sparse\\hybrid_streamfunction",
+      "parameters": 12807,
+      "initial_loss": 307.6953212060632,
+      "final_loss": 15.80226867893883,
+      "validation_loss": 386.66665802099135,
+      "pde_rms": {
+        "continuity": 5.586340303676356e-15,
+        "momentum_x": 11.981289178280594,
+        "momentum_y": 12.308595220421225
+      },
+      "max_flux_relative_error": 0.8798128002466739,
+      "boundary_errors": {
+        "inlet_velocity_error": {
+          "rms": 0.500480813249761,
+          "max_abs": 1.1509533391033488,
+          "p99_abs": 1.1498425361070033
+        },
+        "bottom_velocity": {
+          "rms": 0.23975935972659465,
+          "max_abs": 1.139112083714106,
+          "p99_abs": 0.9853268543943143
+        },
+        "top_velocity": {
+          "rms": 0.2782389387996063,
+          "max_abs": 2.24179167414481,
+          "p99_abs": 1.2256268033419955
+        },
+        "cylinder_velocity": {
+          "rms": 0.16830448333839407,
+          "max_abs": 0.43651626623313844,
+          "p99_abs": 0.4353927380748331
+        },
+        "outlet_traction": {
+          "rms": 0.054462336932352536,
+          "max_abs": 0.22686944763100544,
+          "p99_abs": 0.2094807025387399
+        }
+      },
+      "screening_passes": {
+        "flux": false,
+        "pde": false,
+        "noslip": false,
+        "inlet": false,
+        "outlet": false
+      },
+      "progress": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "closure_evaluations": 622,
+        "status": "training_finished",
+        "elapsed_seconds": 640.8839896
+      },
+      "wake_regions": {
+        "plateau": {
+          "points": 3525,
+          "pde_rms": {
+            "continuity": 2.3785692207660313e-15,
+            "momentum_x": 3.966978230373566,
+            "momentum_y": 8.17061243367234
+          },
+          "symbolic_velocity_rms": 1.1611639668237461,
+          "neural_velocity_rms": 1.5588407272891087,
+          "total_velocity_rms": 0.8921807780833182,
+          "symbolic_neural_velocity_cosine": -0.823807961340428
+        },
+        "taper": {
+          "points": 4332,
+          "pde_rms": {
+            "continuity": 2.7979859953971996e-14,
+            "momentum_x": 56.2733356878263,
+            "momentum_y": 52.22326608527135
+          },
+          "symbolic_velocity_rms": 4.175836369768358,
+          "neural_velocity_rms": 4.142423123561445,
+          "total_velocity_rms": 2.025835538431548,
+          "symbolic_neural_velocity_cosine": -0.881406118085057
+        }
+      },
+      "refined_coefficients": {
+        "a": 0.2589398704206576,
+        "b": 1.9122970826582812,
+        "d": 0.7574211790536685,
+        "omega": 0.6404829962757954,
+        "phase": 0.05594451682717745
+      }
+    }
+  },
+  "note": "Equal optimizer updates and collocation counts, not equal time/FLOPs. No CFD accuracy claim; symbolic prior comes from unknown-Re time-mean data.",
+  "optimization_note": "The first hybrid attempt was stopped for an equivalent performance optimization and excluded. Its incomplete logs and original model source remain under the first root. Completed hybrid results are stored under hybrid_trial_20260923_sparse; all final loss and parameter-gradient equivalence checks passed.",
+  "status": "all_three_matched_budget_runs_complete",
+  "verification": {
+    "pinn_tests_python38": 35,
+    "full_suite_python312": 53,
+    "legacy_checkpoint": {
+      "old_checkpoint_compatible": true,
+      "architecture": "uvp",
+      "max_uvp_difference_vs_saved_fields": 1.9984014443252818e-15,
+      "comparison_points": 257,
+      "checkpoint": "outputs_pinn\\cylinder\\20260922_230817_re20_refined\\checkpoint_last.pt"
+    },
+    "optimization": {
+      "all_losses_and_parameter_gradients_match": true,
+      "initial_seconds_per_loss_backward": 0.4860210799999999,
+      "optimized_seconds_per_loss_backward": 0.27916093999999986,
+      "speedup": 1.7410067468607897,
+      "max_loss_absolute_difference": 0.0,
+      "max_gradient_absolute_difference": 4.440892098500626e-16
+    }
+  }
+}

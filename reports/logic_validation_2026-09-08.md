@@ -194,11 +194,11 @@ A0 原始完整实验重跑后，六项相对误差与旧结果最大差 `3.1e-1
 
 ## 复现入口与证据
 
-完整证据目录：[outputs/logic_validation_2026-09-08](D:/keyan/cylinder_flow_pisr/outputs/logic_validation_2026-09-08)。
+完整证据目录：[outputs/logic_validation_2026-09-08](../outputs/logic_validation_2026-09-08)。
 
-- [验证脚本](D:/keyan/cylinder_flow_pisr/experiments/validate_existing_conclusions.py)：构造解、存档复算、七算例 FD 重建、P2 交叉选式、A0 空间压力测试及 P3 独立重建。
-- [输入与环境清单](D:/keyan/cylinder_flow_pisr/outputs/logic_validation_2026-09-08/validation_manifest.json)：26 份输入的 SHA256、辅助代码指纹、运行库版本；输入在验证前后保持一致。
-- [P2 交叉评价](D:/keyan/cylinder_flow_pisr/outputs/logic_validation_2026-09-08/p2_factorial_holdout.csv)、[A0 空间验证](D:/keyan/cylinder_flow_pisr/outputs/logic_validation_2026-09-08/a0_spatial_stress.csv)、[P3 重建](D:/keyan/cylinder_flow_pisr/outputs/logic_validation_2026-09-08/p3_independent_reconstruction.csv)。
+- [验证脚本](../experiments/validate_existing_conclusions.py)：构造解、存档复算、七算例 FD 重建、P2 交叉选式、A0 空间压力测试及 P3 独立重建。
+- [输入与环境清单](../outputs/logic_validation_2026-09-08/validation_manifest.json)：26 份输入的 SHA256、辅助代码指纹、运行库版本；输入在验证前后保持一致。
+- [P2 交叉评价](../outputs/logic_validation_2026-09-08/p2_factorial_holdout.csv)、[A0 空间验证](../outputs/logic_validation_2026-09-08/a0_spatial_stress.csv)、[P3 重建](../outputs/logic_validation_2026-09-08/p3_independent_reconstruction.csv)。
 
 在项目根目录执行以下命令可重现本次新目录中的主要结果：
 

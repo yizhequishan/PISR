@@ -1,0 +1,8 @@
+{
+  "all_losses_and_parameter_gradients_match": true,
+  "initial_seconds_per_loss_backward": 0.4860210799999999,
+  "optimized_seconds_per_loss_backward": 0.27916093999999986,
+  "speedup": 1.7410067468607897,
+  "max_loss_absolute_difference": 0.0,
+  "max_gradient_absolute_difference": 4.440892098500626e-16
+}

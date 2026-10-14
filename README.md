@@ -34,6 +34,8 @@ Re=20 稳态已完成两轮全量训练，结果及未收敛原因见 [完整训
 
 ## 当前状态
 
+以下数据与模型目录描述本地历史存档。GitHub 保留的核心结果及其证据见 [结果文档索引](reports/README.md)；完整运行产物需在本地保留或重新生成。
+
 - 基准 COMSOL 尾流数据 `outputs_mgn/comsol/eta_sym` 已更新为 `dense_xi_v1`：回归窗 `ξ∈[3,5]` 上为 `33 × 64` 网格，`Δξ=0.0625`、`Δη≈0.0603`。
 - `outputs_mgn/comsol/eta_sym_psi` 中现有符号流函数模型仍来自旧 `16 × 64` 网格，不能与新网格直接混用；应从 Step 2 重新训练。
 - `outputs_mgn/comsol/eta_sym_psi_mlp` 已使用新 `33 × 64` 网格，并包含 3 个随机种子的聚合结果。
@@ -50,7 +52,7 @@ Re=20 稳态已完成两轮全量训练，结果及未收敛原因见 [完整训
 | P2：解析导数损失 | 旧选式网格上的梯度 MSE 降低 `68.4%`，函数值 MSE 增加 `14.3%`；选式与评价复用同一网格，独立测试提升待重跑。 |
 | P3：不同 `H/D` 的半径响应 | 当前数值分辨率下“无结论”：`±1%R` 与 `±2%R` 给出相反趋势，且步长误差约为 `75%–98%`。 |
 
-更完整的 P0–P2 汇总见 [outputs/preliminary_oasis_experiments/SUMMARY.md](outputs/preliminary_oasis_experiments/SUMMARY.md)，P3 判定及适用边界见 [outputs_hd_p3/P3_assessment.md](outputs_hd_p3/P3_assessment.md)。
+更完整的 P0–P2 结果与修正后的结论见 [成果汇总报告](reports/圆柱绕流符号建模与灵敏度研究成果汇总报告_2026-09-20.md)，P3 判定及适用边界见 [outputs_hd_p3/P3_assessment.md](outputs_hd_p3/P3_assessment.md)。
 
 ## 项目结构
 
@@ -174,7 +176,7 @@ python .\experiments\summarize_preliminary_experiments.py
 
 `setup_pysr_derivatives.py` 会修改本机 Julia 环境，只需执行一次。
 
-新版 P2 用 `--n-validation` 控制独立选式集，冻结表达式后才计算密集测试网格指标。P1 对每个观测预算重新在全域均匀选点。历史汇总和报告文件保留原样，汇总脚本会根据协议标记新旧结果。
+新版 P2 用 `--n-validation` 控制独立选式集，冻结表达式后才计算密集测试网格指标。P1 对每个观测预算重新在全域均匀选点。历史运行产物保留在本地，GitHub 仅维护结果索引中的核心报告及必要证据；汇总脚本会根据协议标记新旧结果。
 
 接口回归测试：`python -m pytest tests -q`。合成测试执行真实的数据预处理、文件读写、选式和评价，仅用解析候选替代 PySR 搜索；它不代表真实 CFD 重训结果。
 
@@ -187,7 +189,9 @@ python .\experiments\summarize_preliminary_experiments.py
 | `H_D.txt` | `H/D=4,8` 的 P3 原始数据，约 12 GB | 大文件，仅保留在本地或外部存储 |
 | `outputs_mgn/comsol/eta_sym` | 标准化密集尾流输入 | 用 `meta.json` 检查网格版本 |
 | `outputs_mgn/fd_check` | 分解闭合、梯度审计与 `φ_R` 数据 | 保存关键表格、报告和必要复现产物 |
-| `outputs` | P0–P2 独立实验结果 | 可作为轻量结果快照 |
-| `outputs_hd_p3` | P3 指标、场数据和判断报告 | 当前仅含分析产物，没有一键重跑脚本 |
+| `outputs` | 独立实验结果 | 仅跟踪核心报告引用的最终指标、协议及配图 |
+| `outputs_hd_p3` | P3 判断报告及指标摘要 | 完整场数据保留在本地；尚无一键重跑脚本 |
 
 不要依赖绝对路径复制运行产物；跨机器复现时，应从原始 COMSOL 数据重新执行 Step 1。提交前也请特别检查大型二进制文件、模型权重、缓存和长时间训练产物，避免误入 Git 历史。
+
+GitHub 结果文档以 [reports/README.md](reports/README.md) 为入口。旧规划、重复 Word/PPT、冒烟运行、候选枚举、模型权重和场数组保留在本地；新增结果按 `.gitignore` 中的保留清单纳入版本控制。

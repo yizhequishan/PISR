@@ -1,0 +1,1271 @@
+{
+  "kind": "single_seed_matched_update_budget_hard_boundary_trial",
+  "seed": 42,
+  "reference_data": null,
+  "sr_used": false,
+  "runs": {
+    "soft": {
+      "run_directory": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\soft",
+      "parameters": 12802,
+      "admissible_boundary_problem": true,
+      "initial_loss": 7.340912591876943,
+      "final_loss": 0.04182915939883616,
+      "validation_loss": 0.06549621206150587,
+      "pde_rms": {
+        "continuity": 1.6142153459170563e-16,
+        "momentum_x": 0.19746891396407362,
+        "momentum_y": 0.12135189533018943
+      },
+      "max_flux_relative_error": 0.16475723662381145,
+      "split_flux": {
+        "prescribed_flux": 4.1,
+        "quadrature": "split-fluid Gauss-Legendre",
+        "orders": [
+          64,
+          128,
+          256
+        ],
+        "sections": [
+          {
+            "x": 0.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.0562232587062494,
+              4.056223258633453,
+              4.056223258633425
+            ],
+            "endpoint_flux": 4.056223258633427,
+            "relative_error": -0.010677253991847466,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 1.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.9365171910586416,
+              3.9365171894711875,
+              3.9365171894711595
+            ],
+            "endpoint_flux": 3.9365171894711617,
+            "relative_error": -0.039873856226546385,
+            "quadrature_endpoint_difference": -2.220446049250313e-15
+          },
+          {
+            "x": 1.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.8835990969595957,
+              3.8835991342069263,
+              3.883599134206895
+            ],
+            "endpoint_flux": 3.883599134206898,
+            "relative_error": -0.052780698973927925,
+            "quadrature_endpoint_difference": -2.6645352591003757e-15
+          },
+          {
+            "x": 1.75,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.8514750893154592,
+              3.851475089315482,
+              3.8514750893154575
+            ],
+            "endpoint_flux": 3.8514750893154597,
+            "relative_error": -0.06061583187427859,
+            "quadrature_endpoint_difference": -2.220446049250313e-15
+          },
+          {
+            "x": 2.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5
+              ],
+              [
+                2.5,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.8177248153892864,
+              3.817724815389309,
+              3.8177248153892847
+            ],
+            "endpoint_flux": 3.8177248153892887,
+            "relative_error": -0.06884760600261342,
+            "quadrature_endpoint_difference": -3.9968028886505635e-15
+          },
+          {
+            "x": 2.25,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.7933893980971876,
+              3.79338939809721,
+              3.7933893980971867
+            ],
+            "endpoint_flux": 3.7933893980971876,
+            "relative_error": -0.07478307363483244,
+            "quadrature_endpoint_difference": -8.881784197001252e-16
+          },
+          {
+            "x": 2.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.7804953695392696,
+              3.780495369253308,
+              3.780495369253276
+            ],
+            "endpoint_flux": 3.7804953692532814,
+            "relative_error": -0.07792795871871307,
+            "quadrature_endpoint_difference": -5.329070518200751e-15
+          },
+          {
+            "x": 3.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.7584156047713546,
+              3.7584156047607724,
+              3.7584156047607413
+            ],
+            "endpoint_flux": 3.7584156047607458,
+            "relative_error": -0.08331326713152643,
+            "quadrature_endpoint_difference": -4.440892098500626e-15
+          },
+          {
+            "x": 4.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.741057839500306,
+              3.741057839495348,
+              3.7410578394953187
+            ],
+            "endpoint_flux": 3.7410578394953227,
+            "relative_error": -0.08754686841577586,
+            "quadrature_endpoint_difference": -3.9968028886505635e-15
+          },
+          {
+            "x": 6.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.6981502144063794,
+              3.6981502144066547,
+              3.6981502144066285
+            ],
+            "endpoint_flux": 3.698150214406631,
+            "relative_error": -0.09801214282765151,
+            "quadrature_endpoint_difference": -2.6645352591003757e-15
+          },
+          {
+            "x": 10.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.6134831393660503,
+              3.6134831393660725,
+              3.613483139366049
+            ],
+            "endpoint_flux": 3.6134831393660516,
+            "relative_error": -0.11866264893510994,
+            "quadrature_endpoint_difference": -2.6645352591003757e-15
+          },
+          {
+            "x": 16.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.4982662231395687,
+              3.4982662231395905,
+              3.4982662231395683
+            ],
+            "endpoint_flux": 3.498266223139571,
+            "relative_error": -0.14676433581961743,
+            "quadrature_endpoint_difference": -2.6645352591003757e-15
+          },
+          {
+            "x": 22.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.4244955092931537,
+              3.4244955092931737,
+              3.4244955092931524
+            ],
+            "endpoint_flux": 3.424495509293155,
+            "relative_error": -0.1647571928553286,
+            "quadrature_endpoint_difference": -2.6645352591003757e-15
+          }
+        ],
+        "max_relative_error": 0.1647571928553286,
+        "max_quadrature_endpoint_difference": 5.329070518200751e-15
+      },
+      "boundary_errors": {
+        "inlet_velocity_error": {
+          "rms": 0.011907763559544695,
+          "max_abs": 0.03421475455458611,
+          "p99_abs": 0.03296767452725023
+        },
+        "bottom_velocity": {
+          "rms": 0.017338058104993757,
+          "max_abs": 0.09496939713741197,
+          "p99_abs": 0.07874098202448644
+        },
+        "top_velocity": {
+          "rms": 0.015486278353508298,
+          "max_abs": 0.08992911580577449,
+          "p99_abs": 0.07301023759397428
+        },
+        "cylinder_velocity": {
+          "rms": 0.01066099439387865,
+          "max_abs": 0.028446711147725144,
+          "p99_abs": 0.02774940238180353
+        },
+        "outlet_traction": {
+          "rms": 0.024361433945865218,
+          "max_abs": 0.05490974351075783,
+          "p99_abs": 0.054544248454078126
+        }
+      },
+      "wall_normal_leakage": 0.6317267411920431,
+      "cylinder_normal_leakage": -4.85372325162334e-18,
+      "screening_passes": {
+        "flux": false,
+        "pde": false,
+        "noslip": false,
+        "inlet": false,
+        "outlet": false
+      },
+      "progress": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "closure_evaluations": 611,
+        "status": "training_finished",
+        "elapsed_seconds": 554.2164267
+      },
+      "checkpoint_sha256": "0e5762c3837bd298d20d1c61bb6f854d58f0880b22eaa383d37efc0e30f83169"
+    },
+    "cylinder_poiseuille": {
+      "run_directory": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\cylinder_poiseuille",
+      "parameters": 12803,
+      "admissible_boundary_problem": true,
+      "initial_loss": 0.934348318425462,
+      "final_loss": 0.014670122635522562,
+      "validation_loss": 0.05549980505301243,
+      "pde_rms": {
+        "continuity": 3.161714387766209e-16,
+        "momentum_x": 0.19281914093404845,
+        "momentum_y": 0.1819049348886726
+      },
+      "max_flux_relative_error": 1.7482344439309968e-07,
+      "split_flux": {
+        "prescribed_flux": 4.1,
+        "quadrature": "split-fluid Gauss-Legendre",
+        "orders": [
+          64,
+          128,
+          256
+        ],
+        "sections": [
+          {
+            "x": 0.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 1.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.10001787643576,
+              4.10000000007027,
+              4.099999999999997
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -6.498866485610673e-16,
+            "quadrature_endpoint_difference": -2.6645352591003757e-15
+          },
+          {
+            "x": 1.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.099995808648869,
+              4.10000000011621,
+              4.099999999999996
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -8.665155314147564e-16,
+            "quadrature_endpoint_difference": -3.552713678800501e-15
+          },
+          {
+            "x": 1.75,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999997
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -6.498866485610673e-16,
+            "quadrature_endpoint_difference": -2.6645352591003757e-15
+          },
+          {
+            "x": 2.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5
+              ],
+              [
+                2.5,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 2.25,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.1000000000000245,
+              4.099999999999999
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -2.166288828536891e-16,
+            "quadrature_endpoint_difference": -8.881784197001252e-16
+          },
+          {
+            "x": 2.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.099999999222494,
+              4.100000000000029,
+              4.099999999999995
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -1.0831444142684456e-15,
+            "quadrature_endpoint_difference": -4.440892098500626e-15
+          },
+          {
+            "x": 3.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.099999999994612,
+              4.100000000000029,
+              4.099999999999995
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -1.0831444142684456e-15,
+            "quadrature_endpoint_difference": -4.440892098500626e-15
+          },
+          {
+            "x": 4.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.100000000005433,
+              4.100000000000027,
+              4.099999999999996
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -8.665155314147564e-16,
+            "quadrature_endpoint_difference": -3.552713678800501e-15
+          },
+          {
+            "x": 6.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.099999999999999,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 10.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 16.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.099999999999999,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 22.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1000000000000005,
+              4.1000000000000245,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          }
+        ],
+        "max_relative_error": 1.0831444142684456e-15,
+        "max_quadrature_endpoint_difference": 4.440892098500626e-15
+      },
+      "boundary_errors": {
+        "inlet_velocity_error": {
+          "rms": 1.6549815258303938e-16,
+          "max_abs": 6.661338147750939e-16,
+          "p99_abs": 4.440892098500626e-16
+        },
+        "bottom_velocity": {
+          "rms": 0.0,
+          "max_abs": 0.0,
+          "p99_abs": 0.0
+        },
+        "top_velocity": {
+          "rms": 0.0,
+          "max_abs": 0.0,
+          "p99_abs": 0.0
+        },
+        "cylinder_velocity": {
+          "rms": 4.1040653245686733e-16,
+          "max_abs": 2.777649962208565e-15,
+          "p99_abs": 1.6168756539069953e-15
+        },
+        "outlet_traction": {
+          "rms": 0.029927185787046486,
+          "max_abs": 0.07821442123327274,
+          "p99_abs": 0.07497526359396312
+        }
+      },
+      "wall_normal_leakage": 0.0,
+      "cylinder_normal_leakage": -6.641009380793308e-20,
+      "screening_passes": {
+        "flux": true,
+        "pde": false,
+        "noslip": true,
+        "inlet": true,
+        "outlet": false
+      },
+      "progress": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "closure_evaluations": 619,
+        "status": "training_finished",
+        "elapsed_seconds": 1517.2716609
+      },
+      "checkpoint_sha256": "65a908fbdeeb49a70a2c0602334a1e2fd2924b24cdaf0a50b2f8498a465b5ef9",
+      "cylinder_streamfunction_constant": 1.8977616744026669
+    },
+    "zero": {
+      "run_directory": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\zero",
+      "parameters": 12802,
+      "admissible_boundary_problem": false,
+      "initial_loss": 6.617158919032443,
+      "final_loss": 6.042887766277983,
+      "validation_loss": 5.980421332560904,
+      "pde_rms": {
+        "continuity": 1.0232723000647756e-17,
+        "momentum_x": 0.00023093946396112827,
+        "momentum_y": 0.00015986690968234162
+      },
+      "max_flux_relative_error": 1.000000000088172,
+      "split_flux": {
+        "prescribed_flux": 4.1,
+        "quadrature": "split-fluid Gauss-Legendre",
+        "orders": [
+          64,
+          128,
+          256
+        ],
+        "sections": [
+          {
+            "x": 0.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": 0.0
+          },
+          {
+            "x": 1.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              -1.7202325703184397e-17,
+              -3.6379728008472584e-18,
+              -6.603163370593256e-18
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -6.603163370593256e-18
+          },
+          {
+            "x": 1.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              1.5129948672806607e-17,
+              7.052374424402466e-18,
+              -7.106057748223515e-19
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -7.106057748223515e-19
+          },
+          {
+            "x": 1.75,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.627006549956496e-18,
+              -5.572156761504867e-19,
+              -6.947586182700876e-18
+            ],
+            "endpoint_flux": -7.752321139017126e-36,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -6.947586182700876e-18
+          },
+          {
+            "x": 2.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5
+              ],
+              [
+                2.5,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              -1.417343895309228e-17,
+              -3.702461235235475e-18,
+              -1.2651345213327859e-17
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -1.2651345213327859e-17
+          },
+          {
+            "x": 2.25,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              3.8140199805042342e-19,
+              -1.0830047119415769e-17,
+              3.939622786176602e-18
+            ],
+            "endpoint_flux": -5.95482712535494e-36,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": 3.939622786176602e-18
+          },
+          {
+            "x": 2.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              1.6100334763471755e-17,
+              1.8237280369922213e-17,
+              -5.991718759078024e-18
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -5.991718759078024e-18
+          },
+          {
+            "x": 3.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              -2.6894908374414992e-17,
+              -2.973028215263628e-17,
+              -1.4381913715205138e-17
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -1.4381913715205138e-17
+          },
+          {
+            "x": 4.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              -1.0355555028174291e-17,
+              1.0339705448891496e-17,
+              -8.573715552594087e-19
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -8.573715552594087e-19
+          },
+          {
+            "x": 6.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              -3.743667076181895e-17,
+              -8.866174027246054e-18,
+              -1.9403723306595916e-17
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -1.9403723306595916e-17
+          },
+          {
+            "x": 10.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              -3.8584869760552786e-17,
+              1.2729389362910235e-17,
+              -1.526737330001085e-17
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": -1.526737330001085e-17
+          },
+          {
+            "x": 16.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              -2.9145737917345426e-17,
+              6.244894684352179e-17,
+              9.914260119807519e-18
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": 9.914260119807519e-18
+          },
+          {
+            "x": 22.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              5.050601886347629e-17,
+              5.5367317959249923e-17,
+              2.7179982292052973e-17
+            ],
+            "endpoint_flux": 0.0,
+            "relative_error": -1.0,
+            "quadrature_endpoint_difference": 2.7179982292052973e-17
+          }
+        ],
+        "max_relative_error": 1.0,
+        "max_quadrature_endpoint_difference": 2.7179982292052973e-17
+      },
+      "boundary_errors": {
+        "inlet_velocity_error": {
+          "rms": 0.7745021312940692,
+          "max_abs": 1.4999999999999998,
+          "p99_abs": 1.4993988275527952
+        },
+        "bottom_velocity": {
+          "rms": 0.0,
+          "max_abs": 0.0,
+          "p99_abs": 0.0
+        },
+        "top_velocity": {
+          "rms": 0.0,
+          "max_abs": 0.0,
+          "p99_abs": 0.0
+        },
+        "cylinder_velocity": {
+          "rms": 4.1146554247404246e-20,
+          "max_abs": 2.1914370053989003e-19,
+          "p99_abs": 1.4280766299612501e-19
+        },
+        "outlet_traction": {
+          "rms": 2.715721356143208e-05,
+          "max_abs": 0.00011994429729803957,
+          "p99_abs": 8.596850962411701e-05
+        }
+      },
+      "wall_normal_leakage": 0.0,
+      "cylinder_normal_leakage": -4.343323655887447e-37,
+      "screening_passes": {
+        "flux": false,
+        "pde": true,
+        "noslip": true,
+        "inlet": false,
+        "outlet": true
+      },
+      "progress": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "closure_evaluations": 852,
+        "status": "training_finished",
+        "elapsed_seconds": 1315.5997251
+      },
+      "checkpoint_sha256": "3409543df0c1419c5a01307bd8d43453c82af357ab0ff1d4b4042548cdb4eafd"
+    },
+    "poiseuille": {
+      "run_directory": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\poiseuille",
+      "parameters": 12802,
+      "admissible_boundary_problem": false,
+      "initial_loss": 11.106981643883977,
+      "final_loss": 10.64461282062498,
+      "validation_loss": 10.605144022615256,
+      "pde_rms": {
+        "continuity": 7.879373000003517e-18,
+        "momentum_x": 0.0023744482578268956,
+        "momentum_y": 0.0006408513511258782
+      },
+      "max_flux_relative_error": 0.358372581100674,
+      "split_flux": {
+        "prescribed_flux": 4.1,
+        "quadrature": "split-fluid Gauss-Legendre",
+        "orders": [
+          64,
+          128,
+          256
+        ],
+        "sections": [
+          {
+            "x": 0.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 1.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1000000000000005,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 1.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 1.75,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              2.821054095838865,
+              2.8210540958388677,
+              2.8210540958388646
+            ],
+            "endpoint_flux": 2.821054095838865,
+            "relative_error": -0.3119380254051549,
+            "quadrature_endpoint_difference": -4.440892098500626e-16
+          },
+          {
+            "x": 2.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5
+              ],
+              [
+                2.5,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              2.6306365258774536,
+              2.6306365258774567,
+              2.6306365258774536
+            ],
+            "endpoint_flux": 2.6306365258774527,
+            "relative_error": -0.35838133515184056,
+            "quadrature_endpoint_difference": 8.881784197001252e-16
+          },
+          {
+            "x": 2.25,
+            "fluid_intervals": [
+              [
+                0.0,
+                1.5669872981077808
+              ],
+              [
+                2.433012701892219,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              2.821054095838865,
+              2.8210540958388677,
+              2.8210540958388646
+            ],
+            "endpoint_flux": 2.821054095838865,
+            "relative_error": -0.3119380254051549,
+            "quadrature_endpoint_difference": -4.440892098500626e-16
+          },
+          {
+            "x": 2.5,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 3.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000026,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 4.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 6.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 10.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 16.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1000000000000005,
+              4.100000000000025,
+              4.099999999999998
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -4.332577657073782e-16,
+            "quadrature_endpoint_difference": -1.7763568394002505e-15
+          },
+          {
+            "x": 22.0,
+            "fluid_intervals": [
+              [
+                0.0,
+                4.1
+              ]
+            ],
+            "flux_by_order": [
+              4.1,
+              4.100000000000025,
+              4.099999999999999
+            ],
+            "endpoint_flux": 4.1,
+            "relative_error": -2.166288828536891e-16,
+            "quadrature_endpoint_difference": -8.881784197001252e-16
+          }
+        ],
+        "max_relative_error": 0.35838133515184056,
+        "max_quadrature_endpoint_difference": 1.7763568394002505e-15
+      },
+      "boundary_errors": {
+        "inlet_velocity_error": {
+          "rms": 1.6549815258303938e-16,
+          "max_abs": 6.661338147750939e-16,
+          "p99_abs": 4.440892098500626e-16
+        },
+        "bottom_velocity": {
+          "rms": 0.0,
+          "max_abs": 0.0,
+          "p99_abs": 0.0
+        },
+        "top_velocity": {
+          "rms": 0.0,
+          "max_abs": 0.0,
+          "p99_abs": 0.0
+        },
+        "cylinder_velocity": {
+          "rms": 1.0287613216416154,
+          "max_abs": 1.499999991602502,
+          "p99_abs": 1.499910324434285
+        },
+        "outlet_traction": {
+          "rms": 0.029898618357315745,
+          "max_abs": 0.07839304882583975,
+          "p99_abs": 0.0745602876952508
+        }
+      },
+      "wall_normal_leakage": 0.0,
+      "cylinder_normal_leakage": 2.615901373506474e-16,
+      "screening_passes": {
+        "flux": false,
+        "pde": true,
+        "noslip": false,
+        "inlet": true,
+        "outlet": false
+      },
+      "progress": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "closure_evaluations": 653,
+        "status": "training_finished",
+        "elapsed_seconds": 948.9174585999995
+      },
+      "checkpoint_sha256": "b9fbf685ecc486d8f73b253358e70b44bb499512fb51344a8b5d247d61ab91b5"
+    }
+  },
+  "source_sha256": {
+    "pinn\\__init__.py": "04cfe72875941764bacc7f299fad918b4c40e5d546198e140b56cf0f2189006a",
+    "pinn\\config.py": "1bb319e37444ee502e5c8dbf393168e3f6126b29b6b6ea7aa79d725500668726",
+    "pinn\\data.py": "f412237c69bb96ecbe3cc3ced155d241d2c98d20b8788c529fddeb5f2a54564b",
+    "pinn\\evaluation.py": "83fa304372e5f98be83fa1cca83d38de21a7242f647fb948d43354f5c69d9957",
+    "pinn\\losses.py": "5bb8f23fe6c8d089dfeeb38ae268407eec0cda62cc2c34358da977bf32d69e74",
+    "pinn\\model.py": "34cb3ca3f0e9bb52133ce28c7f612e8b65b62563450303f1353561b12b2cf199",
+    "pinn\\physics.py": "f371b3c40fc6fc281c3bd4854ec20d9e8a3b40c110e6f9b78cd885c111b44dd2",
+    "pinn\\problems.py": "4d2d66e8565a7335afc01dbf39f8cd69049ea08eeacbcbc883b185136a2be0a9",
+    "pinn\\train.py": "c2de06ad082b2daf0fa80058ad56f27189a4d223f13178e8ff5202af412419b6",
+    "scripts\\run_hard_boundary_trial.py": "9814465ffa7dd9407a15efa0063cd024a4ed14c6efd726eb2200defd151647af",
+    "scripts\\audit_pinn_cylinder.py": "1eaeb693baa86926edfe73874b940ed9ef4bec7c08a68a664165b36aa0657f98",
+    "configs\\pinn\\cylinder_steady_hard.json": "b86acac72a03b93f59ecca5ddd79da73b2fa7340edd9e758f4e9d28cf05ada05"
+  },
+  "protocol": {
+    "adam_steps": 1500,
+    "lbfgs_steps": 300,
+    "requested_variants": [
+      "soft",
+      "cylinder_poiseuille",
+      "zero",
+      "poiseuille"
+    ],
+    "n_interior": 2048,
+    "n_boundary_per_segment": 256,
+    "dtype": "float64",
+    "hard_inlet_length": 1.0,
+    "hard_cylinder_length": 1.0,
+    "train_cylinder_constant": true,
+    "momentum_acceptance": "Each component RMS no worse than the matched soft model on the same 20000 independent points",
+    "flux_acceptance": "Maximum relative error against prescribed H is <0.01",
+    "note": "Identical neural initialization, samples, weights and update counts; not equal time/FLOPs. Zero and raw Poiseuille are incompatible negative controls."
+  },
+  "assessment": {
+    "status": "complete_comparison",
+    "success": false,
+    "checks": {
+      "flux_below_one_percent": true,
+      "momentum_x_no_worse": true,
+      "momentum_y_no_worse": false,
+      "velocity_boundaries_exact": true
+    },
+    "criterion": "Both momentum component RMS values <= matched pure neural streamfunction; max cross-section flux error <1%; exact velocity boundaries.",
+    "sr_used": false
+  },
+  "requested_runs_complete": true
+}

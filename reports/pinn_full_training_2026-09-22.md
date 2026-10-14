@@ -39,23 +39,23 @@
 
 ## 对比图
 
-![两轮完整训练的流量守恒与共同独立点残差对比](../outputs_pinn/cylinder/full_training_comparison_20260922.png)
+![两轮完整训练的流量守恒与共同独立点残差对比](assets/pinn/cylinder/full_training_comparison_20260922.png)
 
 蓝线仍沿通道显著下降，表明累计质量守恒误差没有消除；三个独立残差 RMS 也仍高于本次筛查阈值。
 
 ## 文件与复现
 
 - 原配置完整训练目录：`outputs_pinn/cylinder/20260922_225500_re20_full`。
-  - 最终权重：[原配置完整训练 checkpoint](../outputs_pinn/cylinder/20260922_225500_re20_full/checkpoint_last.pt)
-  - 诊断：[dense_audit.json](../outputs_pinn/cylinder/20260922_225500_re20_full/dense_audit.json)
-  - 流场：[fields.png](../outputs_pinn/cylinder/20260922_225500_re20_full/evaluation/fields.png)
-  - 训练曲线：[training_loss.png](../outputs_pinn/cylinder/20260922_225500_re20_full/training_loss.png)
+  - 最终权重：原配置完整训练 checkpoint（本地运行产物：`outputs_pinn/cylinder/20260922_225500_re20_full/checkpoint_last.pt`）
+  - 诊断：[dense_audit.json](assets/pinn/cylinder/20260922_225500_re20_full/dense_audit.json)
+  - 流场：[fields.png](assets/pinn/cylinder/20260922_225500_re20_full/evaluation/fields.png)
+  - 训练曲线：[training_loss.png](assets/pinn/cylinder/20260922_225500_re20_full/training_loss.png)
   - 权重 SHA-256：`34c681b131ad6b33522cbdc07dcecfed44efc74977bea5d149daf47f796c90af`。
 - 加密采样续训目录：`outputs_pinn/cylinder/20260922_230817_re20_refined`。
-  - 最终权重：[加密采样续训 checkpoint](../outputs_pinn/cylinder/20260922_230817_re20_refined/checkpoint_last.pt)
-  - 诊断：[dense_audit.json](../outputs_pinn/cylinder/20260922_230817_re20_refined/dense_audit.json)
-  - 流场：[fields.png](../outputs_pinn/cylinder/20260922_230817_re20_refined/evaluation/fields.png)
-  - 训练曲线：[training_loss.png](../outputs_pinn/cylinder/20260922_230817_re20_refined/training_loss.png)
+  - 最终权重：加密采样续训 checkpoint（本地运行产物：`outputs_pinn/cylinder/20260922_230817_re20_refined/checkpoint_last.pt`）
+  - 诊断：[dense_audit.json](assets/pinn/cylinder/20260922_230817_re20_refined/dense_audit.json)
+  - 流场：[fields.png](assets/pinn/cylinder/20260922_230817_re20_refined/evaluation/fields.png)
+  - 训练曲线：[training_loss.png](assets/pinn/cylinder/20260922_230817_re20_refined/training_loss.png)
   - 权重 SHA-256：`e26e8731ca52561bcb7423e95001fd104f8275dea13c907d5b011db9319976d9`。
 
 ```powershell

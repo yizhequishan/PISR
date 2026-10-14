@@ -31,7 +31,7 @@
 
 流量误差这一行的单位为 %；验证目标包含不同的损失项，不能用总损失单独判断精度。
 
-![三组对照](../outputs_pinn/cylinder/hybrid_trial_20260923/comparison.png)
+![三组对照](assets/pinn/cylinder/hybrid_trial_20260923/comparison.png)
 
 | 指标 | 原 u-v-p | 纯神经流函数 | SR＋神经残差 |
 |---|---:|---:|---:|
@@ -55,7 +55,7 @@
 
 对初始 `ξ=3.95` 截面，原 SR 在可信区内的 u 为 `0.228～1.811`；加门后最小值为 **`-14.628 Uref`**，符号项积分流量为 `5.73e-11`，符合解析零净通量。初始混合损失 `307.695`，约为纯神经流函数初始损失的 `41.9` 倍。
 
-![门函数初始化诊断](../outputs_pinn/cylinder/hybrid_trial_20260923/initial_gate_profile.png)
+![门函数初始化诊断](assets/pinn/cylinder/hybrid_trial_20260923/initial_gate_profile.png)
 
 以下使用窗口内 81×97 网格，独立检查平台区和过渡带；全域随机点均值不足以描述局部尖峰：
 
@@ -92,12 +92,12 @@
 - PINN 专项：Python 3.8.20 / PyTorch 2.4.1，35 项通过；高阶导数优化后的完整回归：Python 3.12.11 / PyTorch 2.7.1 CPU，53 项通过。
 - 覆盖：SymPy 与 Torch 到三阶导数一致、系数梯度、门函数端点、窗口外奇点、稳态／瞬态无散、`no_grad`／`inference_mode`、正则反传、Adam/L-BFGS 与 checkpoint 重载。
 - 原 2026-09-22 加密训练 checkpoint 已重载；257 个点与原保存场的最大差异 `2e-15`。
-- 完成结果汇总：[comparison.json](../outputs_pinn/cylinder/hybrid_trial_20260923/comparison.json)。原始 SR 来源、架构、窗口和精修系数均写入配置及 checkpoint；`symbolic_coefficients.json` 另存可读系数。
-- 最初较慢的混合试跑在 Adam 日志到 500 步后终止，**没有作为最终结果**。原日志、配置及源码快照保留。优化为只在窗口内建立符号导数图，并将等价的四边门乘积简化为两轴门；检查所有损失与参数梯度一致后，从相同种子重新完成 1,500＋300 步。记录见 [optimization_check.json](../outputs_pinn/cylinder/hybrid_trial_20260923/optimization_check.json)。
+- 完成结果汇总：[comparison.json](assets/pinn/cylinder/hybrid_trial_20260923/comparison.json)。原始 SR 来源、架构、窗口和精修系数均写入配置及 checkpoint；`symbolic_coefficients.json` 另存可读系数。
+- 最初较慢的混合试跑在 Adam 日志到 500 步后终止，**没有作为最终结果**。原日志、配置及源码快照保留。优化为只在窗口内建立符号导数图，并将等价的四边门乘积简化为两轴门；检查所有损失与参数梯度一致后，从相同种子重新完成 1,500＋300 步。记录见 [optimization_check.json](assets/pinn/cylinder/hybrid_trial_20260923/optimization_check.json)。
 
-- 原 u-v-p：[checkpoint](../outputs_pinn/cylinder/hybrid_trial_20260923/uvp/checkpoint_last.pt)；SHA-256 `ce39b09662106c7f002f68221fca6e1210c8351104004f8f9495c2a2a8cac401`。
-- 纯神经流函数：[checkpoint](../outputs_pinn/cylinder/hybrid_trial_20260923/streamfunction/checkpoint_last.pt)；SHA-256 `4d34df3d40a9a6e9890615a0d25c80dc94784e5e8a34dd4dc09c01e3da20b69b`。
-- SR＋神经残差：[checkpoint](../outputs_pinn/cylinder/hybrid_trial_20260923_sparse/hybrid_streamfunction/checkpoint_last.pt)；SHA-256 `e82ff59164b9e183930ea526b82f8e01db909d305fa017f2c57b8ce7398966ce`。
+- 原 u-v-p：checkpoint（本地运行产物：`outputs_pinn/cylinder/hybrid_trial_20260923/uvp/checkpoint_last.pt`）；SHA-256 `ce39b09662106c7f002f68221fca6e1210c8351104004f8f9495c2a2a8cac401`。
+- 纯神经流函数：checkpoint（本地运行产物：`outputs_pinn/cylinder/hybrid_trial_20260923/streamfunction/checkpoint_last.pt`）；SHA-256 `4d34df3d40a9a6e9890615a0d25c80dc94784e5e8a34dd4dc09c01e3da20b69b`。
+- SR＋神经残差：checkpoint（本地运行产物：`outputs_pinn/cylinder/hybrid_trial_20260923_sparse/hybrid_streamfunction/checkpoint_last.pt`）；SHA-256 `e82ff59164b9e183930ea526b82f8e01db909d305fa017f2c57b8ce7398966ce`。
 
 ```powershell
 $env:MKL_THREADING_LAYER = 'SEQUENTIAL'

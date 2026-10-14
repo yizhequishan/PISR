@@ -159,7 +159,7 @@ S_{val}=\sum_{q\in\{u,v\}}(L_{q,val}+L_{g,q,val}+L_{K,q,val}),
 这些模型验证的是既有尾流窗口中的速度空间导数与坐标输运项 K_R，尚未识别内禀响应 M，不能据此声称总参数响应 T=K+M 已改善，也不能据此声称跨几何、跨 Re 的泛化精度。
 
 - [拟合脚本](../experiments/wake_pinn_informed_sr.py)、[独立复核脚本](../experiments/audit_wake_pinn_sr.py)。
-- [协议与数据/源代码指纹](../outputs/wake_pinn_informed_sr_v3/protocol.json)、[验证冻结记录](../outputs/wake_pinn_informed_sr_v3/frozen_selection.json)、[验证候选表](../outputs/wake_pinn_informed_sr_v3/validation_candidates.csv)。
+- [协议与数据/源代码指纹](../outputs/wake_pinn_informed_sr_v3/protocol.json)、[验证冻结记录](../outputs/wake_pinn_informed_sr_v3/frozen_selection.json)、验证候选表（本地运行产物：`outputs/wake_pinn_informed_sr_v3/validation_candidates.csv`）。
 - [完整测试指标](../outputs/wake_pinn_informed_sr_v3/test_metrics.csv)、[推荐模型测试指标](../outputs/wake_pinn_informed_sr_v3/recommended_test_metrics.csv)、[各预算测试指标](../outputs/wake_pinn_informed_sr_v3/compact_test_metrics.csv)。
 - [首次测试前的复核](../outputs/wake_pinn_informed_sr_v3/pre_test_verification.json)、[最终复核](../outputs/wake_pinn_informed_sr_v3/verification.json)、[训练损失分项审计](../outputs/wake_pinn_informed_sr_v3/training_loss_audit.csv)。
 
