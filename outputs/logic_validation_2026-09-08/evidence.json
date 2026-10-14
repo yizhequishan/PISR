@@ -1,0 +1,61 @@
+{
+  "theory": {
+    "manufactured_chain_rule_all_exact": true,
+    "finite_difference_halving_error_ratio_range": [
+      3.999340883865341,
+      4.000516524954047
+    ],
+    "arbitrary_random_fields_path_closure": 1.3600580023296456e-16,
+    "identical_base_divergence_free_families": true,
+    "different_intrinsic_u_response": "xi",
+    "different_intrinsic_v_response": "-eta",
+    "counterexample_scope": "Kinematics only; these families need not solve the same PDE/boundary-value problem."
+  },
+  "P0_models": {
+    "old_P0_grid": [
+      16,
+      64
+    ],
+    "FD_grid": [
+      33,
+      64
+    ],
+    "base_psi_current_mse": {
+      "u": 0.003952486320047952,
+      "v": 0.0016343715799618797
+    },
+    "selected_phi": {
+      "equation_index": 19,
+      "complexity": 25,
+      "u_rel_l2": 0.29461746197232175,
+      "v_rel_l2": 0.39807614745872033,
+      "score": 0.2452640680745893,
+      "psi_sympy": "(11.504055 - x_D)*(y_D*(1.3596838 - y_D**2) + cos(x_D + (y_D + 0.38234538)**2) - cos(sin(sin(x_D))) + 0.19094007)",
+      "expression_sha256": "0f3b578ef2f75e463afed661a503dd582438aeadf45bb3d876c1a9b953c0742f"
+    },
+    "dimensional": [
+      {
+        "component": "u",
+        "M_rel_l2": 0.29461746197232175,
+        "total_symbolic_rel_l2": 0.8292091464611568,
+        "dimensional_fully_symbolic_rel_l2": 0.4183569466887668,
+        "dimensional_CFD_base_hybrid_rel_l2": 0.4187554001449382,
+        "dimensional_formula_hybrid_gap_rms": 0.9166147720043641
+      },
+      {
+        "component": "v",
+        "M_rel_l2": 0.39807614745872033,
+        "total_symbolic_rel_l2": 1.557108177692013,
+        "dimensional_fully_symbolic_rel_l2": 1.7295182960798754,
+        "dimensional_CFD_base_hybrid_rel_l2": 1.798056208115978,
+        "dimensional_formula_hybrid_gap_rms": 0.5894229817878134
+      }
+    ],
+    "source_status": "legacy arrays; recalculated metrics are conditional on archived CFD targets"
+  },
+  "FD_cache_reconstruction": {
+    "maximum_field_relative_difference": 3.382011838016174e-14,
+    "all_cache_raw_stat_matches": true,
+    "limitation": "Nodal time means were reused; original time sequences were not re-averaged."
+  }
+}

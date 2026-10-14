@@ -1,0 +1,49 @@
+{
+  "protocol_id": "f2fa947dff68d8cc5d9e1031d9d9963b97ef3e42ff67b966ec354423948241cd",
+  "component": "u",
+  "seed": 0,
+  "lambda_grad": 0.0,
+  "seconds": 17.560958099999997,
+  "choices": {
+    "value": {
+      "equation_index": 2,
+      "complexity": 6,
+      "train_loss": 0.461596708061078,
+      "expression": "cos(y*0.776099401904481) + 0.7938377971789288",
+      "value_mse": 0.06947377372227492,
+      "dx_mse": 0.06122357053636411,
+      "dy_mse": 0.9539435076964877,
+      "value_rel_l2": 0.1728279707585833,
+      "dx_rel_l2": 1.0,
+      "dy_rel_l2": 0.7575422768139004,
+      "gradient_rel_l2": 0.7674681993862645,
+      "gradient_mse": 0.507583539116426,
+      "K_R_rel_l2": 0.7426887621800636,
+      "normalized_value": 0.4720449768071068,
+      "normalized_gradient": 0.8591152770828945,
+      "h1": 1.3311602538900011,
+      "status": "ok",
+      "expression_sha256": "c5ce6ae1e87d70a4e8c24f8d7d9dd2d578e94c960f32dc7284f7e1f26cb0049d"
+    },
+    "h1": {
+      "equation_index": 3,
+      "complexity": 14,
+      "train_loss": 0.4613629482780063,
+      "expression": "cos(y/1.287562650181578) + cos(cos(cos(sin(y*(-0.06341761303376356)))*(-0.8613073529438421)))",
+      "value_mse": 0.0694883933571003,
+      "dx_mse": 0.06122357053636411,
+      "dy_mse": 0.9519306622848781,
+      "value_rel_l2": 0.17284615423109287,
+      "dx_rel_l2": 1.0,
+      "dy_rel_l2": 0.756742637902683,
+      "gradient_rel_l2": 0.7667069644225221,
+      "gradient_mse": 0.5065771164106211,
+      "K_R_rel_l2": 0.7415976158445148,
+      "normalized_value": 0.4721443110567427,
+      "normalized_gradient": 0.8584662284658525,
+      "h1": 1.3306105395225951,
+      "status": "ok",
+      "expression_sha256": "8ac62af86910337ccd9ac2a1fd8ee77a51cabc685989ebac3c0454eacc137969"
+    }
+  }
+}

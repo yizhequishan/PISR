@@ -1,0 +1,180 @@
+{
+  "model_name": "backward_facing_step_2d_Re100_solved",
+  "model_tag": "model1",
+  "existing_models_preserved": [
+    "three_cylinder_flow_2d"
+  ],
+  "created": "2026-09-23T15:02:53.014783",
+  "stage": "complete",
+  "updated": "2026-09-23T15:35:40.545947",
+  "selections": {
+    "sel_inlet": [
+      1
+    ],
+    "sel_outlet": [
+      6
+    ],
+    "sel_top": [
+      3
+    ],
+    "sel_upwall": [
+      2
+    ],
+    "sel_step": [
+      4
+    ],
+    "sel_downwall": [
+      5
+    ],
+    "sel_walls": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "parameters": {
+    "h_step": {
+      "expression": "0.01[m]",
+      "description": "Step height; Reynolds-number reference length"
+    },
+    "Hin": {
+      "expression": "h_step",
+      "description": "Upstream channel height"
+    },
+    "Hout": {
+      "expression": "2*h_step",
+      "description": "Downstream channel height; expansion ratio 2"
+    },
+    "Lu": {
+      "expression": "5*h_step",
+      "description": "Upstream length measured from the step"
+    },
+    "Ld": {
+      "expression": "30*h_step",
+      "description": "Downstream length measured from the step"
+    },
+    "rho0": {
+      "expression": "1000[kg/m^3]",
+      "description": "Constant Newtonian-fluid density"
+    },
+    "mu0": {
+      "expression": "0.001[Pa*s]",
+      "description": "Constant dynamic viscosity"
+    },
+    "Re_h": {
+      "expression": "100",
+      "description": "Reynolds number based on inlet MEAN speed and step height"
+    },
+    "Umean": {
+      "expression": "Re_h*mu0/(rho0*h_step)",
+      "description": "Inlet cross-sectional mean velocity"
+    },
+    "Umax": {
+      "expression": "1.5*Umean",
+      "description": "Peak of the fully developed inlet parabola"
+    },
+    "Re_Dh": {
+      "expression": "rho0*Umean*(2*Hin)/mu0",
+      "description": "Reynolds number based on inlet hydraulic diameter"
+    },
+    "sel_tol": {
+      "expression": "1e-3*h_step",
+      "description": "Tolerance for geometry-coordinate named selections"
+    },
+    "mesh_scale": {
+      "expression": "1.5",
+      "description": "1: baseline mesh; 1.5: refined mesh"
+    }
+  },
+  "physics": [
+    "spf"
+  ],
+  "studies": [
+    "std1"
+  ],
+  "baseline_mesh": {
+    "scale": 1,
+    "vertices": 13307,
+    "elements": 25084
+  },
+  "execution_mode": "standalone",
+  "cores": 8,
+  "source_checkpoint": "E:\\CY\\comsol\\models\\working\\backward_facing_step_2d_Re100.mph",
+  "baseline": {
+    "mesh": {
+      "scale": 1,
+      "vertices": 13307,
+      "elements": 25084
+    },
+    "inlet_flux_m2_s": 9.993749999999996e-05,
+    "outlet_flux_m2_s": 9.977985350575428e-05,
+    "relative_flux_imbalance": 0.0015774508492375284,
+    "fluid_area_m2": 0.006499999999999988,
+    "inlet_profile_relative_discretization_error": 0.0006250000000006528,
+    "u_min_m_s": -0.001734513704952884,
+    "u_max_m_s": 0.015049208497441983,
+    "p_min_Pa": -0.00017577772881599031,
+    "p_max_Pa": 0.06906794910496106,
+    "mean_inlet_pressure_Pa": 0.06903726481177626,
+    "reattachment_x_over_h": 4.849966025933491,
+    "reattachment_offsets_y_over_h": [
+      0.002,
+      0.001
+    ],
+    "reattachment_roots_x_over_h": [
+      4.849966025933491,
+      4.849966025933491
+    ],
+    "reattachment_method": "negative-to-positive near-wall streamwise-velocity crossing; two fluid-side offsets"
+  },
+  "refined_mesh": {
+    "scale": 1.5,
+    "vertices": 22485,
+    "elements": 42679
+  },
+  "refined": {
+    "mesh": {
+      "scale": 1.5,
+      "vertices": 22485,
+      "elements": 42679
+    },
+    "inlet_flux_m2_s": 9.99722222222222e-05,
+    "outlet_flux_m2_s": 9.989341950793708e-05,
+    "relative_flux_imbalance": 0.0007882461001012204,
+    "fluid_area_m2": 0.00649999999999999,
+    "inlet_profile_relative_discretization_error": 0.00027777777777815427,
+    "u_min_m_s": -0.0016980212684253842,
+    "u_max_m_s": 0.01503989337078909,
+    "p_min_Pa": -0.002152499287449033,
+    "p_max_Pa": 0.06896390465794432,
+    "mean_inlet_pressure_Pa": 0.06895174208051381,
+    "reattachment_x_over_h": 4.8887623661417985,
+    "reattachment_offsets_y_over_h": [
+      0.002,
+      0.001
+    ],
+    "reattachment_roots_x_over_h": [
+      4.8887623661417985,
+      4.8887623661417985
+    ],
+    "reattachment_method": "negative-to-positive near-wall streamwise-velocity crossing; two fluid-side offsets"
+  },
+  "reattachment_relative_mesh_change": 0.007999301438578632,
+  "saved_file": "E:\\CY\\comsol\\models\\working\\backward_facing_step_2d_Re100_solved.mph",
+  "saved_bytes": 8976964,
+  "result_plot_tags": [
+    "pg_bfs_speed",
+    "pg_bfs_u",
+    "pg_bfs_p"
+  ],
+  "solver_tags": [
+    "sol1"
+  ],
+  "dataset_tags": [
+    "dset1"
+  ],
+  "shared_server_model": "backward_facing_step_2d_Re100_solved",
+  "saved_solution_reload_verified": true,
+  "saved_solution_dof": 67456
+}

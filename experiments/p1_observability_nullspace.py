@@ -124,6 +124,17 @@ def greedy_d_optimal_rows(
     return selected
 
 
+def uniform_rows(n_candidates: int, count: int) -> list[int]:
+    """For each budget, cover the entire candidate order instead of its prefix."""
+    if not 0 <= count <= n_candidates:
+        raise ValueError("Uniform budget must lie between zero and candidate count")
+    if count == 0:
+        return []
+    if count == 1:
+        return [n_candidates // 2]
+    return np.linspace(0, n_candidates - 1, count, dtype=int).tolist()
+
+
 def existing_pysr_degeneracy() -> list[dict[str, object]]:
     specifications = [
         (
@@ -210,14 +221,13 @@ def main() -> None:
     budget_counts = sorted({int(round(frac * len(matrix_v))) for frac in budget_fractions})
     max_count = max(budget_counts)
     greedy_order = greedy_d_optimal_rows(matrix_u, matrix_v, max_count)
-    uniform_order = np.linspace(0, len(matrix_v) - 1, max_count, dtype=int).tolist()
 
     budget_rows: list[dict[str, object]] = []
     rng_master = np.random.default_rng(20260716)
     for count in budget_counts:
         selections = {
             "d_optimal": greedy_order[:count],
-            "uniform": uniform_order[:count],
+            "uniform": uniform_rows(len(matrix_v), count),
         }
         for method, selected in selections.items():
             matrix = np.vstack([matrix_u, matrix_v[selected]])
@@ -289,6 +299,7 @@ def main() -> None:
     )
 
     metrics = {
+        "sampling_protocol": "full_domain_uniform_per_budget_v2",
         "grid_size": args.grid_size,
         "n_observations_per_component": len(xi),
         "dictionary_size": len(BASIS_NAMES),

@@ -23,6 +23,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import sympy as sp
+from pipeline_contracts import resolve_run_dir, training_run, dataset_manifest
 
 
 REPO_ROOT = Path(__file__).resolve().parent
@@ -131,6 +132,8 @@ def safe_resolve(base, sub):
 
 
 def load_inputs(input_dir):
+    input_dir = resolve_run_dir(input_dir)
+    dataset_manifest(input_dir)
     df = pd.read_csv(os.path.join(input_dir, "wake_data.csv"))
     with open(os.path.join(input_dir, "meta.json"), encoding="utf-8") as f:
         meta = json.load(f)
@@ -245,6 +248,8 @@ def evaluate_psi_pareto(eqs, X, u_data, v_data, *, strategy_label, include_combi
             v_func = lambdify_safe(v_expr, n_points)
             u_pred = u_func(X[:, 0], X[:, 1])
             v_pred = v_func(X[:, 0], X[:, 1])
+            if not np.isfinite(u_pred).all() or not np.isfinite(v_pred).all():
+                raise ValueError("Candidate has non-finite analytic velocity values")
 
             mse_u = float(np.mean((u_pred - u_data) ** 2))
             mse_v = float(np.mean((v_pred - v_data) ** 2))
@@ -341,12 +346,23 @@ def run_psi_strategy(
 def main():
     args = parse_args()
     base = os.path.abspath(args.base_out_dir)
-    input_dir = safe_resolve(base, args.input_subdir)
-    run_out_dir = safe_resolve(base, args.out_subdir)
-    os.makedirs(run_out_dir, exist_ok=True)
+    input_dir = resolve_run_dir(safe_resolve(base, args.input_subdir))
+    output_root = safe_resolve(base, args.out_subdir)
 
     df, meta, v_mean_wake = load_inputs(input_dir)
     dataset = prepare_psi_dataset(df, meta, v_mean_wake)
+
+    with training_run(
+        output_root, input_dir, pipeline="stream_function_psi",
+        strategies=["B"] if args.skip_strategy_a else ["A", "B"],
+        settings={"lambda_v": args.lambda_v, "niterations": args.niterations, "maxsize": args.maxsize},
+    ) as run_out_dir:
+        train_snapshot(args, dataset, meta, v_mean_wake, run_out_dir)
+    print(f"Completed run: {run_out_dir}")
+    return run_out_dir
+
+
+def train_snapshot(args, dataset, meta, v_mean_wake, run_out_dir):
 
     # Snapshot inputs into run dir so step4 finds wake_data.csv, meta.json, v_mean_wake.npy.
     dataset["df_sorted"].to_csv(
@@ -372,7 +388,7 @@ def main():
     )
 
     print(f"Run dir   : {run_out_dir}")
-    print(f"Input dir : {input_dir}")
+    print(f"Input     : {args.input_subdir}")
     print(f"Grid      : n_x={dataset['n_x']}, n_y={dataset['n_y']}, "
           f"dx/D={dataset['dx_D']:.5f}, dy/D={dataset['dy_D']:.5f}")
     print(f"||u*||_RMS = {np.sqrt(np.mean(dataset['u_star']**2)):.4e}")

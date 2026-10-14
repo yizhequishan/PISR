@@ -1,0 +1,10 @@
+{
+  "numpy": "1.23.5",
+  "pandas": "2.0.3",
+  "scipy": "1.10.1",
+  "sympy": "1.13.3",
+  "matplotlib": "3.7.5",
+  "pysr": "1.5.9",
+  "juliacall": "0.9.26",
+  "juliapkg": "0.1.17"
+}

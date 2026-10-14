@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -28,6 +29,8 @@ from scipy.interpolate import RectBivariateSpline
 
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+from pipeline_contracts import selected_model, verify_fd_model, archive_provenance
 DEFAULT_INPUT = REPO / "outputs_mgn" / "fd_check" / "fd_sensitivity_fields.npz"
 DEFAULT_SYMBOLIC = REPO / "outputs_mgn" / "comsol" / "eta_sym_psi" / "sensitivity_results.csv"
 DEFAULT_OUT = REPO / "outputs" / "p0_derivative_closure"
@@ -59,11 +62,15 @@ PARAMETERS = {
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
-    parser.add_argument("--symbolic-csv", type=Path, default=DEFAULT_SYMBOLIC)
+    parser.add_argument("--psi-dir", type=Path, default=DEFAULT_SYMBOLIC.parent)
+    parser.add_argument("--symbolic-csv", type=Path, default=None, help="Optional explicit historical diagnostic table; requires --complexity")
     parser.add_argument("--strategy", default="B")
-    parser.add_argument("--complexity", type=int, default=21)
+    parser.add_argument("--complexity", type=int, default=None)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
-    return parser.parse_args()
+    args = parser.parse_args()
+    if (args.symbolic_csv is None) != (args.complexity is None):
+        parser.error("Use --symbolic-csv and --complexity together for an explicit historical diagnostic")
+    return args
 
 
 def eval_spline(
@@ -183,10 +190,26 @@ def write_report(out_dir: Path, rows: list[dict[str, object]]) -> None:
 
 
 def main() -> None:
+    global D0, CX0, CY0, PARAMETERS
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    archive = np.load(args.input)
+    with np.load(args.input, allow_pickle=False) as loaded:
+        archive = {name: loaded[name].copy() for name in loaded.files}
+    required = {"x_D", "y_D", "u_base", "S_R", "S_cx", "S_cy",
+                "u_Rp", "u_Rn", "u_cxp", "u_cxn", "u_cyp", "u_cyn"}
+    missing = required - archive.keys()
+    if missing:
+        raise ValueError(f"P0 needs the Step 5 v2 reference-field archive; missing {sorted(missing)}. Rerun Step 5.")
+    provenance = archive_provenance(archive)
+    geometry = provenance["cases"]["base"]
+    D0, CX0, CY0 = geometry["D"], geometry["cx"], geometry["cy"]
+    PARAMETERS = {}
+    for parameter, prefix in (("R", "R"), ("cx", "cx"), ("cy", "cy")):
+        plus, minus = provenance["cases"][parameter + "+"], provenance["cases"][parameter + "-"]
+        PARAMETERS[parameter] = (provenance["parameter_steps"][parameter],
+            (f"u_{prefix}p", plus["D"], plus["cx"], plus["cy"]),
+            (f"u_{prefix}n", minus["D"], minus["cx"], minus["cy"]))
     xi = archive["x_D"]
     eta = archive["y_D"]
     xi_grid, eta_grid = np.meshgrid(xi, eta, indexing="ij")
@@ -194,13 +217,18 @@ def main() -> None:
     base_spline = RectBivariateSpline(xi, eta, archive["u_base"], kx=3, ky=3, s=0)
     base_grad_xi = base_spline(xi, eta, dx=1, dy=0)
     base_grad_eta = base_spline(xi, eta, dx=0, dy=1)
-    symbolic_grad_xi, symbolic_grad_eta, symbolic_expression = load_symbolic_gradients(
-        args.symbolic_csv,
-        args.strategy,
-        args.complexity,
-        xi_grid,
-        eta_grid,
-    )
+    if args.symbolic_csv is not None:
+        symbolic_grad_xi, symbolic_grad_eta, symbolic_expression = load_symbolic_gradients(
+            args.symbolic_csv, args.strategy, args.complexity, xi_grid, eta_grid)
+        model = {"selection_role": "explicit_historical_diagnostic", "complexity": args.complexity}
+    else:
+        model = selected_model(args.psi_dir, args.strategy)
+        verify_fd_model(archive, model)
+        symbolic_expression = model["sympy"]
+        xi_symbol, eta_symbol = sp.symbols("x_D y_D")
+        expression = sp.sympify(symbolic_expression)
+        symbolic_grad_xi = np.broadcast_to(sp.lambdify((xi_symbol, eta_symbol), sp.diff(expression, xi_symbol), "numpy")(xi_grid, eta_grid), xi_grid.shape).copy()
+        symbolic_grad_eta = np.broadcast_to(sp.lambdify((xi_symbol, eta_symbol), sp.diff(expression, eta_symbol), "numpy")(xi_grid, eta_grid), xi_grid.shape).copy()
 
     summary_rows: list[dict[str, object]] = []
     saved_fields: dict[str, np.ndarray] = {"x_D": xi, "y_D": eta}
@@ -297,9 +325,11 @@ def main() -> None:
 
     metadata = {
         "input": str(args.input.resolve()),
-        "symbolic_csv": str(args.symbolic_csv.resolve()),
+        "symbolic_csv": str(args.symbolic_csv.resolve()) if args.symbolic_csv else None,
         "symbolic_strategy": args.strategy,
-        "symbolic_complexity": args.complexity,
+        "symbolic_complexity": model["complexity"],
+        "model": model,
+        "provenance": provenance,
         "symbolic_expression": symbolic_expression,
         "baseline": {"D": D0, "cx": CX0, "cy": CY0},
         "metrics": summary_rows,

@@ -23,6 +23,7 @@ training target for the Step 6 response-stream-function experiment.
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -34,6 +35,8 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import griddata
 import sympy as sp
+from pipeline_contracts import (resolve_run_dir, dataset_manifest, selected_model, grid_manifest,
+                                array_hash, content_hash, atomic_json, write_data_manifest)
 
 
 REPO = Path(__file__).resolve().parent
@@ -42,8 +45,7 @@ PSI_RUN_DIR = REPO / "outputs_mgn" / "comsol" / "eta_sym_psi"
 OUT_DIR = REPO / "outputs_mgn" / "fd_check"
 CACHE_DIR = OUT_DIR / "case_cache"
 PHI_INPUT_DIR = OUT_DIR / "phi_R_input"
-for directory in (OUT_DIR, CACHE_DIR, PHI_INPUT_DIR):
-    directory.mkdir(parents=True, exist_ok=True)
+SOURCE_DIR = REPO
 
 
 CASES = {
@@ -62,7 +64,19 @@ DCY = 0.002
 T_START_FRAC = 0.5
 INLET_WIDTH = 0.02
 PSI_STRATEGY = "B"
-PSI_COMPLEXITY = 21
+TIME_START_INDEX = None
+TIME_END_INDEX = None
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source-dir", type=Path, default=REPO)
+    parser.add_argument("--base-grid-dir", type=Path, default=BASE_GRID_DIR)
+    parser.add_argument("--psi-dir", type=Path, default=PSI_RUN_DIR)
+    parser.add_argument("--out-dir", type=Path, default=OUT_DIR)
+    parser.add_argument("--case-config", type=Path, help="JSON with cases using the base/R-/R+/cx-/cx+/cy-/cy+ keys")
+    parser.add_argument("--no-plots", action="store_true")
+    return parser.parse_args()
 
 
 def read_comsol(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray, int]:
@@ -96,10 +110,10 @@ def estimate_uin(coords: np.ndarray, u_mean: np.ndarray) -> float:
 
 def load_case(case_name: str, info: dict) -> dict:
     """Load and time-average a case, using a validated small cache on reruns."""
-    path = REPO / info["file"]
+    path = SOURCE_DIR / info["file"]
     stat = path.stat()
     cache_path = CACHE_DIR / f"{case_name.replace('+', 'p').replace('-', 'm')}.npz"
-    cache_key = f"{stat.st_size}:{stat.st_mtime_ns}:{T_START_FRAC}"
+    cache_key = f"{stat.st_size}:{stat.st_mtime_ns}:{T_START_FRAC}:{TIME_START_INDEX}:{TIME_END_INDEX}:{INLET_WIDTH}"
 
     if cache_path.exists():
         with np.load(cache_path) as cached:
@@ -120,9 +134,12 @@ def load_case(case_name: str, info: dict) -> dict:
 
     print(f"[{case_name}] loading {path.name} ...")
     coords, u_time, v_time, n_time = read_comsol(path)
-    start = int(n_time * T_START_FRAC)
-    u_mean = u_time[:, start:].mean(axis=1)
-    v_mean = v_time[:, start:].mean(axis=1)
+    start = int(n_time * T_START_FRAC) if TIME_START_INDEX is None else TIME_START_INDEX
+    end = n_time if TIME_END_INDEX is None else TIME_END_INDEX
+    if not 0 <= start < end <= n_time:
+        raise ValueError(f"Case {case_name}: time window [{start}, {end}) is invalid for {n_time} samples")
+    u_mean = u_time[:, start:end].mean(axis=1)
+    v_mean = v_time[:, start:end].mean(axis=1)
     u_in = estimate_uin(coords, u_mean)
     np.savez_compressed(
         cache_path,
@@ -174,17 +191,10 @@ def ensure_array(value: object, n_points: int) -> np.ndarray:
 
 
 def load_psi_b_transport(
-    x_d: np.ndarray, y_d: np.ndarray, base_d: float
+    x_d: np.ndarray, y_d: np.ndarray, base_d: float, model=None
 ) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], str]:
     """Evaluate psi-B velocity and analytic Euler transport terms for u and v."""
-    results = pd.read_csv(PSI_RUN_DIR / "results_strategy_b.csv")
-    selected = results[
-        (results["complexity"] == PSI_COMPLEXITY)
-    ]
-    if selected.empty:
-        raise ValueError(f"No psi-B formula with complexity={PSI_COMPLEXITY}")
-
-    row = selected.iloc[0]
+    row = selected_model(PSI_RUN_DIR, PSI_STRATEGY) if model is None else model
     xi, eta = sp.symbols("x_D y_D")
     psi = sp.sympify(str(row["psi_sympy"]))
     u_expr = sp.diff(psi, eta)
@@ -328,6 +338,7 @@ def save_phi_input(
             "response_parameter": "R",
             "response_step_m": DR,
             "response_units": "1/m",
+            "fd_target_id": json.loads(str(auxiliary["provenance_json"]))["fd_target_id"],
             "u_target": "partial u_star / partial R at fixed (xi, eta)",
             "v_target": "partial v_star / partial R at fixed (xi, eta)",
             "source": str(OUT_DIR / "fd_sensitivity_fields.npz"),
@@ -335,6 +346,7 @@ def save_phi_input(
     )
     with (PHI_INPUT_DIR / "meta.json").open("w", encoding="utf-8") as handle:
         json.dump(response_meta, handle, indent=2, ensure_ascii=False)
+    write_data_manifest(PHI_INPUT_DIR)
 
 
 def plot_decomposition(
@@ -411,6 +423,37 @@ def plot_parity(
 
 
 def main() -> tuple[pd.DataFrame, dict]:
+    global BASE_GRID_DIR, PSI_RUN_DIR, OUT_DIR, CACHE_DIR, PHI_INPUT_DIR, SOURCE_DIR
+    global CASES, DR, DCX, DCY, TIME_START_INDEX, TIME_END_INDEX, INLET_WIDTH
+    args = parse_args()
+    BASE_GRID_DIR = resolve_run_dir(args.base_grid_dir)
+    PSI_RUN_DIR = resolve_run_dir(args.psi_dir)
+    SOURCE_DIR = args.source_dir.resolve()
+    OUT_DIR = args.out_dir.resolve()
+    CACHE_DIR, PHI_INPUT_DIR = OUT_DIR / "case_cache", OUT_DIR / "phi_R_input"
+    if args.case_config:
+        CASES = json.loads(args.case_config.read_text(encoding="utf-8"))["cases"]
+    required_cases = {"base", "R-", "R+", "cx-", "cx+", "cy-", "cy+"}
+    if set(CASES) != required_cases:
+        raise ValueError(f"Expected case keys {sorted(required_cases)}")
+    DR = (CASES["R+"]["D"] - CASES["R-"]["D"]) / 4.0
+    DCX = (CASES["cx+"]["cx"] - CASES["cx-"]["cx"]) / 2.0
+    DCY = (CASES["cy+"]["cy"] - CASES["cy-"]["cy"] ) / 2.0
+    for parameter, key, step in (("R", "D", DR * 2), ("cx", "cx", DCX), ("cy", "cy", DCY)):
+        if step <= 0:
+            raise ValueError("Centered parameter steps must be positive")
+        for suffix, sign in (("+", 1), ("-", -1)):
+            case = CASES[parameter + suffix]
+            for coordinate in ("D", "cx", "cy"):
+                expected = CASES["base"][coordinate] + (sign * step if coordinate == key else 0.0)
+                if not np.isclose(case[coordinate], expected):
+                    raise ValueError("Cases must be symmetric single-parameter perturbations")
+    base_data_manifest = dataset_manifest(BASE_GRID_DIR)
+    base_model = selected_model(PSI_RUN_DIR, PSI_STRATEGY)
+    if "psi_sympy" not in base_model:
+        raise ValueError("Step 5 requires a stream-function base model")
+    for directory in (OUT_DIR, CACHE_DIR, PHI_INPUT_DIR):
+        directory.mkdir(parents=True, exist_ok=True)
     # The reporting/evaluation grid is a Step 1 artifact and may be refined
     # independently of the historical psi-B fit.  Keep its provenance separate
     # from PSI_RUN_DIR so a dense-grid audit cannot silently fall back to the
@@ -418,6 +461,16 @@ def main() -> tuple[pd.DataFrame, dict]:
     base_frame = pd.read_csv(BASE_GRID_DIR / "wake_data.csv")
     with (BASE_GRID_DIR / "meta.json").open("r", encoding="utf-8") as handle:
         base_meta = json.load(handle)
+    TIME_START_INDEX = base_meta.get("t_avg_start_index")
+    TIME_END_INDEX = base_meta.get("t_avg_end_index")
+    INLET_WIDTH = float(base_meta.get("inlet_width", 0.02))
+    for key, meta_key in (("D", "D"), ("cx", "cyl_cx"), ("cy", "cyl_cy")):
+        if not np.isclose(CASES["base"][key], float(base_meta[meta_key])):
+            raise ValueError("Case geometry differs from the Step 1 baseline metadata")
+    model_normalization = base_model["training_data"]["normalization"]
+    for key in ("D", "U_in", "cyl_cx", "cyl_cy"):
+        if not np.isclose(float(model_normalization[key]), float(base_meta[key])):
+            raise ValueError("Base model and Step 1 normalization differ; retrain or explicitly convert the model")
     n_x = int(base_meta["n_x_wake"])
     n_y = int(base_meta["n_y"])
     x_d = np.sort(base_frame["x_D"].unique())
@@ -430,6 +483,8 @@ def main() -> tuple[pd.DataFrame, dict]:
     )
 
     cases = {name: load_case(name, info) for name, info in CASES.items()}
+    if not np.isclose(cases["base"]["U_in"], float(base_meta["U_in"]), rtol=1e-8, atol=1e-12):
+        raise ValueError("Step 1/5 inlet normalization differs; align time window and inlet estimate")
     base_points = normalized_grid_points(cases["base"], x_d, y_d)
 
     own_dimensional: dict[str, np.ndarray] = {}
@@ -438,6 +493,11 @@ def main() -> tuple[pd.DataFrame, dict]:
         points = normalized_grid_points(case, x_d, y_d)
         own_dimensional[name] = interpolate_velocity(case, points).reshape(n_x, n_y, 2)
         own_star[name] = own_dimensional[name] / case["U_in"]
+    expected_u = base_frame.sort_values(["x_D", "y_D"])["u_star"].to_numpy().reshape(n_x, n_y)
+    expected_v = np.load(BASE_GRID_DIR / "v_mean_wake.npy")
+    if not (np.allclose(own_star["base"][..., 0], expected_u, rtol=1e-8, atol=1e-10)
+            and np.allclose(own_star["base"][..., 1], expected_v, rtol=1e-8, atol=1e-10)):
+        raise ValueError("Step 1 baseline differs from the current source/time window; regenerate Step 1")
 
     fixed_dimensional = {
         name: interpolate_velocity(cases[name], base_points).reshape(n_x, n_y, 2)
@@ -472,7 +532,7 @@ def main() -> tuple[pd.DataFrame, dict]:
         ) / (2.0 * DR)
         base_star[component] = own_star["base"][..., index]
 
-    _, k_psi, psi_expression = load_psi_b_transport(x_d, y_d, cases["base"]["D"])
+    _, k_psi, psi_expression = load_psi_b_transport(x_d, y_d, cases["base"]["D"], base_model)
     k_cfd = {
         component: numerical_transport(
             base_star[component], x_d, y_d, cases["base"]["D"]
@@ -737,8 +797,7 @@ def main() -> tuple[pd.DataFrame, dict]:
     # FD-vs-psi comparison from older runs.
     fixed_coordinate_table.to_csv(OUT_DIR / "fd_vs_pisr_summary.csv", index=False)
 
-    np.savez_compressed(
-        OUT_DIR / "fd_sensitivity_fields.npz",
+    fd_payload = dict(
         x_D=x_d,
         y_D=y_d,
         u_base=base_star["u"],
@@ -766,11 +825,31 @@ def main() -> tuple[pd.DataFrame, dict]:
         S_cy=legacy_response["cy"],
     )
 
+    # Version 2 restores the reference-coordinate perturbed fields used by P0.
+    for case_name, suffix in (("R+", "Rp"), ("R-", "Rn"), ("cx+", "cxp"), ("cx-", "cxn"), ("cy+", "cyp"), ("cy-", "cyn")):
+        for component, index in component_index.items():
+            fd_payload[f"{component}_{suffix}"] = own_star[case_name][..., index]
+    provenance = {
+        "schema_version": 2, "evaluation_grid": grid_manifest(x_d, y_d),
+        "evaluation_data": base_data_manifest, "base_model": base_model,
+        "cases": CASES, "parameter_steps": {"R": DR, "cx": DCX, "cy": DCY},
+        "normalization": {name: case["U_in"] for name, case in cases.items()},
+        "time_window": [TIME_START_INDEX, TIME_END_INDEX],
+        "legacy_S_fields": "intrinsic_response_M",
+        "fd_target_id": content_hash({key: array_hash(value) for key, value in sorted(fd_payload.items())}),
+    }
+    fd_payload["provenance_json"] = np.array(json.dumps(provenance))
+    np.savez_compressed(OUT_DIR / "fd_sensitivity_fields.npz", **fd_payload)
+    atomic_json(OUT_DIR / "fd_manifest.json", provenance)
+
     data_field_payload: dict[str, np.ndarray] = {"x_D": x_d, "y_D": y_d}
     for parameter, component_fields in data_gradient_fields.items():
         for component, named_fields in component_fields.items():
             for name, field in named_fields.items():
                 data_field_payload[f"{parameter}_{component}_{name}"] = field
+    closure_provenance = {**provenance, "archive_role": "data_gradient_closure",
+        "archive_fields_sha256": content_hash({key: array_hash(value) for key, value in sorted(data_field_payload.items())})}
+    data_field_payload["provenance_json"] = np.array(json.dumps(closure_provenance))
     np.savez_compressed(
         OUT_DIR / "data_gradient_closure_fields.npz", **data_field_payload
     )
@@ -792,84 +871,25 @@ def main() -> tuple[pd.DataFrame, dict]:
             "U0": u0,
             "Uprime": u_prime,
             "psi0_sympy": psi_expression,
+            "provenance_json": json.dumps(provenance),
         },
     )
 
-    fig, axis = plt.subplots(figsize=(7, 5), constrained_layout=True)
-    image = axis.pcolormesh(x_d, y_d, base_star["u"].T, cmap="viridis", shading="auto")
-    axis.set_xlabel("xi")
-    axis.set_ylabel("eta")
-    axis.set_aspect("equal")
-    axis.set_title("Base time-averaged u* field")
-    fig.colorbar(image, ax=axis, label="u*")
-    fig.savefig(OUT_DIR / "01_u_star_base.png", dpi=170)
-    plt.close(fig)
-
-    fig, axes = plt.subplots(1, 3, figsize=(17, 4.8), constrained_layout=True)
-    for axis, parameter in zip(axes, ("R", "cx", "cy")):
-        field = legacy_response[parameter]
-        limit = max(float(np.max(np.abs(field))), 1e-12)
-        image = axis.pcolormesh(
-            x_d,
-            y_d,
-            field.T,
-            cmap="RdBu_r",
-            vmin=-limit,
-            vmax=limit,
-            shading="auto",
-        )
+    if not args.no_plots:
+        fig, axis = plt.subplots(figsize=(7, 5), constrained_layout=True)
+        image = axis.pcolormesh(x_d, y_d, base_star["u"].T, cmap="viridis", shading="auto")
         axis.set_xlabel("xi")
         axis.set_ylabel("eta")
         axis.set_aspect("equal")
-        axis.set_title(
-            f"M_{parameter} at fixed (xi,eta)\nnot total sensitivity; mean |.|={np.mean(np.abs(field)):.3g}"
-        )
-        fig.colorbar(image, ax=axis, shrink=0.84)
-    fig.suptitle("Legacy fixed-normalized-coordinate FD reclassified as intrinsic response")
-    fig.savefig(OUT_DIR / "02_fd_sensitivity_heatmaps.png", dpi=170)
-    plt.close(fig)
+        axis.set_title("Base time-averaged u* field")
+        fig.colorbar(image, ax=axis, label="u*")
+        fig.savefig(OUT_DIR / "01_u_star_base.png", dpi=170)
+        plt.close(fig)
 
-    labels = ["total FD", "K psi-B", "M FD", "K+M"]
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.8), constrained_layout=True)
-    for axis, component in zip(axes, ("u", "v")):
-        values = [
-            np.mean(np.abs(total_star[component])),
-            np.mean(np.abs(k_psi[component])),
-            np.mean(np.abs(m_star[component])),
-            np.mean(np.abs(reconstructed_star_psi[component])),
-        ]
-        axis.bar(labels, values, color=["#355C7D", "#C06C84", "#6C5B7B", "#F8B195"])
-        axis.set_ylabel("mean absolute value [1/m]")
-        axis.set_title(f"Radius decomposition: {component}*")
-        axis.grid(axis="y", alpha=0.25)
-        axis.tick_params(axis="x", rotation=18)
-    fig.suptitle("Corrected comparison: total sensitivity versus its K and M terms")
-    fig.savefig(OUT_DIR / "03_fd_vs_pisr_bar.png", dpi=170)
-    plt.close(fig)
-
-    plot_decomposition(
-        x_d, y_d, total_star, k_psi, m_star, reconstructed_star_psi
-    )
-    plot_parity(
-        total_star,
-        reconstructed_star_psi,
-        total_dim,
-        reconstructed_dim_explicit,
-    )
-
-    # Clean pipeline test: R and cy, u component, all terms from CFD data.
-    fig, axes = plt.subplots(2, 4, figsize=(20, 8.5), constrained_layout=True)
-    for row_index, parameter in enumerate(("R", "cy")):
-        fields = data_gradient_fields[parameter]["u"]
-        panels = [
-            ("total FD", fields["S_total"]),
-            ("K: base CFD data gradient", fields["K_data"]),
-            ("M: fixed normalized FD", fields["M"]),
-            ("K + M", fields["reconstructed"]),
-        ]
-        limit = max(float(np.max(np.abs(field))) for _, field in panels)
-        for column_index, (label, field) in enumerate(panels):
-            axis = axes[row_index, column_index]
+        fig, axes = plt.subplots(1, 3, figsize=(17, 4.8), constrained_layout=True)
+        for axis, parameter in zip(axes, ("R", "cx", "cy")):
+            field = legacy_response[parameter]
+            limit = max(float(np.max(np.abs(field))), 1e-12)
             image = axis.pcolormesh(
                 x_d,
                 y_d,
@@ -883,79 +903,140 @@ def main() -> tuple[pd.DataFrame, dict]:
             axis.set_ylabel("eta")
             axis.set_aspect("equal")
             axis.set_title(
-                f"{parameter}, u*: {label}\nmean |.|={np.mean(np.abs(field)):.3g}"
+                f"M_{parameter} at fixed (xi,eta)\nnot total sensitivity; mean |.|={np.mean(np.abs(field)):.3g}"
             )
-            fig.colorbar(image, ax=axis, shrink=0.82)
-    fig.suptitle("Data-gradient chain-rule closure on the original base CFD field")
-    fig.savefig(OUT_DIR / "06_data_gradient_closure_fields.png", dpi=170)
-    plt.close(fig)
+            fig.colorbar(image, ax=axis, shrink=0.84)
+        fig.suptitle("Legacy fixed-normalized-coordinate FD reclassified as intrinsic response")
+        fig.savefig(OUT_DIR / "02_fd_sensitivity_heatmaps.png", dpi=170)
+        plt.close(fig)
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), constrained_layout=True)
-    for axis, parameter in zip(axes, ("R", "cx", "cy")):
-        fields = data_gradient_fields[parameter]["u"]
-        truth = fields["S_total"].ravel()
-        estimate = fields["reconstructed"].ravel()
-        metric = comparison_metrics(truth, estimate)
-        limit = max(np.max(np.abs(truth)), np.max(np.abs(estimate)), 1e-12)
-        axis.scatter(truth, estimate, s=12, alpha=0.35, edgecolors="none")
-        axis.plot([-limit, limit], [-limit, limit], "k--", linewidth=1)
-        axis.set_xlabel("total FD [1/m]")
-        axis.set_ylabel("data-gradient K + M [1/m]")
-        axis.set_title(
-            f"{parameter}: rel L2={metric['rel_l2']:.3f}, r={metric['correlation']:.3f}"
+        labels = ["total FD", "K psi-B", "M FD", "K+M"]
+        fig, axes = plt.subplots(1, 2, figsize=(11, 4.8), constrained_layout=True)
+        for axis, component in zip(axes, ("u", "v")):
+            values = [
+                np.mean(np.abs(total_star[component])),
+                np.mean(np.abs(k_psi[component])),
+                np.mean(np.abs(m_star[component])),
+                np.mean(np.abs(reconstructed_star_psi[component])),
+            ]
+            axis.bar(labels, values, color=["#355C7D", "#C06C84", "#6C5B7B", "#F8B195"])
+            axis.set_ylabel("mean absolute value [1/m]")
+            axis.set_title(f"Radius decomposition: {component}*")
+            axis.grid(axis="y", alpha=0.25)
+            axis.tick_params(axis="x", rotation=18)
+        fig.suptitle("Corrected comparison: total sensitivity versus its K and M terms")
+        fig.savefig(OUT_DIR / "03_fd_vs_pisr_bar.png", dpi=170)
+        plt.close(fig)
+
+        plot_decomposition(
+            x_d, y_d, total_star, k_psi, m_star, reconstructed_star_psi
         )
-        axis.grid(alpha=0.25)
-    fig.suptitle("Fixed-physical-point closure with matched-step base-CFD gradients")
-    fig.savefig(OUT_DIR / "07_data_gradient_closure_parity.png", dpi=170)
-    plt.close(fig)
+        plot_parity(
+            total_star,
+            reconstructed_star_psi,
+            total_dim,
+            reconstructed_dim_explicit,
+        )
 
-    r_u_row = data_gradient_table[
-        (data_gradient_table["parameter"] == "R")
-        & (data_gradient_table["component"] == "u")
-    ].iloc[0]
-    fig, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
-    labels = ["psi-B transport", "base-CFD transport"]
-    transport_errors = [
-        100.0 * r_u_row["K_psi_vs_empirical_rel_l2"],
-        100.0 * r_u_row["K_data_vs_empirical_rel_l2"],
-    ]
-    closure_errors = [
-        100.0 * r_u_row["psi_closure_rel_l2"],
-        100.0 * r_u_row["closure_rel_l2"],
-    ]
-    positions = np.arange(2)
-    width = 0.36
-    axis.bar(
-        positions - width / 2,
-        transport_errors,
-        width,
-        label="transport error vs S-M",
-        color="#6C5B7B",
-    )
-    axis.bar(
-        positions + width / 2,
-        closure_errors,
-        width,
-        label="amplified total closure error",
-        color="#F8B195",
-    )
-    axis.axhspan(
-        10,
-        15,
-        color="#7FB069",
-        alpha=0.15,
-        label="10-15% closure band (orange bars)",
-    )
-    axis.set_xticks(positions)
-    axis.set_xticklabels(labels)
-    axis.set_ylabel("relative L2 error [%]")
-    axis.set_title(
-        f"R, u*: gradient error amplified by kappa={r_u_row['condition_number_kappa']:.3f}"
-    )
-    axis.legend()
-    axis.grid(axis="y", alpha=0.25)
-    fig.savefig(OUT_DIR / "08_gradient_error_kappa_amplification.png", dpi=170)
-    plt.close(fig)
+        # Clean pipeline test: R and cy, u component, all terms from CFD data.
+        fig, axes = plt.subplots(2, 4, figsize=(20, 8.5), constrained_layout=True)
+        for row_index, parameter in enumerate(("R", "cy")):
+            fields = data_gradient_fields[parameter]["u"]
+            panels = [
+                ("total FD", fields["S_total"]),
+                ("K: base CFD data gradient", fields["K_data"]),
+                ("M: fixed normalized FD", fields["M"]),
+                ("K + M", fields["reconstructed"]),
+            ]
+            limit = max(float(np.max(np.abs(field))) for _, field in panels)
+            for column_index, (label, field) in enumerate(panels):
+                axis = axes[row_index, column_index]
+                image = axis.pcolormesh(
+                    x_d,
+                    y_d,
+                    field.T,
+                    cmap="RdBu_r",
+                    vmin=-limit,
+                    vmax=limit,
+                    shading="auto",
+                )
+                axis.set_xlabel("xi")
+                axis.set_ylabel("eta")
+                axis.set_aspect("equal")
+                axis.set_title(
+                    f"{parameter}, u*: {label}\nmean |.|={np.mean(np.abs(field)):.3g}"
+                )
+                fig.colorbar(image, ax=axis, shrink=0.82)
+        fig.suptitle("Data-gradient chain-rule closure on the original base CFD field")
+        fig.savefig(OUT_DIR / "06_data_gradient_closure_fields.png", dpi=170)
+        plt.close(fig)
+
+        fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), constrained_layout=True)
+        for axis, parameter in zip(axes, ("R", "cx", "cy")):
+            fields = data_gradient_fields[parameter]["u"]
+            truth = fields["S_total"].ravel()
+            estimate = fields["reconstructed"].ravel()
+            metric = comparison_metrics(truth, estimate)
+            limit = max(np.max(np.abs(truth)), np.max(np.abs(estimate)), 1e-12)
+            axis.scatter(truth, estimate, s=12, alpha=0.35, edgecolors="none")
+            axis.plot([-limit, limit], [-limit, limit], "k--", linewidth=1)
+            axis.set_xlabel("total FD [1/m]")
+            axis.set_ylabel("data-gradient K + M [1/m]")
+            axis.set_title(
+                f"{parameter}: rel L2={metric['rel_l2']:.3f}, r={metric['correlation']:.3f}"
+            )
+            axis.grid(alpha=0.25)
+        fig.suptitle("Fixed-physical-point closure with matched-step base-CFD gradients")
+        fig.savefig(OUT_DIR / "07_data_gradient_closure_parity.png", dpi=170)
+        plt.close(fig)
+
+        r_u_row = data_gradient_table[
+            (data_gradient_table["parameter"] == "R")
+            & (data_gradient_table["component"] == "u")
+        ].iloc[0]
+        fig, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
+        labels = ["psi-B transport", "base-CFD transport"]
+        transport_errors = [
+            100.0 * r_u_row["K_psi_vs_empirical_rel_l2"],
+            100.0 * r_u_row["K_data_vs_empirical_rel_l2"],
+        ]
+        closure_errors = [
+            100.0 * r_u_row["psi_closure_rel_l2"],
+            100.0 * r_u_row["closure_rel_l2"],
+        ]
+        positions = np.arange(2)
+        width = 0.36
+        axis.bar(
+            positions - width / 2,
+            transport_errors,
+            width,
+            label="transport error vs S-M",
+            color="#6C5B7B",
+        )
+        axis.bar(
+            positions + width / 2,
+            closure_errors,
+            width,
+            label="amplified total closure error",
+            color="#F8B195",
+        )
+        axis.axhspan(
+            10,
+            15,
+            color="#7FB069",
+            alpha=0.15,
+            label="10-15% closure band (orange bars)",
+        )
+        axis.set_xticks(positions)
+        axis.set_xticklabels(labels)
+        axis.set_ylabel("relative L2 error [%]")
+        axis.set_title(
+            f"R, u*: gradient error amplified by kappa={r_u_row['condition_number_kappa']:.3f}"
+        )
+        axis.legend()
+        axis.grid(axis="y", alpha=0.25)
+        fig.savefig(OUT_DIR / "08_gradient_error_kappa_amplification.png", dpi=170)
+        plt.close(fig)
 
     run_info = {
         "D0_m": cases["base"]["D"],
@@ -966,8 +1047,10 @@ def main() -> tuple[pd.DataFrame, dict]:
             name: cases[name]["Umax"] * cases[name]["D"] for name in ("R-", "base", "R+")
         },
         "psi_strategy": PSI_STRATEGY,
-        "psi_complexity": PSI_COMPLEXITY,
+        "psi_complexity": base_model["complexity"],
         "psi_sympy": psi_expression,
+        "base_model": base_model,
+        "provenance": provenance,
         "base_grid_dir": str(BASE_GRID_DIR),
         "base_grid_revision": base_meta.get("grid_revision", "legacy_or_unknown"),
         "n_x_wake": n_x,

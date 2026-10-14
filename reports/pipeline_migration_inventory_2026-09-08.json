@@ -1,0 +1,245 @@
+{
+  "as_of": "2026-09-08",
+  "purpose": "Read-only inventory of existing scientific outputs before rerunning the corrected pipeline",
+  "legacy_policy": "Preserved historical outputs; they are not new-protocol validation evidence. New training publishes isolated runs.",
+  "snapshots": [
+    {
+      "role": "base_data",
+      "directory": "outputs_mgn/comsol/eta_sym",
+      "present": true,
+      "data": {
+        "schema_version": 1,
+        "grid": {
+          "shape": [
+            33,
+            64
+          ],
+          "sha256": "25b24f488e3948abb290ebe02a228a232b52a0b46886b3db482ea49de123358c",
+          "xi_range": [
+            3.0,
+            4.999999999999999
+          ],
+          "eta_range": [
+            -1.9,
+            1.9
+          ]
+        },
+        "target_sha256": "4e8fb8b57b2cb40905fad79a3d0624e1176c8ba62539f81c4fb6ecc7c541b6c0",
+        "normalization": {
+          "D": 0.1,
+          "U_in": 0.7299456031423919,
+          "cyl_cx": 0.2,
+          "cyl_cy": 0.2,
+          "response_parameter": null,
+          "response_units": null,
+          "fd_target_id": null
+        },
+        "dataset_id": "bd73da3cfae6de52e9e8c17bbc46f4682c0d389d4e00cbd7de05885527238a04",
+        "files": {
+          "wake_data.csv": "4595e301e635b086cdc8a97575c8bc4ff3edde20790e3f744d2b79803f756a35",
+          "v_mean_wake.npy": "42490960f58d7e30c95a1a31f48ada6f8d77afd78c796779780b27d893d87d69",
+          "meta.json": "387af1630633a5e98c9fa169f0e993e3e9001fbbe907206e0036241fbfab53c4"
+        }
+      },
+      "state": "legacy_flat_snapshot_unverified_run",
+      "candidate_files_sha256": {
+        "results_strategy_a.csv": "d5d663fb3d69695dd97723ac553b219e1ee9275b8201f928151fe59e8709c8ca",
+        "results_strategy_b.csv": "9988f575d5aaa0852b0219706ce8ba56e113d91bfaed32d3df03f8c0de062caf"
+      },
+      "existing_manifests": []
+    },
+    {
+      "role": "base_psi",
+      "directory": "outputs_mgn/comsol/eta_sym_psi",
+      "present": true,
+      "data": {
+        "schema_version": 1,
+        "grid": {
+          "shape": [
+            16,
+            64
+          ],
+          "sha256": "e7b1eca88167d60dd76166ebc519c0320e9d0d777a9f09b0721cac51eb838502",
+          "xi_range": [
+            3.021276595744681,
+            4.9361702127659575
+          ],
+          "eta_range": [
+            -1.9,
+            1.9
+          ]
+        },
+        "target_sha256": "3facf1783dcbd2b2a5b3ac56ee0461a757814bec25c364cde1c06bd99f9fd101",
+        "normalization": {
+          "D": 0.1,
+          "U_in": 0.7299456031423919,
+          "cyl_cx": 0.2,
+          "cyl_cy": 0.2,
+          "response_parameter": null,
+          "response_units": null,
+          "fd_target_id": null
+        },
+        "dataset_id": "8e8f13058d63252e9b316ef4018e89b0c5cde01685447e762b217d570115f11b",
+        "files": {
+          "wake_data.csv": "1dd57b3912e6c49cf87c0ae972183c0edd597842a958f7396ecd4ff2d9c6152e",
+          "v_mean_wake.npy": "a3bab8ee8f09bf132a237db3f980ec89e50b07c134e229b69eb02cf243e8d1d1",
+          "meta.json": "b92b406612ea2f1e9291bda9e98a16ee408319e62369f11af0ffd2c0789bc0e9"
+        }
+      },
+      "state": "legacy_flat_snapshot_unverified_run",
+      "candidate_files_sha256": {
+        "results_strategy_a.csv": "5270e6164082515178d7ded8b8dba3d659c80f1674fb09611831c5c808afa0ba",
+        "results_strategy_b.csv": "0ffdb695f42fc8988b4a11f1cf7725d0ce6dc2bf76fb29f2a5dc7512faf4d8d7"
+      },
+      "existing_manifests": []
+    },
+    {
+      "role": "mlp_psi",
+      "directory": "outputs_mgn/comsol/eta_sym_psi_mlp",
+      "present": true,
+      "data": {
+        "schema_version": 1,
+        "grid": {
+          "shape": [
+            33,
+            64
+          ],
+          "sha256": "25b24f488e3948abb290ebe02a228a232b52a0b46886b3db482ea49de123358c",
+          "xi_range": [
+            3.0,
+            4.999999999999999
+          ],
+          "eta_range": [
+            -1.9,
+            1.9
+          ]
+        },
+        "target_sha256": "59bc289879be717b79eaef4f8d2d22c6510ef8eedf4ef8de9ff3c0e09ac6aa21",
+        "normalization": {
+          "D": 0.1,
+          "U_in": 0.7299456031423919,
+          "cyl_cx": 0.2,
+          "cyl_cy": 0.2,
+          "response_parameter": null,
+          "response_units": null,
+          "fd_target_id": null
+        },
+        "dataset_id": "d5a7fbcc0c2fc318b49a0cd68ec93177ab478cb33a55c402f879faab463ee9fe",
+        "files": {
+          "wake_data.csv": "3442d17d8e2365ba8fa7021d9f6684984ac110040f46b89da5848f1b72fa1d5d",
+          "v_mean_wake.npy": "42490960f58d7e30c95a1a31f48ada6f8d77afd78c796779780b27d893d87d69",
+          "meta.json": "f121cf458e5110c90326e72d7f9f7311939fd37cc1052f907db35f2686357775"
+        }
+      },
+      "state": "legacy_flat_snapshot_unverified_run",
+      "candidate_files_sha256": {},
+      "existing_manifests": []
+    },
+    {
+      "role": "phi_input",
+      "directory": "outputs_mgn/fd_check/phi_R_input",
+      "present": true,
+      "data": {
+        "schema_version": 1,
+        "grid": {
+          "shape": [
+            33,
+            64
+          ],
+          "sha256": "25b24f488e3948abb290ebe02a228a232b52a0b46886b3db482ea49de123358c",
+          "xi_range": [
+            3.0,
+            4.999999999999999
+          ],
+          "eta_range": [
+            -1.9,
+            1.9
+          ]
+        },
+        "target_sha256": "af7b54e183803b042433507458a0e3cca1741e5e2321eb80e6c1a51a3d601a38",
+        "normalization": {
+          "D": 0.1,
+          "U_in": 1.0,
+          "cyl_cx": 0.2,
+          "cyl_cy": 0.2,
+          "response_parameter": "R",
+          "response_units": "1/m",
+          "fd_target_id": null
+        },
+        "dataset_id": "ae461c7a67ae36215904590820fe9a98e1932e2652fb9a23de807aca6968fbe6",
+        "files": {
+          "wake_data.csv": "8dcd9646260b6f8e7e13aa251c4f523546cc4cd6f120ec7a5bc0404eabed4b7c",
+          "v_mean_wake.npy": "2b1ac7a7d939601e414a731b7d21321271bd2ef3174c0af9bc43080e5a8e92fc",
+          "meta.json": "7830ab06be4e8fa4f1089dd65dee1b0930a39ef35ae20acfd1a8b4ff4bd093aa"
+        }
+      },
+      "state": "legacy_flat_snapshot_unverified_run",
+      "candidate_files_sha256": {},
+      "existing_manifests": []
+    },
+    {
+      "role": "phi_model",
+      "directory": "outputs_mgn/fd_check/phi_R_pysr",
+      "present": true,
+      "data": {
+        "schema_version": 1,
+        "grid": {
+          "shape": [
+            16,
+            64
+          ],
+          "sha256": "e7b1eca88167d60dd76166ebc519c0320e9d0d777a9f09b0721cac51eb838502",
+          "xi_range": [
+            3.021276595744681,
+            4.9361702127659575
+          ],
+          "eta_range": [
+            -1.9,
+            1.9
+          ]
+        },
+        "target_sha256": "6c023350e6305a5b73397d947aff001a2c5221ea8d3f4fe96c5cf14b4777210c",
+        "normalization": {
+          "D": 0.1,
+          "U_in": 1.0,
+          "cyl_cx": 0.2,
+          "cyl_cy": 0.2,
+          "response_parameter": "R",
+          "response_units": "1/m",
+          "fd_target_id": null
+        },
+        "dataset_id": "474f519a2eb1af4545f66677403adaeab04d09e76376c8b6f0771611e608c4fc",
+        "files": {
+          "wake_data.csv": "055bac57787f99339b48b8ce92446293a1b897945ff21d45c5c30b659f738d57",
+          "v_mean_wake.npy": "8b0c5f0738938824630982362b90992bfe54a985f41403c3ac5c92fb40064ee0",
+          "meta.json": "5c61215c99453200a2530a43bd0e2463743f2128b503309e833b3041ffbd5309"
+        }
+      },
+      "state": "legacy_flat_snapshot_unverified_run",
+      "candidate_files_sha256": {
+        "results_strategy_b.csv": "5f596ca3514af22ef2c33495b6e893ccc9b05e16659164ba3aba690f4268debb"
+      },
+      "existing_manifests": []
+    }
+  ],
+  "fd_archives": [
+    {
+      "file": "outputs_mgn\\fd_check\\fd_sensitivity_fields.npz",
+      "sha256": "a8ac00487bbe99ef06e727e5ababf1bd47f18c570fbcf9dcff95744e7544aeab",
+      "has_provenance": false,
+      "p0_perturbed_u_fields_present": false
+    },
+    {
+      "file": "outputs_mgn\\fd_check\\data_gradient_closure_fields.npz",
+      "sha256": "70c66543d74305ad6cc6313c5b63d4457b7dbe7282bbbb168862fb7d1be4c48a",
+      "has_provenance": false,
+      "p0_perturbed_u_fields_present": false
+    }
+  ],
+  "regression_validation": {
+    "command": "python -m pytest tests -q -p no:cacheprovider --basetemp=.codex_tmp/pytest_final_contracts",
+    "passed": 18,
+    "runtime_seconds": 38.66,
+    "limitation": "Analytic candidates replace PySR/Julia search. No real CFD retraining or historical metric regeneration was performed."
+  }
+}

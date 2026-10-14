@@ -1,0 +1,20 @@
+[
+  {
+    "scheme": "inner",
+    "minimum_delta": -1.1888979593628348,
+    "maximum_delta": 0.8266711129044281,
+    "both_signs": true
+  },
+  {
+    "scheme": "outer",
+    "minimum_delta": -0.3880711610540183,
+    "maximum_delta": 0.07076750669933468,
+    "both_signs": true
+  },
+  {
+    "scheme": "five",
+    "minimum_delta": -1.6790841940050087,
+    "maximum_delta": 1.1669117972461205,
+    "both_signs": true
+  }
+]

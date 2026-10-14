@@ -1,0 +1,14 @@
+[
+  {
+    "context": "u_fine",
+    "method": "spline_residual_0.001",
+    "requested_s": 0.00038259792494397106,
+    "error": "A theoretically impossible result was found during the iteration process for finding a smoothing spline with fp = s: s too small or badly chosen eps. Weighted sum of squared residuals does not satisfy abs(fp-s)/s < tol."
+  },
+  {
+    "context": "v_coarse",
+    "method": "spline_residual_0.0001",
+    "requested_s": 6.795772362435988e-08,
+    "error": "A theoretically impossible result was found during the iteration process for finding a smoothing spline with fp = s: s too small or badly chosen eps. Weighted sum of squared residuals does not satisfy abs(fp-s)/s < tol."
+  }
+]

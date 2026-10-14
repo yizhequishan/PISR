@@ -1,0 +1,26 @@
+{
+  "input_source_split_hashes_match": true,
+  "compact_choices_frozen_before_test": true,
+  "compact_matrix_and_symbolic_predictions_match": true,
+  "selected_expression_hashes_match": true,
+  "divergence_diagnostic": {
+    "model_divergence_rms": 0.015725043057584393,
+    "numerical_reference_divergence_rms": 0.034751322077300376,
+    "model_minus_numerical_reference_rms": 0.03809946917473968,
+    "hard_incompressibility": false
+  },
+  "algebraic_compression_checks": [
+    {
+      "component": "u",
+      "original_operations": 198,
+      "horner_operations": 56,
+      "dense_value_and_gradient_max_abs_difference": 2.842170943040401e-14
+    },
+    {
+      "component": "v",
+      "original_operations": 224,
+      "horner_operations": 64,
+      "dense_value_and_gradient_max_abs_difference": 1.3600232051658168e-14
+    }
+  ]
+}

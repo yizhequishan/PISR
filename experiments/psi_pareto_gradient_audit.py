@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -29,11 +30,13 @@ import sympy as sp
 
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+from pipeline_contracts import (resolve_run_dir, load_strategies, selected_model, verify_fd_model, archive_provenance)
 DEFAULT_PSI_DIR = REPO / "outputs_mgn" / "comsol" / "eta_sym_psi"
 DEFAULT_FD_DIR = REPO / "outputs_mgn" / "fd_check"
 DEFAULT_OUT_DIR = DEFAULT_FD_DIR / "psi_pareto_gradient_audit"
 DEFAULT_SELECTED_STRATEGY = "B"
-DEFAULT_SELECTED_COMPLEXITY = 21
+DEFAULT_SELECTED_COMPLEXITY = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -47,7 +50,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--selected-complexity", type=int, default=DEFAULT_SELECTED_COMPLEXITY,
-        help="Previously selected complexity used for the comparison baseline.",
+        help="Optional explicit diagnostic override; default uses selected_models.json.",
     )
     return parser.parse_args()
 
@@ -128,9 +131,10 @@ def candidate_fields(
 
 def load_candidates(psi_dir: Path) -> pd.DataFrame:
     frames: list[pd.DataFrame] = []
-    for strategy in ("A", "B"):
+    psi_dir = resolve_run_dir(psi_dir)
+    for strategy, frame in load_strategies(psi_dir).items():
         path = psi_dir / f"results_strategy_{strategy.lower()}.csv"
-        frame = pd.read_csv(path)
+        frame = frame.copy()
         frame.insert(0, "strategy", strategy)
         frame.insert(1, "source_file", path.name)
         frames.append(frame)
@@ -346,13 +350,21 @@ def main() -> None:
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
+    args.psi_dir = resolve_run_dir(args.psi_dir)
+    args.fd_dir = resolve_run_dir(args.fd_dir)
     candidates = load_candidates(args.psi_dir)
+    chosen = selected_model(args.psi_dir, args.selected_strategy)
     fields_path = args.fd_dir / "data_gradient_closure_fields.npz"
     with np.load(fields_path) as loaded:
         x_d = loaded["x_D"].copy()
         y_d = loaded["y_D"].copy()
         fd_fields = {name: loaded[name].copy() for name in loaded.files}
+    closure_provenance = archive_provenance(fd_fields)
     with np.load(args.fd_dir / "fd_sensitivity_fields.npz") as loaded:
+        base_archive = {name: loaded[name].copy() for name in loaded.files}
+        provenance = verify_fd_model(base_archive, selected_model(args.psi_dir, "B"))
+        if provenance["fd_target_id"] != closure_provenance["fd_target_id"]:
+            raise ValueError("FD and closure archives come from different runs")
         fd_fields["u_base"] = loaded["u_base"].copy()
         fd_fields["v_base"] = loaded["v_base"].copy()
 
@@ -380,7 +392,7 @@ def main() -> None:
         raise RuntimeError("Every candidate failed evaluation; inspect audit CSV")
     selected_rows = valid[
         (valid["strategy"].str.upper() == args.selected_strategy.upper())
-        & (valid["complexity"] == args.selected_complexity)
+        & ((valid["equation_index"] == chosen["equation_index"]) if args.selected_complexity is None else (valid["complexity"] == args.selected_complexity))
     ]
     if len(selected_rows) != 1:
         raise ValueError(
@@ -399,6 +411,10 @@ def main() -> None:
     )
 
     summary = {
+        "training_data": chosen["training_data"],
+        "evaluation_grid": provenance["evaluation_grid"],
+        "target_id": provenance["fd_target_id"],
+        "selected_model": chosen,
         "candidate_count": int(len(audit)),
         "valid_candidate_count": int(len(valid)),
         "failed_candidate_count": int((audit["status"] != "ok").sum()),

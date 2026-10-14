@@ -1,0 +1,49 @@
+{
+  "source_files_sha256": {
+    "outputs\\p0_derivative_closure\\closure_fields.npz": "43bc3623c1a85d34f79f784c20064dce3f02ffbb14f3b673c4656ae4b152df71",
+    "outputs_mgn\\fd_check\\fd_sensitivity_fields.npz": "a8ac00487bbe99ef06e727e5ababf1bd47f18c570fbcf9dcff95744e7544aeab",
+    "outputs_mgn\\fd_check\\data_gradient_closure_fields.npz": "70c66543d74305ad6cc6313c5b63d4457b7dbe7282bbbb168862fb7d1be4c48a",
+    "outputs_mgn\\fd_check\\decomposition_run_info.json": "b5a2fb993be7c646ff988ff0c40201fa6d0e60d46c95697c3b4834c43ac757c7",
+    "outputs_mgn\\fd_check\\phi_R_pysr\\results_strategy_b.csv": "5f596ca3514af22ef2c33495b6e893ccc9b05e16659164ba3aba690f4268debb",
+    "outputs\\p2_analytic_derivative_loss\\raw_value_equations.csv": "81507a37edc12ba101eb838c6365e286e2e5699f545093958362d4349176ed4e",
+    "outputs\\p2_analytic_derivative_loss\\raw_derivative_equations.csv": "b87ca376f9c77733f2154935c6137b93dd7b5c2de0df85b27b29e3b9fcd96984",
+    "outputs\\p2_analytic_derivative_loss\\metrics.json": "e4426925d1d0a6610ccf21454dcabda23afb1e3c4bb1d2db9a295a1247d9b534",
+    "outputs_hd_p3\\point_time_means.npz": "fb04caa38ac11d3b978063bc5d7d70210356457ad75702a506400fcccf752680",
+    "outputs_hd_p3\\p3_core_fields.npz": "55777fd7a81f4fbe79edb16fc26790f7eae9ce50cb99ba00a77aa26d687e787f",
+    "outputs_hd_p3\\leave_one_block_out.json": "b4be5b34c0aeb3ca873e6baa26f7050525878cb366471e806452fe2a4dd9cb33",
+    "outputs_hd_p3\\p3_metrics.json": "82b755506af91aee0d19e222ece5004bd281673358a339a80e7b5ac76ca3991b",
+    "outputs_hd_p3\\step_variant_metrics.json": "1bea87635d3e2ee37d96ec32f8c870d4a8424c6f18175bf591179e7db6da7c13",
+    "outputs_mgn\\comsol\\eta_sym_psi_mlp\\seed_0\\predictions.npz": "f461f5e927a92c5ddf1e3e929bf1568f2b717cef238e5a613f24753f6503fcab",
+    "outputs_mgn\\comsol\\eta_sym_psi_mlp\\seed_1\\predictions.npz": "257cfd04c5bda1a6cd720529993300d4ad64befa78778a4fb09efa78d69dd0f2",
+    "outputs_mgn\\comsol\\eta_sym_psi_mlp\\seed_2\\predictions.npz": "e69a8f78f60b2e6ced70adf7bfd2c3caafae4cf9ce10c22c35c63bcce4cb858a",
+    "outputs_mgn\\comsol\\eta_sym_psi_mlp\\seed_0\\sensitivity_fields.npz": "1084ded81c3c7053fff5449c0f797430dd1e4fab89d1a94a072098552fb9ecae",
+    "outputs_mgn\\comsol\\eta_sym_psi_mlp\\seed_1\\sensitivity_fields.npz": "a244d6b53daecab22a83fcae5c78466924d2a31807bfe06c3717d1946fe0e70b",
+    "outputs_mgn\\comsol\\eta_sym_psi_mlp\\seed_2\\sensitivity_fields.npz": "bc8e3d0aaa6ae99f0d09eeccd7c0c51e4d33d9c09c68a31620b41c5cc5a4821c",
+    "outputs_mgn\\fd_check\\case_cache\\base.npz": "04c552aaa2a4ab3fab79f2e42a98cb38b645de7af78913c23f97e695169ee9ae",
+    "outputs_mgn\\fd_check\\case_cache\\cxm.npz": "0e040db75624ab2fef688eb092a42e9aa740553da8d3119da720f57fb6a34beb",
+    "outputs_mgn\\fd_check\\case_cache\\cxp.npz": "22920507daf7a7f919752618b8fb15854471d6f5fb4a1102083a8e189d6944b9",
+    "outputs_mgn\\fd_check\\case_cache\\cym.npz": "fc177e20289a22c030d843d43370218a991050874c2264719992ec6cd45c6d8a",
+    "outputs_mgn\\fd_check\\case_cache\\cyp.npz": "6befa3b47347f19484b580cf04d10c3c277b9b9505ec06551d52404e46d5a27b",
+    "outputs_mgn\\fd_check\\case_cache\\Rm.npz": "8f0554c24ff8852b117fd72ca61a92d742b1e62b7c563be3c236fb0a66d57b15",
+    "outputs_mgn\\fd_check\\case_cache\\Rp.npz": "4bf95c44996e6e8a9ba4b7b80014c1ad9c4202826907d4f0c6cf97f0294ee0a3"
+  },
+  "script_sha256": "7baad9bb9b174d1cc3c00434e167eaad94157e268d87e080fd1c68ad6ff96984",
+  "helper_files_sha256": {
+    "experiments\\a0_m_reconstructability.py": "520497f52a9cc612351b792e047e95c185de4728d6849c5aad3a773a6b39aee4",
+    "experiments\\p1_observability_nullspace.py": "cce2865162a0bde88f66031c4ef22243cafb2121decd6a48ba09d97f8c159c96",
+    "experiments\\p2_analytic_derivative_loss.py": "ea9925f8ee093224954a7eae43ffdf6541d297e74a28cfeff12058c4460e2339",
+    "step5_fd_sensitivity_check.py": "f1c01807ac93d3080dbc7e99e61e1b9f2399f83c8e27d85ad7de317640aa5926",
+    "step6_phi_R_analysis.py": "23581bd64236a4ef67a60401728498ca36c81f5def3f692153e75a0808b9aec5",
+    "pipeline_contracts.py": "b5bba93ccae5a4b5a626fb96998fdb4e231419a8ddf50b768fa5538bc84be3c8"
+  },
+  "runtime": {
+    "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 13:17:27) [MSC v.1929 64 bit (AMD64)]",
+    "numpy": "1.26.4",
+    "pandas": "2.2.2",
+    "scipy": "1.13.1",
+    "sympy": "1.14.0"
+  },
+  "source_files_unchanged": true,
+  "historical_outputs_overwritten": false,
+  "scope": "Theory, saved CFD fields/candidates and new spatial validation; no raw CFD solve or new PySR search"
+}

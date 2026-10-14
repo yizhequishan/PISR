@@ -16,6 +16,22 @@ $$
 
 从结构上满足二维不可压缩约束。
 
+## 圆柱绕流 PINN 基线
+
+新增独立的标准 Navier–Stokes PINN，支持 Re=20 稳态和 Re=100 非稳态圆柱绕流、Adam + L-BFGS、模型保存与评估、流场/残差图、升阻力积分及 COMSOL 瞬态观测接口。网络、物理残差、采样和损失分开，便于后续方法改进。
+
+```powershell
+python train_pinn.py --smoke --device cpu
+python train_pinn.py --config configs/pinn/cylinder_steady.json
+python train_pinn.py --config configs/pinn/cylinder_unsteady.json
+```
+
+详细配置、量纲、边界条件和数据契约见 [docs/pinn_baseline.md](docs/pinn_baseline.md)。默认算例不假定与现有 COMSOL 设置相同；时均尾流数据不能直接作为标准稳态 NS 的解。
+
+入口、上下壁面与圆柱的硬边界流函数基线及零背景/Poiseuille 消融见 [docs/pinn_hard_boundary.md](docs/pinn_hard_boundary.md)。解析 lifting 保证通量与速度边界，独立比较动量残差，用于隔离边界修正和后续 SR 先验的收益。[2026-10-13 试验报告](reports/pinn_hard_boundary_2026-10-13.md) 保留首轮失败与后续同预算精修的完整结果。
+
+Re=20 稳态已完成两轮全量训练，结果及未收敛原因见 [完整训练报告](reports/pinn_full_training_2026-09-22.md)。
+
 ## 当前状态
 
 - 基准 COMSOL 尾流数据 `outputs_mgn/comsol/eta_sym` 已更新为 `dense_xi_v1`：回归窗 `ξ∈[3,5]` 上为 `33 × 64` 网格，`Δξ=0.0625`、`Δη≈0.0603`。
@@ -23,13 +39,15 @@ $$
 - `outputs_mgn/comsol/eta_sym_psi_mlp` 已使用新 `33 × 64` 网格，并包含 3 个随机种子的聚合结果。
 - `outputs_mgn/fd_check/phi_R_pysr` 中的响应流函数结果仍对应旧 `16 × 64` 网格；基准 `ψ` 重训后，Step 5–6 也需要重新运行。
 
-已完成的验证结果：
+以下为历史产物中的结果，尚未按本次修正协议重算；旧 P2、P1 稀疏均匀采样比较不应作为新协议的验证证据。
+
+对现有结论的独立重算、P1/A0 重跑、P2 交叉选式与空间验证见 [逻辑与实验验证报告](reports/logic_validation_2026-09-08.md)。
 
 | 实验 | 当前结论 |
 |---|---|
 | P0：`T=M+K` 闭合 | 精确离散路径的最大相对 L2 误差为 `1.70e-16`，说明坐标、符号和归一化记账闭合；现有符号梯度仍有明显误差。 |
 | P1：微分观测可辨识性 | `u` 单分量观测秩为 `3/7`，加入 `v` 后为 `6/7`，剩余 1 维是流函数常数规范自由度。 |
-| P2：解析导数损失 | 相比只按函数值选式，导数感知选择使测试梯度 MSE 降低 `68.4%`，函数值 MSE 增加 `14.3%`。 |
+| P2：解析导数损失 | 旧选式网格上的梯度 MSE 降低 `68.4%`，函数值 MSE 增加 `14.3%`；选式与评价复用同一网格，独立测试提升待重跑。 |
 | P3：不同 `H/D` 的半径响应 | 当前数值分辨率下“无结论”：`±1%R` 与 `±2%R` 给出相反趋势，且步长误差约为 `75%–98%`。 |
 
 更完整的 P0–P2 汇总见 [outputs/preliminary_oasis_experiments/SUMMARY.md](outputs/preliminary_oasis_experiments/SUMMARY.md)，P3 判定及适用边界见 [outputs_hd_p3/P3_assessment.md](outputs_hd_p3/P3_assessment.md)。
@@ -56,7 +74,7 @@ $$
 └── archive/                       # 已退出主流程的历史实验
 ```
 
-理论上的可辨识性边界见 [docs/theory_identifiability.md](docs/theory_identifiability.md)，预备实验的逐项运行说明见 [experiments/README.md](experiments/README.md)。
+模块关系、文件契约和迁移顺序见 [docs/pipeline_contracts.md](docs/pipeline_contracts.md)，预备实验的逐项运行说明见 [experiments/README.md](experiments/README.md)。
 
 ## 环境
 
@@ -108,7 +126,9 @@ n_y           = 64
 
 默认同时运行 `A_psi`（只使用 `u` 损失）和 `B_psi`（联合 `u+v` 损失）。只运行推荐的联合路线可追加 `--skip-strategy-a`；可通过 `--lambda-v`、`--niterations` 和 `--maxsize` 调整搜索。
 
-### 3. 可视化并计算 Euler 灵敏度
+每次训练写入独立的 `eta_sym_psi/runs/<run_id>/`，成功后才更新 `current_run.json`。后续脚本接受上面的根目录并自动解析当前完成的运行；根目录旧的 A/B 文件保留为历史快照，不会混入新运行。所选表达式及指纹保存在 `selected_models.json`。
+
+### 3. 可视化并计算 Euler 坐标输运项 K
 
 ```powershell
 python .\step3_visualize.py --out-dir .\outputs_mgn\comsol\eta_sym_psi
@@ -123,13 +143,15 @@ python .\step5_fd_sensitivity_check.py
 
 该步骤读取基准算例以及 `R±.txt`、`cx±.txt`、`cy±.txt`，计算固定物理坐标总响应、坐标输运项和内在响应，并生成 Step 6 所需的 `outputs_mgn/fd_check/phi_R_input`。
 
+旧 FD 归档缺少完整字段和版本信息，必须先重跑 Step 5 才能用于新版 P0、Step 6 和梯度审计。可用 `--source-dir`、`--base-grid-dir`、`--psi-dir`、`--out-dir` 指定独立的数据与输出目录。
+
 ### 5. 拟合并验证半径响应流函数
 
 ```powershell
 .\scripts\Run-PhiRPySrLocal.ps1
 ```
 
-启动器先拟合 `φ_R`，再运行 `step6_phi_R_analysis.py`，输出位于 `outputs_mgn/fd_check/phi_R_pysr`。
+启动器先拟合 `φ_R`，再运行 `step6_phi_R_analysis.py`，输出位于 `outputs_mgn/fd_check/phi_R_pysr/runs/<run_id>/`。Step 6 在当前 FD 目标上重新计算候选误差，保存 `response_selection.json`；这属于当前目标上的响应重建，独立泛化误差需要另设测试数据。
 
 ## 预备实验与审计
 
@@ -151,6 +173,10 @@ python .\experiments\summarize_preliminary_experiments.py
 ```
 
 `setup_pysr_derivatives.py` 会修改本机 Julia 环境，只需执行一次。
+
+新版 P2 用 `--n-validation` 控制独立选式集，冻结表达式后才计算密集测试网格指标。P1 对每个观测预算重新在全域均匀选点。历史汇总和报告文件保留原样，汇总脚本会根据协议标记新旧结果。
+
+接口回归测试：`python -m pytest tests -q`。合成测试执行真实的数据预处理、文件读写、选式和评价，仅用解析候选替代 PySR 搜索；它不代表真实 CFD 重训结果。
 
 ## 数据与产物
 

@@ -1,0 +1,509 @@
+{
+  "protocol": {
+    "reference_window": "4.00 through 8.00 s inclusive, 401 samples",
+    "batch_window": "4.00 through 7.99 s inclusive, 400 samples",
+    "grid_shape": [
+      33,
+      64
+    ],
+    "parameter_steps_m": {
+      "R": 0.001,
+      "cx": 0.002,
+      "cy": 0.002
+    },
+    "cx_step_convergence_identifiable": false,
+    "covariance_of_sampling_errors_identifiable": false,
+    "SE_is_conditional_not_certified_CI": true,
+    "gradient_comparisons_are_stability_not_truth_accuracy": true
+  },
+  "self_checks": {
+    "batch_variance_identity": true,
+    "affine_vector_interpolation": true,
+    "manufactured_quadratic_derivative_max_rel_errors": {
+      "numpy_gradient": 2.7527609184415217e-13,
+      "savgol5_gradient": 5.979369846350904e-13,
+      "savgol9_gradient": 7.187345362341329e-13,
+      "spline_residual_0": 3.173653241088033e-12,
+      "spline_residual_0.0001": 5.534062029799147e-14,
+      "spline_residual_0.001": 5.534062029799147e-14,
+      "spline_residual_0.01": 5.534062029799147e-14
+    }
+  },
+  "batch_covariance_formula_max_rel_discrepancy": 2.1396104687366636e-13,
+  "raw_reproduction": [
+    {
+      "parameter": "R",
+      "component": "u",
+      "M_rms": 40.62807962547557,
+      "raw_vs_archived_M_rel_l2": 1.42722122099474e-14,
+      "omit_last_frame_relative_change": 0.020958033724854174
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "M_rms": 7.476014560980943,
+      "raw_vs_archived_M_rel_l2": 6.079305316397524e-15,
+      "omit_last_frame_relative_change": 0.14208973371219802
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "M_rms": 1.7130067287267396,
+      "raw_vs_archived_M_rel_l2": 1.701811166160653e-13,
+      "omit_last_frame_relative_change": 0.02300949367334088
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "M_rms": 0.8389552885242326,
+      "raw_vs_archived_M_rel_l2": 2.692309857348721e-14,
+      "omit_last_frame_relative_change": 0.05923643685355768
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "M_rms": 14.692736364603189,
+      "raw_vs_archived_M_rel_l2": 1.9299187720922748e-14,
+      "omit_last_frame_relative_change": 0.0012493198522832581
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "M_rms": 1.5291101755809853,
+      "raw_vs_archived_M_rel_l2": 1.4562423034988457e-14,
+      "omit_last_frame_relative_change": 0.012399602431590995
+    }
+  ],
+  "cases": [
+    {
+      "case": "base",
+      "file": "D:\\keyan\\cylinder_flow_pisr\\cylinder_flow_result",
+      "source_bytes": 764686729,
+      "source_mtime_ns": 1777190538587876400,
+      "source_sha256": "dc69f0221d72e0070cdcde93c5a04bbce094544a6e9b8cb927378a72eefc6f23",
+      "nodes": 6361,
+      "n_time": 801,
+      "dt": 0.01,
+      "geometry": {
+        "D": 0.1,
+        "cx": 0.2,
+        "cy": 0.2
+      },
+      "time_start": 0.0,
+      "time_end": 8.0,
+      "inlet_nodes": 60,
+      "reference_U_in": 0.7299456031423919,
+      "old_U_in": 0.7299456031423919,
+      "raw_vs_cached_node_mean_rel_l2": {
+        "u": 0.0,
+        "v": 0.0
+      },
+      "max_export_mesh_motion": 4.440892098500626e-16,
+      "inlet_temporal_std_4_8": 3.4515962126576503e-06
+    },
+    {
+      "case": "cx+",
+      "file": "D:\\keyan\\cylinder_flow_pisr\\cx+.txt",
+      "source_bytes": 760840484,
+      "source_mtime_ns": 1778396210748651900,
+      "source_sha256": "1d9400fd7740e0c8e101a7a358895ef073cfc9e1bd3aa3c0cb20c583569ba9f8",
+      "nodes": 6329,
+      "n_time": 801,
+      "dt": 0.01,
+      "geometry": {
+        "D": 0.1,
+        "cx": 0.202,
+        "cy": 0.2
+      },
+      "time_start": 0.0,
+      "time_end": 8.0,
+      "inlet_nodes": 60,
+      "reference_U_in": 0.7307382575997554,
+      "old_U_in": 0.7307382575997555,
+      "raw_vs_cached_node_mean_rel_l2": {
+        "u": 0.0,
+        "v": 0.0
+      },
+      "max_export_mesh_motion": 4.440892098500626e-16,
+      "inlet_temporal_std_4_8": 3.031093479658808e-06
+    },
+    {
+      "case": "cx-",
+      "file": "D:\\keyan\\cylinder_flow_pisr\\cx-.txt",
+      "source_bytes": 761201006,
+      "source_mtime_ns": 1778395471650130700,
+      "source_sha256": "48802f0b761737a051b4ba2479d5b0759a52fd53abb18dd191bfd33178e8ca75",
+      "nodes": 6332,
+      "n_time": 801,
+      "dt": 0.01,
+      "geometry": {
+        "D": 0.1,
+        "cx": 0.198,
+        "cy": 0.2
+      },
+      "time_start": 0.0,
+      "time_end": 8.0,
+      "inlet_nodes": 60,
+      "reference_U_in": 0.7309701251810119,
+      "old_U_in": 0.7309701251810119,
+      "raw_vs_cached_node_mean_rel_l2": {
+        "u": 0.0,
+        "v": 0.0
+      },
+      "max_export_mesh_motion": 4.440892098500626e-16,
+      "inlet_temporal_std_4_8": 4.078315381903963e-06
+    },
+    {
+      "case": "cy+",
+      "file": "D:\\keyan\\cylinder_flow_pisr\\cy+.txt",
+      "source_bytes": 761561469,
+      "source_mtime_ns": 1778481973272530900,
+      "source_sha256": "c12e17554a6f9832391a223d8ba521191423ab53470c724c1416dda98c867ddb",
+      "nodes": 6335,
+      "n_time": 801,
+      "dt": 0.01,
+      "geometry": {
+        "D": 0.1,
+        "cx": 0.2,
+        "cy": 0.202
+      },
+      "time_start": 0.0,
+      "time_end": 8.0,
+      "inlet_nodes": 60,
+      "reference_U_in": 0.7297596872667107,
+      "old_U_in": 0.7297596872667106,
+      "raw_vs_cached_node_mean_rel_l2": {
+        "u": 0.0,
+        "v": 0.0
+      },
+      "max_export_mesh_motion": 4.440892098500626e-16,
+      "inlet_temporal_std_4_8": 3.926856669930541e-06
+    },
+    {
+      "case": "cy-",
+      "file": "D:\\keyan\\cylinder_flow_pisr\\cy-.txt",
+      "source_bytes": 765407885,
+      "source_mtime_ns": 1778397172236960900,
+      "source_sha256": "0250905234db9f197956e48effaa84f51a556a1ca84876eb1907eff0e3ce073b",
+      "nodes": 6367,
+      "n_time": 801,
+      "dt": 0.01,
+      "geometry": {
+        "D": 0.1,
+        "cx": 0.2,
+        "cy": 0.198
+      },
+      "time_start": 0.0,
+      "time_end": 8.0,
+      "inlet_nodes": 60,
+      "reference_U_in": 0.7301989647101355,
+      "old_U_in": 0.7301989647101353,
+      "raw_vs_cached_node_mean_rel_l2": {
+        "u": 0.0,
+        "v": 0.0
+      },
+      "max_export_mesh_motion": 4.440892098500626e-16,
+      "inlet_temporal_std_4_8": 2.958209284715153e-06
+    },
+    {
+      "case": "R+",
+      "file": "D:\\keyan\\cylinder_flow_pisr\\R+.txt",
+      "source_bytes": 769614805,
+      "source_mtime_ns": 1778394167926509900,
+      "source_sha256": "e5c2e3d7ffa6cbe5a7e472a7e9eff6b7a146b624f61e925645add427d93c8b9a",
+      "nodes": 6402,
+      "n_time": 801,
+      "dt": 0.01,
+      "geometry": {
+        "D": 0.102,
+        "cx": 0.2,
+        "cy": 0.2
+      },
+      "time_start": 0.0,
+      "time_end": 8.0,
+      "inlet_nodes": 60,
+      "reference_U_in": 0.7154377048098566,
+      "old_U_in": 0.7154377048098567,
+      "raw_vs_cached_node_mean_rel_l2": {
+        "u": 0.0,
+        "v": 0.0
+      },
+      "max_export_mesh_motion": 4.440892098500626e-16,
+      "inlet_temporal_std_4_8": 5.5776147749247815e-06
+    },
+    {
+      "case": "R-",
+      "file": "D:\\keyan\\cylinder_flow_pisr\\R-.txt",
+      "source_bytes": 763725078,
+      "source_mtime_ns": 1778335848766786800,
+      "source_sha256": "bc444df4172873c3bca4ed9fe0a72f927ccbeaf95d926c1076e049b9d635bf47",
+      "nodes": 6353,
+      "n_time": 801,
+      "dt": 0.01,
+      "geometry": {
+        "D": 0.098,
+        "cx": 0.2,
+        "cy": 0.2
+      },
+      "time_start": 0.0,
+      "time_end": 8.0,
+      "inlet_nodes": 60,
+      "reference_U_in": 0.7445973113699268,
+      "old_U_in": 0.744597311369927,
+      "raw_vs_cached_node_mean_rel_l2": {
+        "u": 0.0,
+        "v": 0.0
+      },
+      "max_export_mesh_motion": 4.440892098500626e-16,
+      "inlet_temporal_std_4_8": 3.4118697856726427e-06
+    }
+  ],
+  "temporal_scales": [
+    {
+      "series": "base",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05258709739734188,
+      "max_abs_acf_1_to_2s": 0.9985590141637983,
+      "fluctuation_rms": 0.34234948334414894
+    },
+    {
+      "series": "base",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05259645375950334,
+      "max_abs_acf_1_to_2s": 0.9979941922317521,
+      "fluctuation_rms": 0.42935876440971027
+    },
+    {
+      "series": "cx+",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.052726523808965434,
+      "max_abs_acf_1_to_2s": 0.9993967911643905,
+      "fluctuation_rms": 0.34182748539777774
+    },
+    {
+      "series": "cx+",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.052705924664732964,
+      "max_abs_acf_1_to_2s": 0.9989455760974862,
+      "fluctuation_rms": 0.42993439234723557
+    },
+    {
+      "series": "cx-",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.0525607471691475,
+      "max_abs_acf_1_to_2s": 0.9986600368421195,
+      "fluctuation_rms": 0.3425258683088684
+    },
+    {
+      "series": "cx-",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05259210272737482,
+      "max_abs_acf_1_to_2s": 0.9980765370874419,
+      "fluctuation_rms": 0.43276877305090206
+    },
+    {
+      "series": "cy+",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.052387394171225926,
+      "max_abs_acf_1_to_2s": 0.9990449590216213,
+      "fluctuation_rms": 0.33989973448502064
+    },
+    {
+      "series": "cy+",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05243839944658901,
+      "max_abs_acf_1_to_2s": 0.9984603980175415,
+      "fluctuation_rms": 0.4274628144782454
+    },
+    {
+      "series": "cy-",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.052366826389872154,
+      "max_abs_acf_1_to_2s": 0.9987928280683505,
+      "fluctuation_rms": 0.33943774629164836
+    },
+    {
+      "series": "cy-",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05241025843761638,
+      "max_abs_acf_1_to_2s": 0.9982427983552475,
+      "fluctuation_rms": 0.42634077500305284
+    },
+    {
+      "series": "R+",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05438085469170533,
+      "max_abs_acf_1_to_2s": 0.9995346163795947,
+      "fluctuation_rms": 0.3419078901916684
+    },
+    {
+      "series": "R+",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05424943099776838,
+      "max_abs_acf_1_to_2s": 0.9997742856929231,
+      "fluctuation_rms": 0.42221607444490156
+    },
+    {
+      "series": "R-",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 3.0,
+      "dominant_period_s": 0.3333333333333333,
+      "cycles_in_4s": 12.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05078340581666173,
+      "max_abs_acf_1_to_2s": 0.9997378733859666,
+      "fluctuation_rms": 0.3413675418302907
+    },
+    {
+      "series": "R-",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 3.0,
+      "dominant_period_s": 0.3333333333333333,
+      "cycles_in_4s": 12.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.050907181856625794,
+      "max_abs_acf_1_to_2s": 1.000112810718924,
+      "fluctuation_rms": 0.4341976594347683
+    },
+    {
+      "series": "M_R",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 3.0,
+      "dominant_period_s": 0.3333333333333333,
+      "cycles_in_4s": 12.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.050319165499166985,
+      "max_abs_acf_1_to_2s": 0.39812543031065933,
+      "fluctuation_rms": 210.10503869722032
+    },
+    {
+      "series": "M_R",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 3.0,
+      "dominant_period_s": 0.3333333333333333,
+      "cycles_in_4s": 12.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.05031749336166642,
+      "max_abs_acf_1_to_2s": 0.39275171947126153,
+      "fluctuation_rms": 262.9655275739404
+    },
+    {
+      "series": "M_cx",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.08,
+      "positive_lobe_integral_time_s": 0.04012643761094435,
+      "max_abs_acf_1_to_2s": 0.9042527656696223,
+      "fluctuation_rms": 10.228271745462552
+    },
+    {
+      "series": "M_cx",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.08,
+      "positive_lobe_integral_time_s": 0.03856427067723449,
+      "max_abs_acf_1_to_2s": 0.9079993127820316,
+      "fluctuation_rms": 13.293356742211246
+    },
+    {
+      "series": "M_cy",
+      "component": "u",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.09,
+      "positive_lobe_integral_time_s": 0.04767240301504253,
+      "max_abs_acf_1_to_2s": 0.9968505018253031,
+      "fluctuation_rms": 7.295189880834485
+    },
+    {
+      "series": "M_cy",
+      "component": "v",
+      "frequency_resolution_hz": 0.25,
+      "dominant_fft_frequency_hz": 2.75,
+      "dominant_period_s": 0.36363636363636365,
+      "cycles_in_4s": 11.0,
+      "first_nonpositive_acf_s": 0.08,
+      "positive_lobe_integral_time_s": 0.043287944611469696,
+      "max_abs_acf_1_to_2s": 0.9961300582681024,
+      "fluctuation_rms": 7.671505080734821
+    }
+  ],
+  "runtime": {
+    "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 13:17:27) [MSC v.1929 64 bit (AMD64)]",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1"
+  },
+  "script_sha256": "0c568a47c657e5befbe8358b854c69b257ced4c46a80993502fbfe1023a58368"
+}

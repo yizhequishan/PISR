@@ -27,6 +27,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from scipy.interpolate import griddata
+from pipeline_contracts import write_data_manifest
 
 
 REPO_ROOT = Path(__file__).resolve().parent
@@ -368,6 +369,8 @@ def write_outputs(
     meta_out = {
         "D": D,
         "U_in": float(u_in),
+        "inlet_width": float(args.inlet_width),
+        "inlet_velocity_method": "estimated" if args.u_in is None else "provided",
         "Re": "not provided in COMSOL export",
         "cyl_cx": cyl_cx,
         "cyl_cy": cyl_cy,
@@ -398,6 +401,7 @@ def write_outputs(
     }
     with open(out_dir / "meta.json", "w", encoding="utf-8") as f:
         json.dump(meta_out, f, indent=2, ensure_ascii=False)
+    write_data_manifest(out_dir)
 
     print(f"\nDataFrame: {len(df)} samples")
     print(df.describe())

@@ -1,0 +1,23 @@
+{
+  "case": "cylinder",
+  "reynolds": 20.0,
+  "architecture": "hybrid_streamfunction",
+  "hidden_layers": [64, 64, 64, 64],
+  "adam_steps": 10000,
+  "lbfgs_steps": 1000,
+  "symbolic_expression": "y_D + sin(y_D - y_D*(cos(omega*y_D)-a)/(x_D-b-d*(cos(omega*y_D)-a))-phase)",
+  "symbolic_coefficients": {
+    "omega": 0.71782035,
+    "a": 0.3375839,
+    "b": 1.7832861,
+    "d": 0.68956524,
+    "phase": 0.054244295
+  },
+  "symbolic_coefficient_radius": 0.1,
+  "symbolic_window": [3.0, 4.9, -1.9, 1.9],
+  "symbolic_taper": [0.4, 0.4],
+  "symbolic_source": "outputs_mgn/comsol/eta_sym_psi/results_strategy_b.csv; B-E14-C21; algebraically cancelled removable division; COMSOL time mean, unknown Re; structural transfer prior only, not Re=20 observations",
+  "weight_regularization": 0.0001,
+  "dtype": "float64",
+  "device": "auto"
+}

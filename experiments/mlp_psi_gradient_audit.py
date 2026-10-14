@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -27,6 +28,8 @@ import pandas as pd
 
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+from pipeline_contracts import (resolve_run_dir, selected_model, verify_fd_model, archive_provenance, dataset_manifest, evaluate, file_hash)
 DEFAULT_MAIN_MLP = REPO / "outputs_mgn" / "comsol" / "eta_sym_psi_mlp"
 DEFAULT_WORKTREE_MLP = (
     REPO
@@ -45,6 +48,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mlp-dir", type=Path, default=None)
     parser.add_argument("--fd-dir", type=Path, default=DEFAULT_FD)
+    parser.add_argument("--psi-dir", type=Path, default=REPO / "outputs_mgn/comsol/eta_sym_psi")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     return parser.parse_args()
@@ -164,7 +168,7 @@ def plot_fields(
         ("K empirical = S-M", k_empirical),
         ("K base-CFD data gradient", k_data),
         ("K psi-B", k_psi),
-        ("K MLP-psi (3-seed mean)", k_mlp),
+        ("K MLP-psi (seed mean)", k_mlp),
     ]
     limit = max(float(np.max(np.abs(field))) for _, field in fields)
     fig, axes = plt.subplots(2, 4, figsize=(19, 8.5), constrained_layout=True)
@@ -209,7 +213,10 @@ def plot_fields(
 
 def main() -> dict:
     args = parse_args()
+    args.fd_dir = resolve_run_dir(args.fd_dir)
     mlp_dir = resolve_mlp_dir(args.mlp_dir)
+    mlp_data = dataset_manifest(mlp_dir)
+    base_model = selected_model(args.psi_dir, "B")
     args.out_dir.mkdir(parents=True, exist_ok=True)
     with (mlp_dir / "meta.json").open("r", encoding="utf-8") as handle:
         mlp_meta = json.load(handle)
@@ -219,6 +226,12 @@ def main() -> dict:
     with np.load(args.fd_dir / "fd_sensitivity_fields.npz") as loaded:
         legacy = {key: loaded[key].copy() for key in loaded.files}
 
+    provenance = verify_fd_model(legacy, base_model)
+    closure_provenance = archive_provenance(fd)
+    if provenance["fd_target_id"] != closure_provenance["fd_target_id"]:
+        raise ValueError("FD and closure archives are from different runs")
+    if mlp_data["grid"] != provenance["evaluation_grid"]:
+        raise ValueError("MLP fields and FD evaluation grids differ; regenerate MLP evaluation fields")
     x_d, y_d = fd["x_D"], fd["y_D"]
     s_total = fd["R_u_S_total"]
     m_response = fd["R_u_M"]
@@ -227,14 +240,9 @@ def main() -> dict:
     k_psi = legacy["K_R_u_psi"]
     kappa = float(np.linalg.norm(k_empirical) / np.linalg.norm(s_total))
 
-    psi_results = pd.read_csv(
-        REPO
-        / "outputs_mgn"
-        / "comsol"
-        / "eta_sym_psi"
-        / "results_strategy_b.csv"
-    )
-    psi_mse = float(psi_results[psi_results["complexity"] == 21].iloc[0]["mse"])
+    xx, yy = np.meshgrid(x_d, y_d, indexing="ij")
+    psi_mse = float(np.mean((evaluate(base_model["sympy"], xx, yy) - legacy["u_base"])**2))
+    seed_provenance = {}
 
     seed_rows = []
     seed_fields = []
@@ -243,8 +251,15 @@ def main() -> dict:
         seed_dir = mlp_dir / f"seed_{seed}"
         with np.load(seed_dir / "sensitivity_fields.npz") as loaded:
             k_seed = loaded["S_R_vals"].copy()
-        seed_result = pd.read_csv(seed_dir / "sensitivity_results.csv").iloc[0]
-        seed_mse = float(seed_result["mse"])
+        with np.load(seed_dir / "predictions.npz") as loaded:
+            prediction = loaded["u_pred"].copy()
+        if k_seed.shape != s_total.shape or prediction.shape != s_total.shape:
+            raise ValueError(f"Seed {seed} fields do not match the evaluation grid")
+        if not np.isfinite(k_seed).all() or not np.isfinite(prediction).all():
+            raise ValueError(f"Seed {seed} contains non-finite fields")
+        seed_mse = float(np.mean((prediction - legacy["u_base"])**2))
+        seed_provenance[str(seed)] = {"sensitivity_fields_sha256": file_hash(seed_dir / "sensitivity_fields.npz"),
+                                      "predictions_sha256": file_hash(seed_dir / "predictions.npz")}
         seed_mses.append(seed_mse)
         seed_fields.append(k_seed)
         seed_rows.append(
@@ -283,7 +298,7 @@ def main() -> dict:
         k_data=k_data,
         field_mse=psi_mse,
         kappa=kappa,
-        seed="C21",
+        seed=base_model["expression_sha256"],
     )
     data_row = audit_row(
         "base-CFD data gradient",
@@ -321,6 +336,11 @@ def main() -> dict:
         / mlp_mean_row["epsilon_K_vs_empirical"]
     )
     result = {
+        "base_model": base_model,
+        "mlp_training_data": mlp_data,
+        "evaluation_grid": provenance["evaluation_grid"],
+        "target_id": provenance["fd_target_id"],
+        "seed_files": seed_provenance,
         "source_mlp_dir": str(mlp_dir),
         "source_grid_revision": mlp_meta.get("grid_revision", "legacy_or_unknown"),
         "source_grid_shape": [
@@ -372,9 +392,8 @@ def main() -> dict:
             f"{per_seed['actual_closure_rel_l2'].mean():.4f} +/- "
             f"{per_seed['actual_closure_rel_l2'].std(ddof=0):.4f}.",
             "",
-            "The MLP gradient is already close to the base-CFD data-gradient floor, yet "
-            "kappa amplification lifts its approximately 5.7% transport error to approximately "
-            "15.4% total-sensitivity error.",
+            "These errors refer to the recorded evaluation grid and FD target version. "
+            "The relation closure=kappa*epsilon is an algebraic conditioning check.",
         ]
     )
     (args.out_dir / "MLP_GRADIENT_AUDIT.md").write_text(

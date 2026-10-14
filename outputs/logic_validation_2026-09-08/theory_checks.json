@@ -1,0 +1,12 @@
+{
+  "manufactured_chain_rule_all_exact": true,
+  "finite_difference_halving_error_ratio_range": [
+    3.999340883865341,
+    4.000516524954047
+  ],
+  "arbitrary_random_fields_path_closure": 1.3600580023296456e-16,
+  "identical_base_divergence_free_families": true,
+  "different_intrinsic_u_response": "xi",
+  "different_intrinsic_v_response": "-eta",
+  "counterexample_scope": "Kinematics only; these families need not solve the same PDE/boundary-value problem."
+}

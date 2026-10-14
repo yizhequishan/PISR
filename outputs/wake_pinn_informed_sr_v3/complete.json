@@ -1,0 +1,9 @@
+{
+  "protocol_id": "eba1153cc185a0db3a2a6ab3c46d81c1c06af8511b837c7594c0ea8971d6b926",
+  "frozen_selection_sha256": "38935757d08350191f16c2e2277db5fc3ea01ea1b6824b55807fffc390dc4fd6",
+  "created_at": "2026-09-29T10:44:10.472348+08:00",
+  "selected_method": "gpinn_continuity",
+  "candidate_count": 3289,
+  "sparse_path_count": 702,
+  "fit_seconds": 6.3715584
+}

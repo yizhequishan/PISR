@@ -1,0 +1,24 @@
+{
+  "ranking_scores_recomputed": {
+    "R": [
+      0.01957409739662485,
+      0.048345823588826
+    ],
+    "cy": [
+      0.005722000104048415,
+      0.012972592105147345
+    ],
+    "cx": [
+      0.0031645075603075634,
+      0.002418197716884937
+    ]
+  },
+  "ranking_source": "outputs_mgn\\fd_check\\data_gradient_closure_fields.npz",
+  "ranking_source_sha256": "70c66543d74305ad6cc6313c5b63d4457b7dbe7282bbbb168862fb7d1be4c48a",
+  "markdown_links_checked": 25,
+  "missing_links": [],
+  "formula_equivalence_max_abs_error": {
+    "psi": 0.0,
+    "phi": 0.0
+  }
+}

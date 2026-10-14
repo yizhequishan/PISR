@@ -1,0 +1,439 @@
+{
+  "reference_point": {
+    "point_index": 32,
+    "xi": 3.0,
+    "eta": 0.0301587301587302,
+    "selection": "maximum baseline v temporal variance on [4,8]"
+  },
+  "event": "upward crossing of each case's [4,8] mean v at the same reference position",
+  "integration": "piecewise-linear trapezoidal integration with fractional endpoints",
+  "caveat": "different averaging functional; neither FD step convergence nor independent-cycle uncertainty is certified",
+  "self_checks": {
+    "linear_signal_fractional_endpoint_mean": true,
+    "sinusoidal_event_period": true
+  },
+  "script_sha256": "9ab4486e2a19c48f354f7eb136f090983a90b96f995832f75a91f0e731e9e0bc",
+  "raw_source_sha256": {
+    "base": "dc69f0221d72e0070cdcde93c5a04bbce094544a6e9b8cb927378a72eefc6f23",
+    "cx+": "1d9400fd7740e0c8e101a7a358895ef073cfc9e1bd3aa3c0cb20c583569ba9f8",
+    "cx-": "48802f0b761737a051b4ba2479d5b0759a52fd53abb18dd191bfd33178e8ca75",
+    "cy+": "c12e17554a6f9832391a223d8ba521191423ab53470c724c1416dda98c867ddb",
+    "cy-": "0250905234db9f197956e48effaa84f51a556a1ca84876eb1907eff0e3ce073b",
+    "R+": "e5c2e3d7ffa6cbe5a7e472a7e9eff6b7a146b624f61e925645add427d93c8b9a",
+    "R-": "bc444df4172873c3bca4ed9fe0a72f927ccbeaf95d926c1076e049b9d635bf47"
+  },
+  "events": {
+    "base": [
+      4.060114150504089,
+      4.414536311027865,
+      4.769086500807085,
+      5.123541529951047,
+      5.478034305848753,
+      5.8325460813963375,
+      6.187023332839064,
+      6.54156188209462,
+      6.895983860241652,
+      7.250566360388342,
+      7.604985304826377,
+      7.959552648054611
+    ],
+    "cx+": [
+      4.059784333643739,
+      4.414901445501723,
+      4.770187703152858,
+      5.125289478184393,
+      5.480564563958045,
+      5.835673514078538,
+      6.1909390105849775,
+      6.546057467772897,
+      6.901312700357838,
+      7.256442387221276,
+      7.611686678868573,
+      7.966828657100235
+    ],
+    "cx-": [
+      4.05755482475261,
+      4.412092740335938,
+      4.766571640743593,
+      5.121150714821425,
+      5.475610513924725,
+      5.830213652266634,
+      6.184659156597001,
+      6.539231697564423,
+      6.893716125834294,
+      7.248248528939028,
+      7.602779779758061,
+      7.9572792437622955
+    ],
+    "cy+": [
+      4.047122075746595,
+      4.399888021864988,
+      4.75253263193558,
+      5.105170423795409,
+      5.45785700586481,
+      5.8105843149315906,
+      6.163213068375785,
+      6.515867779140769,
+      6.86857807944286,
+      7.22127282885119,
+      7.5738925458359185,
+      7.926560687831696
+    ],
+    "cy-": [
+      4.043741884025726,
+      4.396455659556326,
+      4.7492633757276135,
+      5.10197993483112,
+      5.45466467915243,
+      5.807417209671758,
+      6.160227941582271,
+      6.512897600845562,
+      6.865613487654734,
+      7.218392488294302,
+      7.571153936205959,
+      7.923840220512446
+    ],
+    "R+": [
+      4.178707959504346,
+      4.545566238318739,
+      4.912491574721407,
+      5.279442084783361,
+      5.646273857451218,
+      6.013187276351626,
+      6.380175231941397,
+      6.746994400503104,
+      7.113893840263239,
+      7.480877618568794,
+      7.847722791414256
+    ],
+    "R-": [
+      4.271879497861472,
+      4.615165119138847,
+      4.95853617631066,
+      5.301894851111278,
+      5.64517630970673,
+      5.988548295745393,
+      6.331909671239595,
+      6.67518921430245,
+      7.018567480298241,
+      7.361925863245562,
+      7.705203217881778
+    ]
+  },
+  "response_metrics": [
+    {
+      "parameter": "R",
+      "component": "u",
+      "raw_M_rms": 40.628079625475635,
+      "cycle_M_rms": 40.34443088877203,
+      "cycle_vs_raw_M_rel_l2": 0.12003060057630852,
+      "cycle_halves_difference_over_cycle_M_rms": 0.00041621606329955805,
+      "cycle_first_half_vs_full_rel_l2": 0.00020809994638343473,
+      "cycle_last_half_vs_full_rel_l2": 0.0002081161171733096
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "raw_M_rms": 7.476014560980946,
+      "cycle_M_rms": 3.523247247389701,
+      "cycle_vs_raw_M_rel_l2": 0.7989071653630871,
+      "cycle_halves_difference_over_cycle_M_rms": 0.0023307590659062023,
+      "cycle_first_half_vs_full_rel_l2": 0.0011653833650135783,
+      "cycle_last_half_vs_full_rel_l2": 0.0011653757012813752
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "raw_M_rms": 1.7130067287267314,
+      "cycle_M_rms": 1.729940653459591,
+      "cycle_vs_raw_M_rel_l2": 0.11962171944059229,
+      "cycle_halves_difference_over_cycle_M_rms": 0.06632294908727666,
+      "cycle_first_half_vs_full_rel_l2": 0.036174582299903064,
+      "cycle_last_half_vs_full_rel_l2": 0.03014836678802151
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "raw_M_rms": 0.8389552885242295,
+      "cycle_M_rms": 0.7422911002508357,
+      "cycle_vs_raw_M_rel_l2": 0.32366574159226036,
+      "cycle_halves_difference_over_cycle_M_rms": 0.03573927657540791,
+      "cycle_first_half_vs_full_rel_l2": 0.019493526497837626,
+      "cycle_last_half_vs_full_rel_l2": 0.016245750080845455
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "raw_M_rms": 14.692736364603189,
+      "cycle_M_rms": 14.636059724336846,
+      "cycle_vs_raw_M_rel_l2": 0.011459426193742418,
+      "cycle_halves_difference_over_cycle_M_rms": 0.0005934922615817769,
+      "cycle_first_half_vs_full_rel_l2": 0.0003237080855372203,
+      "cycle_last_half_vs_full_rel_l2": 0.0002697842153032414
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "raw_M_rms": 1.5291101755809846,
+      "cycle_M_rms": 1.4500908564160881,
+      "cycle_vs_raw_M_rel_l2": 0.11239237453173642,
+      "cycle_halves_difference_over_cycle_M_rms": 0.004748269320082021,
+      "cycle_first_half_vs_full_rel_l2": 0.0025898548337879713,
+      "cycle_last_half_vs_full_rel_l2": 0.002158414502460635
+    }
+  ],
+  "phase_robustness": [
+    {
+      "parameter": "R",
+      "component": "u",
+      "alternative": "direction_1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.00024083990012017248
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "alternative": "direction_1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.003445922568081561
+    },
+    {
+      "parameter": "R",
+      "component": "u",
+      "alternative": "direction_1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "alternative": "direction_1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0
+    },
+    {
+      "parameter": "R",
+      "component": "u",
+      "alternative": "direction_1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 2.6552116922053e-05
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "alternative": "direction_1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0003639432659039191
+    },
+    {
+      "parameter": "R",
+      "component": "u",
+      "alternative": "direction_-1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.00035831314593083325
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "alternative": "direction_-1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.004885091656274195
+    },
+    {
+      "parameter": "R",
+      "component": "u",
+      "alternative": "direction_-1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0004548100157185888
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "alternative": "direction_-1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0013173536971161877
+    },
+    {
+      "parameter": "R",
+      "component": "u",
+      "alternative": "direction_-1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0005090372222809022
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "alternative": "direction_-1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0030159397184596915
+    },
+    {
+      "parameter": "R",
+      "component": "u",
+      "alternative": "temporal_subsample_dt_0.02",
+      "change_from_primary_cycle_M_rel_l2": 0.0005561682303737652
+    },
+    {
+      "parameter": "R",
+      "component": "v",
+      "alternative": "temporal_subsample_dt_0.02",
+      "change_from_primary_cycle_M_rel_l2": 0.007816069174736014
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "alternative": "direction_1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.002351259313705939
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "alternative": "direction_1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.006272497071773381
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "alternative": "direction_1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "alternative": "direction_1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "alternative": "direction_1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0016132838460187356
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "alternative": "direction_1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0035257712481659618
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "alternative": "direction_-1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0072619855553235375
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "alternative": "direction_-1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.005503781585415884
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "alternative": "direction_-1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.006631710019340406
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "alternative": "direction_-1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.005626320979978255
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "alternative": "direction_-1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.006708250043072277
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "alternative": "direction_-1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.010212867115355892
+    },
+    {
+      "parameter": "cx",
+      "component": "u",
+      "alternative": "temporal_subsample_dt_0.02",
+      "change_from_primary_cycle_M_rel_l2": 0.0013136619570125647
+    },
+    {
+      "parameter": "cx",
+      "component": "v",
+      "alternative": "temporal_subsample_dt_0.02",
+      "change_from_primary_cycle_M_rel_l2": 0.003808155414257333
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "alternative": "direction_1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 2.440898704462335e-05
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "alternative": "direction_1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.00034173753135454554
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "alternative": "direction_1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "alternative": "direction_1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "alternative": "direction_1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 1.9274504826888878e-05
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "alternative": "direction_1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.00023736404949183018
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "alternative": "direction_-1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0001858204631304539
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "alternative": "direction_-1_level_-0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0016774527771337886
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "alternative": "direction_-1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.00021212944611463468
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "alternative": "direction_-1_level_0",
+      "change_from_primary_cycle_M_rel_l2": 0.0019518107816917465
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "alternative": "direction_-1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.00019101087966772972
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "alternative": "direction_-1_level_0.5",
+      "change_from_primary_cycle_M_rel_l2": 0.0021018019839863507
+    },
+    {
+      "parameter": "cy",
+      "component": "u",
+      "alternative": "temporal_subsample_dt_0.02",
+      "change_from_primary_cycle_M_rel_l2": 7.136767810725628e-05
+    },
+    {
+      "parameter": "cy",
+      "component": "v",
+      "alternative": "temporal_subsample_dt_0.02",
+      "change_from_primary_cycle_M_rel_l2": 0.0008996822932839248
+    }
+  ]
+}

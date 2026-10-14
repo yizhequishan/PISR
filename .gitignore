@@ -26,6 +26,7 @@ cy[+-].txt
 
 # Local Codex scratch artifacts
 .codex_tmp/
+.codex/
 
 # Temporary reference pages and document-rendering QA artifacts
 _arxiv_abs.html
@@ -43,3 +44,18 @@ outputs_mgn/**/*_run.log
 .idea/
 .obsidian/
 .skill-build/
+
+# Reproducible PINN runs: weights, sampled fields and converted CFD snapshots
+outputs_pinn/
+
+# Regenerable solver files, search checkpoints and packaged run snapshots
+outputs/**/*.mph
+outputs/**/*.pkl
+outputs/**/*.bak
+outputs/**/*.tar.gz
+
+# Large cached COMSOL time series; keep audit summaries and derived fields
+outputs/a0_label_reliability_2026-09-09/time_series/
+
+# Local artifacts from the separate Forcing-KV project
+outputs/pad_logm_recovery_20261008/

@@ -1,0 +1,5 @@
+{
+  "status": "stopped_for_verified_performance_optimization",
+  "completed_fits": 5,
+  "reason": "Type-stable Julia loss preserves exact arithmetic and was bitwise equal on four expressions; restart all seeds with the same search budget in a new output directory. No test evaluations performed."
+}

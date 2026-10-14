@@ -1,7 +1,7 @@
 """
-Step 4: Euler Operator Sensitivity Analysis
-  Maps SR formula u* = f(x/D, y/D) to geometric parameter sensitivity S_R
-  via Euler operator: S_R = -(2/D) * [xi * df/dxi + eta * df/deta]
+Step 4: Euler Coordinate Transport Analysis
+  Maps SR formula u* = f(x/D, y/D) to coordinate transport K_R
+  via Euler operator: K_R = -(2/D) * [xi * df/dxi + eta * df/deta]
 
 This script can run on the default outputs_mgn/ directory or on a self-contained
 sub-run directory created by step2_pisr.py.
@@ -9,6 +9,8 @@ sub-run directory created by step2_pisr.py.
 import argparse
 import json
 import os
+from pathlib import Path
+from pipeline_contracts import resolve_run_dir, load_strategies, selected_models, dataset_manifest, atomic_json
 
 import numpy as np
 import pandas as pd
@@ -22,7 +24,7 @@ from matplotlib import rcParams
 rcParams["font.size"] = 11
 rcParams["figure.dpi"] = 150
 
-BASE_OUT_DIR = r"D:\keyan\cylinder_flow_pisr\outputs_mgn"
+BASE_OUT_DIR = str(Path(__file__).resolve().parent / "outputs_mgn")
 SELF_CHECK_DELTA_FRAC = 0.05
 xi_sym, eta_sym = sp.symbols("x_D y_D")
 SUPPORTED_EULER_SYMBOLS = {xi_sym, eta_sym}
@@ -108,11 +110,12 @@ def compute_euler_sensitivity(sympy_expr_str, X_data, D_val):
 
 
 def compute_translation_sensitivity(sympy_expr_str, X_data, D_val):
-    """Translation operator sensitivities: S_cx = -(1/D) df/dxi, S_cy = -(1/D) df/deta.
+    """Coordinate transport: K_cx = -(1/D) df/dxi, K_cy = -(1/D) df/deta.
 
-    These are the c_x and c_y geometric sensitivities derived by chain rule from
+    These are the c_x and c_y frozen-field transport terms derived by chain rule from
     xi = (x - c_x)/D and eta = (y - c_y)/D. They are siblings of the Euler scaling
-    sensitivity S_R and obey the identity S_R = 2 (xi*S_cx + eta*S_cy).
+    transport K_R and obey K_R = 2 (xi*K_cx + eta*K_cy).
+    The returned S_* keys are compatibility aliases for K, not total response T.
     """
     expr = sp.sympify(sympy_expr_str)
     unsupported = expr.free_symbols - SUPPORTED_EULER_SYMBOLS
@@ -148,7 +151,7 @@ def compute_translation_sensitivity(sympy_expr_str, X_data, D_val):
 
 
 def verify_euler_decomposition(S_R_vals, S_cx_vals, S_cy_vals, X_data):
-    """Math identity: S_R = 2 (xi * S_cx + eta * S_cy). Should hold to machine precision."""
+    """Math identity: K_R = 2 (xi * K_cx + eta * K_cy). Should hold to machine precision."""
     xi = X_data[:, 0]
     eta = X_data[:, 1]
     S_R_recon = 2.0 * (xi * S_cx_vals + eta * S_cy_vals)
@@ -210,11 +213,13 @@ def select_best_supported(sens_df, strategy, preferred_metric):
 
 
 def load_inputs(run_out_dir):
-    df = pd.read_csv(os.path.join(run_out_dir, "wake_data.csv"))
+    run_out_dir = resolve_run_dir(run_out_dir)
+    strategies = load_strategies(run_out_dir)
+    df = pd.read_csv(os.path.join(run_out_dir, "wake_data.csv")).sort_values(["x_D", "y_D"]).reset_index(drop=True)
     with open(os.path.join(run_out_dir, "meta.json"), encoding="utf-8") as f:
         meta = json.load(f)
-    res_a = pd.read_csv(os.path.join(run_out_dir, "results_strategy_a.csv"))
-    res_b = pd.read_csv(os.path.join(run_out_dir, "results_strategy_b.csv"))
+    res_a = strategies.get("A", pd.DataFrame())
+    res_b = strategies.get("B", pd.DataFrame())
     return df, meta, res_a, res_b
 
 
@@ -223,6 +228,9 @@ def main():
     run_out_dir = resolve_run_out_dir(
         BASE_OUT_DIR, out_dir=args.out_dir, out_subdir=args.out_subdir
     )
+    run_out_dir = resolve_run_dir(run_out_dir)
+    chosen = selected_models(run_out_dir)
+    data_version = dataset_manifest(run_out_dir)
     fig_dir = os.path.join(run_out_dir, "figures")
     os.makedirs(fig_dir, exist_ok=True)
 
@@ -239,7 +247,7 @@ def main():
 
     print(f"Data loaded: {len(df)} points, n_x={n_x}, n_y={n_y}, D={D:.4f}")
     print("\n" + "=" * 60)
-    print("Euler Operator Sensitivity Analysis")
+    print("Euler Coordinate Transport Analysis")
     print("=" * 60)
 
     sensitivity_rows = []
@@ -263,6 +271,8 @@ def main():
                 sensitivity_rows.append(
                     {
                         "strategy": label,
+                        "equation_index": int(row.get("equation_index", row.name)),
+                        "quantity": "coordinate_transport_K",
                         "complexity": row["complexity"],
                         "mse": row["mse"],
                         "combined_loss": row["combined_loss"]
@@ -292,8 +302,8 @@ def main():
                 degenerate_flag = "[xi-DEGEN]" if trans["S_cx_integrated"] < 1e-10 else ""
                 print(
                     f"  C={row['complexity']:>2.0f}  MSE={row['mse']:.6f}  "
-                    f"|S_R|={S_R_int:.4f}  |S_cx|={trans['S_cx_integrated']:.4e}  "
-                    f"|S_cy|={trans['S_cy_integrated']:.4f}  "
+                    f"|K_R|={S_R_int:.4f}  |K_cx|={trans['S_cx_integrated']:.4e}  "
+                    f"|K_cy|={trans['S_cy_integrated']:.4f}  "
                     f"identity relL2={ident['rel_l2']:.2e}  {degenerate_flag}"
                 )
             except Exception as exc:
@@ -316,9 +326,16 @@ def main():
     if sens_df.empty:
         raise RuntimeError("No Euler-compatible formulas were found in the selected run directory.")
 
+    for column in list(sens_df.columns):
+        if column.startswith(("S_R_", "S_cx_", "S_cy_")):
+            sens_df["K" + column[1:]] = sens_df[column]
+    atomic_json(run_out_dir / "transport_manifest.json", {"schema_version": 1,
+        "quantity": "coordinate_transport_K", "legacy_S_columns": "aliases for K, not total T",
+        "training_data": chosen["training_data"], "evaluation_data": data_version,
+        "selected_models": chosen["models"], "self_check": "frozen-formula Taylor check, not CFD validation"})
     sens_path = os.path.join(run_out_dir, "sensitivity_results.csv")
     sens_df.to_csv(sens_path, index=False)
-    print("\nSensitivity results saved to sensitivity_results.csv")
+    print("\nCoordinate transport results saved to sensitivity_results.csv")
 
     self_check_table = sens_df[
         [
@@ -343,8 +360,17 @@ def main():
         pd.DataFrame(skipped_rows).to_csv(skipped_path, index=False)
         print("Skipped-formula table saved to sensitivity_skipped.csv")
 
-    best_a_idx, best_a_metric = select_best_supported(sens_df, "A", "mse")
-    best_b_idx, best_b_metric = select_best_supported(sens_df, "B", "combined_loss")
+    def chosen_index(label):
+        if label not in chosen["models"]:
+            return None, None
+        model = chosen["models"][label]
+        matches = sens_df[(sens_df.strategy == label) & (sens_df.equation_index == model["equation_index"])]
+        if len(matches) != 1:
+            raise ValueError(f"Selected {label} model could not be evaluated by Step 4")
+        return matches.index[0], model["selection_metric"]
+
+    best_a_idx, best_a_metric = chosen_index("A")
+    best_b_idx, best_b_metric = chosen_index("B")
 
     selected = []
     for label, idx, metric in [
@@ -400,13 +426,13 @@ def main():
             f"(C={row['complexity']:.0f}, by {item['selection_metric']})"
         )
         ax.set_aspect("equal")
-        plt.colorbar(im, ax=ax, label=r"$S_R = \partial u^*/\partial R$")
+        plt.colorbar(im, ax=ax, label=r"$K_R$ (frozen-field transport)")
 
-    fig.suptitle(r"Sensitivity of $u^*$ to Cylinder Radius $R$ (Euler Operator)", fontsize=13, y=1.02)
+    fig.suptitle(r"Frozen-field radius transport $K_R$; total response requires $M_R$", fontsize=13, y=1.02)
     fig.tight_layout()
     fig.savefig(os.path.join(fig_dir, "07_SR_sensitivity_heatmap.png"), bbox_inches="tight")
     plt.close()
-    print("\nFig 7: S_R sensitivity heatmap saved")
+    print("\nFig 7: K_R transport heatmap saved")
 
     u_true_2d = y_true.reshape(n_x, n_y)
     x_stations = [0, n_x // 2, n_x - 1]
@@ -430,15 +456,15 @@ def main():
             )
         ax.axhline(y=0, color="k", linestyle=":", alpha=0.3)
         ax.set_xlabel("y/D")
-        ax.set_ylabel(r"$S_R = \partial u^*/\partial R$")
+        ax.set_ylabel(r"$K_R$ (frozen-field transport)")
         ax.set_title(f"x/D = {x_vals[ix]:.2f}")
         ax.legend(loc="upper left", fontsize=9)
 
-    fig.suptitle(r"$S_R$ Cross-Section Profiles (with $u^*$ background)", fontsize=13, y=1.02)
+    fig.suptitle(r"$K_R$ Cross-Section Profiles (with $u^*$ background)", fontsize=13, y=1.02)
     fig.tight_layout()
     fig.savefig(os.path.join(fig_dir, "08_SR_cross_section_profiles.png"), bbox_inches="tight")
     plt.close()
-    print("Fig 8: S_R cross-section profiles saved")
+    print("Fig 8: K_R cross-section profiles saved")
 
     sens_a = sens_df[sens_df["strategy"] == "A"]
     sens_b = sens_df[sens_df["strategy"] == "B"]
@@ -449,8 +475,8 @@ def main():
     if not sens_b.empty:
         ax1.plot(sens_b["complexity"], sens_b["S_R_integrated"], "s-", color="coral", label="Strategy B")
     ax1.set_xlabel("Formula Complexity")
-    ax1.set_ylabel(r"$\bar{S}_R$ (integrated sensitivity)")
-    ax1.set_title(r"Integrated $|S_R|$ vs Complexity")
+    ax1.set_ylabel(r"$\bar{K}_R$ (mean absolute transport)")
+    ax1.set_title(r"Integrated $|K_R|$ vs Complexity")
     ax1.legend()
     ax1.grid(True, alpha=0.3)
 
@@ -479,8 +505,8 @@ def main():
             marker="s",
         )
     ax2.set_xlabel("MSE")
-    ax2.set_ylabel(r"$\bar{S}_R$")
-    ax2.set_title(r"MSE vs Integrated $|S_R|$")
+    ax2.set_ylabel(r"$\bar{K}_R$")
+    ax2.set_title(r"MSE vs Integrated $|K_R|$")
     ax2.legend()
     ax2.grid(True, alpha=0.3)
     if sc_a is not None:
@@ -488,11 +514,11 @@ def main():
     if sc_b is not None:
         plt.colorbar(sc_b, ax=ax2, label="Complexity (B)", pad=0.02, shrink=0.6)
 
-    fig.suptitle("Sensitivity Stability Across Pareto Front", fontsize=13, y=1.02)
+    fig.suptitle("Coordinate Transport Across Pareto Front", fontsize=13, y=1.02)
     fig.tight_layout()
     fig.savefig(os.path.join(fig_dir, "09_sensitivity_vs_complexity.png"), bbox_inches="tight")
     plt.close()
-    print("Fig 9: Sensitivity vs complexity saved")
+    print("Fig 9: Transport vs complexity saved")
 
     best_a_row_for_fig10 = None
     if best_a_idx is not None:
@@ -501,39 +527,18 @@ def main():
         best_a_row_for_fig10 = selected[0]["row"]
 
     best_expr = sp.sympify(best_a_row_for_fig10["sympy"])
-    df_deta_expr = sp.diff(best_expr, eta_sym)
-    df_deta_func = sp.lambdify([xi_sym, eta_sym], df_deta_expr, modules="numpy")
-
     mid_ix = n_x // 2
     eta_profile = y_vals
-    df_deta_profile = df_deta_func(x_vals[mid_ix] * np.ones_like(eta_profile), eta_profile)
-    if np.isscalar(df_deta_profile):
-        df_deta_profile = np.full_like(eta_profile, float(df_deta_profile))
-    df_deta_profile = np.array(df_deta_profile, dtype=float)
-    euler_profile = eta_profile * df_deta_profile
-
+    xi_profile = np.full_like(eta_profile, x_vals[mid_ix])
+    terms = [xi_sym * sp.diff(best_expr, xi_sym), eta_sym * sp.diff(best_expr, eta_sym)]
+    values = [ensure_numpy_array(sp.lambdify((xi_sym, eta_sym), term, "numpy")(xi_profile, eta_profile), len(eta_profile)) for term in terms]
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-    axes[0].plot(eta_profile, df_deta_profile, "b-", linewidth=2)
-    axes[0].set_xlabel(r"$\eta = y/D$")
-    axes[0].set_ylabel(r"$df/d\eta$")
-    axes[0].set_title(r"Velocity Gradient $df/d\eta$")
-    axes[0].axhline(y=0, color="k", linestyle=":", alpha=0.3)
-    axes[0].grid(True, alpha=0.3)
-
-    axes[1].plot(eta_profile, eta_profile, "g-", linewidth=2)
-    axes[1].set_xlabel(r"$\eta = y/D$")
-    axes[1].set_ylabel(r"$\eta$")
-    axes[1].set_title(r"Position Factor $\eta = y/D$")
-    axes[1].axhline(y=0, color="k", linestyle=":", alpha=0.3)
-    axes[1].grid(True, alpha=0.3)
-
-    axes[2].plot(eta_profile, euler_profile, "r-", linewidth=2)
-    axes[2].fill_between(eta_profile, 0, euler_profile, alpha=0.2, color="red")
-    axes[2].set_xlabel(r"$\eta = y/D$")
-    axes[2].set_ylabel(r"$\mathcal{E}[f] = \eta \cdot df/d\eta$")
-    axes[2].set_title(r"Euler Operator $\mathcal{E}[f]$")
-    axes[2].axhline(y=0, color="k", linestyle=":", alpha=0.3)
-    axes[2].grid(True, alpha=0.3)
+    for axis, profile, title in zip(axes, [values[0], values[1], values[0] + values[1]],
+                                    [r"$\xi\,\partial_\xi f$", r"$\eta\,\partial_\eta f$", r"$\mathcal{E}[f]=\xi\partial_\xi f+\eta\partial_\eta f$"]):
+        axis.plot(eta_profile, profile, linewidth=2)
+        axis.set(xlabel="eta", ylabel="Euler term", title=title)
+        axis.axhline(0, color="k", linestyle=":", alpha=.3)
+        axis.grid(alpha=.3)
 
     formula_latex = sp.latex(best_expr)
     fig.suptitle(
@@ -568,7 +573,7 @@ def main():
             delta_euler_2d[mid_ix, :],
             "r--",
             linewidth=2,
-            label=r"$S_R\,\Delta R$",
+            label=r"$K_R\,\Delta R$",
         )
         ax_profile.axhline(y=0, color="k", linestyle=":", alpha=0.3)
         ax_profile.set_xlabel("y/D")
@@ -599,7 +604,7 @@ def main():
         ax_scatter.grid(True, alpha=0.3)
 
     fig.suptitle(
-        f"Pure Mathematical Self-Check for Euler Sensitivity "
+        f"Frozen-formula Taylor Check for Coordinate Transport "
         f"(Delta D/D={SELF_CHECK_DELTA_FRAC:.0%})",
         fontsize=13,
         y=1.02,
@@ -623,9 +628,9 @@ def main():
         scy_lim = max(scy_lim, 1e-12)
 
         panels = [
-            ("S_R_2d", sr_lim, r"$S_R = -\frac{2}{D}\,\mathcal{E}[f]$", "Radius R"),
-            ("S_cx_2d", scx_lim, r"$S_{c_x} = -\frac{1}{D}\,\partial f/\partial \xi$", "Center c_x"),
-            ("S_cy_2d", scy_lim, r"$S_{c_y} = -\frac{1}{D}\,\partial f/\partial \eta$", "Center c_y"),
+            ("S_R_2d", sr_lim, r"$K_R = -\frac{2}{D}\,\mathcal{E}[f]$", "Radius R"),
+            ("S_cx_2d", scx_lim, r"$K_{c_x} = -\frac{1}{D}\,\partial f/\partial \xi$", "Center c_x"),
+            ("S_cy_2d", scy_lim, r"$K_{c_y} = -\frac{1}{D}\,\partial f/\partial \eta$", "Center c_y"),
         ]
         for col_idx, (key, lim, eq_label, param_label) in enumerate(panels):
             ax = axes[row_idx, col_idx]
@@ -647,11 +652,11 @@ def main():
             ax.set_title(
                 f"Strategy {item['strategy']} (C={row['complexity']:.0f}) -- "
                 f"{param_label}\n"
-                rf"$\bar{{|S|}}={mean_abs:.4f}$, $|S|_\max={lim:.4f}$"
+                rf"$\bar{{|K|}}={mean_abs:.4f}$, $|K|_\max={lim:.4f}$"
             )
 
     fig.suptitle(
-        "Geometric Sensitivity Fields: Radius vs Cylinder-Center Translations",
+        "Coordinate Transport K: Radius and Cylinder-Center Translations",
         fontsize=13,
         y=1.005,
     )
@@ -661,7 +666,7 @@ def main():
         bbox_inches="tight",
     )
     plt.close()
-    print("Fig 12: three-parameter sensitivity heatmap saved")
+    print("Fig 12: three-parameter transport heatmap saved")
 
     # ---- Fig 13: Math identity parity S_R == 2*(xi*S_cx + eta*S_cy) ----
     fig, axes = plt.subplots(1, len(selected), figsize=(7 * len(selected), 6), squeeze=False)
@@ -672,8 +677,8 @@ def main():
         ax.scatter(S_R_flat, S_R_recon_flat, s=14, alpha=0.35, edgecolors="none")
         lim = max(np.max(np.abs(S_R_flat)), np.max(np.abs(S_R_recon_flat)), 1e-8)
         ax.plot([-lim, lim], [-lim, lim], "k--", linewidth=1, label="y=x")
-        ax.set_xlabel(r"$S_R$ (Euler operator)")
-        ax.set_ylabel(r"$2(\xi S_{c_x} + \eta S_{c_y})$ (translation decomposition)")
+        ax.set_xlabel(r"$K_R$ (Euler operator)")
+        ax.set_ylabel(r"$2(\xi K_{c_x} + \eta K_{c_y})$ (translation decomposition)")
         ax.set_title(
             f"Strategy {item['strategy']} (C={item['row']['complexity']:.0f})\n"
             f"identity rel L2 = {item['identity_rel_l2']:.2e}, "
@@ -683,7 +688,7 @@ def main():
         ax.grid(True, alpha=0.3)
         ax.set_aspect("equal")
     fig.suptitle(
-        r"Math Identity: $S_R = 2(\xi\,S_{c_x} + \eta\,S_{c_y})$",
+        r"Math Identity: $K_R = 2(\xi\,K_{c_x} + \eta\,K_{c_y})$",
         fontsize=13,
         y=1.02,
     )
@@ -696,7 +701,7 @@ def main():
     print("Fig 13: Euler-translation identity parity saved")
 
     print("\n" + "=" * 60)
-    print("EULER OPERATOR SENSITIVITY SUMMARY")
+    print("COORDINATE TRANSPORT SUMMARY: K (TOTAL T=K+M)")
     print("=" * 60)
 
     for label, idx in [("A", best_a_idx), ("B", best_b_idx)]:
@@ -716,34 +721,33 @@ def main():
         print(f"  LaTeX: u^* = {sp.latex(expr)}")
         print(f"  Euler operator: E[f] = {euler_simplified}")
         print(f"  LaTeX: \\mathcal{{E}}[f] = {sp.latex(euler_simplified)}")
-        print(f"  S_R = -(2/D) * E[f]")
+        print(f"  K_R = -(2/D) * E[f]")
         S_R_sym = sp.Rational(-2, 1) / sp.Symbol("D") * euler_simplified
-        print(f"  LaTeX: S_R = {sp.latex(S_R_sym)}")
+        print(f"  LaTeX: K_R = {sp.latex(S_R_sym)}")
 
-    cyl_cy = meta.get("cyl_cy", "N/A")
-    print("\n--- Physical Interpretation ---")
-    print("1. S_R > 0: increasing R increases local u* (flow acceleration)")
-    print("2. S_R < 0: increasing R decreases local u* (more blockage/wake deficit)")
-    print(f"3. S_R = 0 at y/D = 0 (cylinder center axis, physical y={cyl_cy}):")
-    print("   Coordinate origin is at cylinder center, so y/D=0 IS the wake centerline.")
-    print("   Euler operator has eta as multiplicative factor -> S_R exactly zero here.")
-    print("4. |S_R| peaks at intermediate y/D: maximum sensitivity in the shear layer")
-    print("   region, consistent with wake width scaling with D")
+    print("\n--- Coordinate transport interpretation ---")
+    print("K_R describes resampling a frozen normalized field. Total CFD response is T_R=K_R+M_R.")
+    print("At eta=0, K_R=-(2/D)*xi*df/dxi; it is not generally zero.")
+    print("The self-check tests the same formula's Taylor expansion, not a perturbed CFD solution.")
+    for item in selected:
+        expression = sp.sympify(item["row"]["sympy"])
+        centerline = -(2.0 / D) * xi_sym * sp.diff(expression, xi_sym).subs(eta_sym, 0)
+        print(f"  Strategy {item['strategy']} centerline K_R: {centerline}")
 
-    print("\n--- Integrated Sensitivity Ranking (best per strategy by MSE) ---")
+    print("\n--- Selected-model transport magnitudes ---")
     for label in ["A", "B"]:
-        sub = sens_df[sens_df["strategy"] == label].sort_values("mse")
-        if sub.empty:
+        idx, _ = chosen_index(label)
+        if idx is None:
             print(f"  Strategy {label}: no Euler-compatible formula")
             continue
-        best = sub.iloc[0]
+        best = sens_df.loc[idx]
         print(
-            f"  Strategy {label}: |S_R|_mean ={best['S_R_integrated']:.4f}, "
-            f"|S_cx|_mean ={best['S_cx_integrated']:.4e}, "
-            f"|S_cy|_mean ={best['S_cy_integrated']:.4f}"
+            f"  Strategy {label}: |K_R|_mean ={best['S_R_integrated']:.4f}, "
+            f"|K_cx|_mean ={best['S_cx_integrated']:.4e}, "
+            f"|K_cy|_mean ={best['S_cy_integrated']:.4f}"
         )
 
-    print("\n--- xi-Degeneracy Audit (S_cx_mean across full Pareto front) ---")
+    print("\n--- xi-Degeneracy Audit (K_cx_mean across full Pareto front) ---")
     for label in ["A", "B"]:
         sub = sens_df[sens_df["strategy"] == label].sort_values("complexity")
         if sub.empty:
@@ -752,17 +756,17 @@ def main():
         n_degen = int((sub["S_cx_integrated"] < 1e-10).sum())
         max_scx = float(sub["S_cx_integrated"].max())
         print(
-            f"  Strategy {label}: {n_degen}/{n_total} formulas have |S_cx| < 1e-10 "
-            f"(structurally xi-degenerate). Max |S_cx|_mean = {max_scx:.4e}."
+            f"  Strategy {label}: {n_degen}/{n_total} formulas have |K_cx| < 1e-10 "
+            f"(structurally xi-degenerate). Max |K_cx|_mean = {max_scx:.4e}."
         )
         if n_degen / max(n_total, 1) > 0.5:
             print(
                 f"  WARNING: >50% of Strategy {label} Pareto front is xi-degenerate. "
-                "This makes c_x sensitivity structurally zero. Consider re-running "
+                "This makes frozen-field c_x transport structurally zero. Consider re-running "
                 "Step 2 with stream-function objective or Sobolev xi-grad penalty."
             )
 
-    print("\n--- Math Identity Check: S_R == 2(xi*S_cx + eta*S_cy) ---")
+    print("\n--- Math Identity Check: K_R == 2(xi*K_cx + eta*K_cy) ---")
     for item in selected:
         rel_l2 = item["identity_rel_l2"]
         max_abs = item["identity_max_abs"]

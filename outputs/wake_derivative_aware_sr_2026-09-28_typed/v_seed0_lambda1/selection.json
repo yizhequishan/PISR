@@ -1,0 +1,49 @@
+{
+  "protocol_id": "eb99ce0181c38441879d4b0f69bb3d37aa818373937c194a895e2abdd6319cb6",
+  "component": "v",
+  "seed": 0,
+  "lambda_grad": 1.0,
+  "seconds": 38.069575800000024,
+  "choices": {
+    "value": {
+      "equation_index": 13,
+      "complexity": 22,
+      "train_loss": 0.1702880735353057,
+      "expression": "(x*sin(y + sin(y)) - sin(y/1.007803905396067) - sin(y + y + sin(y)))*0.10761401822690944",
+      "value_mse": 0.00026191503555068825,
+      "dx_mse": 0.000959492651895482,
+      "dy_mse": 0.0008441312430345401,
+      "value_rel_l2": 0.13036750581533976,
+      "dx_rel_l2": 0.298809060848327,
+      "dy_rel_l2": 0.11946311862360678,
+      "gradient_rel_l2": 0.16063920447792418,
+      "gradient_mse": 0.000901811947465011,
+      "K_R_rel_l2": 0.23617705503266284,
+      "normalized_value": 0.018265596519887937,
+      "normalized_gradient": 0.06406846965458035,
+      "h1": 0.08233406617446828,
+      "status": "ok",
+      "expression_sha256": "9a906de9b91073b06edd1994909ee2f97448d2dfda4db7b85605662e09b38512"
+    },
+    "h1": {
+      "equation_index": 13,
+      "complexity": 22,
+      "train_loss": 0.1702880735353057,
+      "expression": "(x*sin(y + sin(y)) - sin(y/1.007803905396067) - sin(y + y + sin(y)))*0.10761401822690944",
+      "value_mse": 0.00026191503555068825,
+      "dx_mse": 0.000959492651895482,
+      "dy_mse": 0.0008441312430345401,
+      "value_rel_l2": 0.13036750581533976,
+      "dx_rel_l2": 0.298809060848327,
+      "dy_rel_l2": 0.11946311862360678,
+      "gradient_rel_l2": 0.16063920447792418,
+      "gradient_mse": 0.000901811947465011,
+      "K_R_rel_l2": 0.23617705503266284,
+      "normalized_value": 0.018265596519887937,
+      "normalized_gradient": 0.06406846965458035,
+      "h1": 0.08233406617446828,
+      "status": "ok",
+      "expression_sha256": "9a906de9b91073b06edd1994909ee2f97448d2dfda4db7b85605662e09b38512"
+    }
+  }
+}

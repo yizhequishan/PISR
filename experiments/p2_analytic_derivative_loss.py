@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import pickle
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -32,6 +33,8 @@ from scipy.stats import spearmanr
 
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+from pipeline_contracts import array_hash, content_hash
 DEFAULT_OUT = REPO / "outputs" / "p2_analytic_derivative_loss"
 
 
@@ -82,6 +85,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--n-train", type=int, default=512)
+    parser.add_argument("--n-validation", type=int, default=512)
     parser.add_argument("--test-grid", type=int, default=151)
     parser.add_argument("--niterations", type=int, default=35)
     parser.add_argument("--populations", type=int, default=12)
@@ -367,6 +371,21 @@ def select_row(frame: pd.DataFrame, source: str, metric: str) -> pd.Series:
     return subset.loc[subset[metric].idxmin()]
 
 
+def test_row_for_selection(selection: pd.Series, test_frame: pd.DataFrame) -> pd.Series:
+    """Retrieve the frozen validation choice; never search again using test errors."""
+    rows = test_frame[(test_frame.source == selection.source) &
+                      (test_frame.equation_index == selection.equation_index)]
+    if len(rows) != 1 or rows.iloc[0]["status"] != "ok":
+        raise ValueError("Validation-selected candidate failed on test data; do not reselect")
+    row = rows.iloc[0].copy()
+    if row["expression"] != selection["expression"]:
+        raise ValueError("Candidate expression changed between validation and testing")
+    for key in ("value_mse", "gradient_mse", "normalized_h1_score"):
+        row["validation_" + key] = float(selection[key])
+    row["expression_sha256"] = content_hash(str(sp.sympify(row["expression"])))
+    return row
+
+
 def plot_results(
     frame: pd.DataFrame,
     out_dir: Path,
@@ -397,7 +416,7 @@ def plot_results(
     axes[0].set_yscale("log")
     axes[0].set_xlabel("held-out value MSE")
     axes[0].set_ylabel("held-out analytic-gradient MSE")
-    axes[0].set_title("Value and derivative errors are separate objectives")
+    axes[0].set_title("Post-selection test diagnostics (no test-set reselection)")
     axes[0].grid(alpha=0.25)
     axes[0].legend()
 
@@ -446,7 +465,7 @@ def main() -> None:
     value_model.fit(features, target_train, variable_names=["x", "y"])
 
     print("Fitting analytic-derivative PySR model ...")
-    derivative_model = make_model(args, DERIVATIVE_OBJECTIVE, args.seed + 1)
+    derivative_model = make_model(args, DERIVATIVE_OBJECTIVE, args.seed)
     derivative_model.fit(features, target_train, variable_names=["x", "y"])
 
     value_model.equations_.to_csv(args.out_dir / "raw_value_equations.csv", index=False)
@@ -457,6 +476,18 @@ def main() -> None:
         pickle.dump(value_model, handle)
     with (args.out_dir / "derivative_model.pkl").open("wb") as handle:
         pickle.dump(derivative_model, handle)
+
+    validation_rng = np.random.default_rng(args.seed + 100003)
+    validation_points = validation_rng.uniform(-1.0, 1.0, size=(args.n_validation, 2))
+    vx, vy = validation_points.T
+    validation_frame = pd.concat([
+        evaluate_pareto(model, source, vx, vy, truth(vx, vy), truth_dx(vx, vy), truth_dy(vx, vy),
+                        value_scale, dx_scale, dy_scale, args.lambda_grad)
+        for model, source in ((value_model, "value_only"), (derivative_model, "analytic_derivative"))
+    ], ignore_index=True)
+    validation_frame.to_csv(args.out_dir / "validation_candidate_metrics.csv", index=False)
+    value_choice = select_row(validation_frame, "value_only", "value_mse")
+    derivative_choice = select_row(validation_frame, "analytic_derivative", "normalized_h1_score")
 
     axis = np.linspace(-1.0, 1.0, args.test_grid)
     x_grid, y_grid = np.meshgrid(axis, axis, indexing="ij")
@@ -508,10 +539,21 @@ def main() -> None:
     )
     all_candidates.to_csv(args.out_dir / "candidate_metrics.csv", index=False)
 
-    value_selected = select_row(all_candidates, "value_only", "value_mse")
-    derivative_selected = select_row(
-        all_candidates, "analytic_derivative", "normalized_h1_score"
-    )
+    value_selected = test_row_for_selection(value_choice, all_candidates)
+    derivative_selected = test_row_for_selection(derivative_choice, all_candidates)
+    test_points = np.column_stack([x_test, y_test])
+    split_manifest = {
+        "protocol": "train_validate_select_then_test_v2",
+        "train": {"n": len(features), "sha256": array_hash(features),
+                  "target_sha256": array_hash(target_train, dx_train, dy_train)},
+        "validation": {"n": len(validation_points), "sha256": array_hash(validation_points),
+                       "target_sha256": array_hash(truth(vx, vy), truth_dx(vx, vy), truth_dy(vx, vy))},
+        "test": {"n": len(test_points), "sha256": array_hash(test_points),
+                 "target_sha256": array_hash(target_test, dx_test, dy_test)},
+        "selection_metrics": {"value_only": "validation_value_mse", "analytic_derivative": "validation_normalized_h1_score"},
+        "test_candidate_diagnostics": "post-selection only; no reselection on test failures",
+    }
+    np.savez_compressed(args.out_dir / "evaluation_splits.npz", train=features, validation=validation_points, test=test_points)
     controlled_drop = all_candidates[
         all_candidates.get("name", pd.Series(index=all_candidates.index, dtype=object))
         == "drop_low_amplitude_ripple"
@@ -532,8 +574,10 @@ def main() -> None:
 
     metrics = {
         "truth": "sin(x)*cos(y) + 0.05*sin(6*x)",
+        "evaluation_protocol": split_manifest,
         "settings": {
             "n_train": args.n_train,
+            "n_validation": args.n_validation,
             "test_grid": args.test_grid,
             "niterations": args.niterations,
             "populations": args.populations,
@@ -550,7 +594,12 @@ def main() -> None:
                 key: value_selected[key]
                 for key in (
                     "complexity",
+                    "equation_index",
                     "expression",
+                    "expression_sha256",
+                    "validation_value_mse",
+                    "validation_gradient_mse",
+                    "validation_normalized_h1_score",
                     "value_mse",
                     "gradient_mse",
                     "gradient_rel_l2",
@@ -561,7 +610,12 @@ def main() -> None:
                 key: derivative_selected[key]
                 for key in (
                     "complexity",
+                    "equation_index",
                     "expression",
+                    "expression_sha256",
+                    "validation_value_mse",
+                    "validation_gradient_mse",
+                    "validation_normalized_h1_score",
                     "value_mse",
                     "gradient_mse",
                     "gradient_rel_l2",
@@ -615,9 +669,10 @@ def main() -> None:
         "# P2 analytic derivative-loss experiment",
         "",
         "Both searches used the same operator set and search budget. Candidate "
-        "derivatives were evaluated analytically on a dense held-out grid.",
+        "models use a paired random seed. Candidate formulas are selected only on a separate "
+        "random validation set; the table reports those fixed choices on an independent dense test grid.",
         "",
-        "| selection | complexity | value MSE | gradient MSE | gradient rel L2 |",
+        "| validation selection | complexity | test value MSE | test gradient MSE | test gradient rel L2 |",
         "|---|---:|---:|---:|---:|",
         (
             f"| value-only / min value | {int(value_selected['complexity'])} | "

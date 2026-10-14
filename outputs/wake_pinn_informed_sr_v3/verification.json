@@ -1,0 +1,16 @@
+{
+  "protocol_id": "eba1153cc185a0db3a2a6ab3c46d81c1c06af8511b837c7594c0ea8971d6b926",
+  "audit_source_sha256": "217a6aa720a248e91dd64038273d7e2bf916082a49c0e7fae2651a8668be275c",
+  "frozen_selection_sha256": "38935757d08350191f16c2e2277db5fc3ea01ea1b6824b55807fffc390dc4fd6",
+  "all_sources_and_data_hashes_match": true,
+  "all_selections_minimize_declared_validation_score": true,
+  "all_candidate_coefficient_caps_verified": 3289,
+  "heldout_label_poisoning_leaves_all_training_arrays_unchanged": true,
+  "unique_frozen_models_audited": 23,
+  "basis_vs_sympy_max_error_through_second_derivatives": 1.361133428190442e-13,
+  "validation_score_max_error": 5.065392549852277e-16,
+  "training_objective_max_error": 3.890464339573185e-14,
+  "normal_equation_max_relative_residual": 2.160807877300005e-15,
+  "dense_horner_export_max_error_through_second_derivatives": 8.526512829121202e-14,
+  "test_metrics_independent_max_error": 1.1795009413617663e-12
+}

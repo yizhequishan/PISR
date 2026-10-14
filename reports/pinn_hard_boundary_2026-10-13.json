@@ -1,0 +1,688 @@
+{
+  "created_utc": "2026-10-13T03:35:18.352678+00:00",
+  "sr_used": false,
+  "training_seed": 42,
+  "stages": {
+    "hard_boundary_trial_20261013": {
+      "comparison": "outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\comparison.json",
+      "protocol": {
+        "adam_steps": 1500,
+        "lbfgs_steps": 300,
+        "requested_variants": [
+          "soft",
+          "cylinder_poiseuille",
+          "zero",
+          "poiseuille"
+        ],
+        "n_interior": 2048,
+        "n_boundary_per_segment": 256,
+        "dtype": "float64",
+        "hard_inlet_length": 1.0,
+        "hard_cylinder_length": 1.0,
+        "train_cylinder_constant": true,
+        "momentum_acceptance": "Each component RMS no worse than the matched soft model on the same 20000 independent points",
+        "flux_acceptance": "Maximum relative error against prescribed H is <0.01",
+        "note": "Identical neural initialization, samples, weights and update counts; not equal time/FLOPs. Zero and raw Poiseuille are incompatible negative controls."
+      },
+      "assessment": {
+        "status": "complete_comparison",
+        "success": false,
+        "checks": {
+          "flux_below_one_percent": true,
+          "momentum_x_no_worse": true,
+          "momentum_y_no_worse": false,
+          "velocity_boundaries_exact": true
+        },
+        "criterion": "Both momentum component RMS values <= matched pure neural streamfunction; max cross-section flux error <1%; exact velocity boundaries.",
+        "sr_used": false
+      },
+      "provenance": {
+        "execution_source": "outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\source",
+        "source_files_changed_on_disk_after_import": {
+          "poiseuille": {
+            "pinn\\config.py": {
+              "observed_on_disk": "7f8765e287d3d026c1dfdc6573e4bd6d12a35e2141acb3a2fab100050beb82a7",
+              "execution_snapshot": "1bb319e37444ee502e5c8dbf393168e3f6126b29b6b6ea7aa79d725500668726"
+            },
+            "pinn\\problems.py": {
+              "observed_on_disk": "f2d588b03d5643839952b56b0500c8e5a0d722fdc3c89ab89bca146d7afd22da",
+              "execution_snapshot": "4d2d66e8565a7335afc01dbf39f8cd69049ea08eeacbcbc883b185136a2be0a9"
+            },
+            "pinn\\train.py": {
+              "observed_on_disk": "e9f56861883c9f95e2fb315fa5ca0bfe50acd82d6c5203433681a7dd786ef8e5",
+              "execution_snapshot": "c2de06ad082b2daf0fa80058ad56f27189a4d223f13178e8ff5202af412419b6"
+            }
+          }
+        },
+        "note": "Reproduce from the immutable source snapshot copied when this process started. Per-run environment files preserve hashes read from disk at that run's start; files edited during an earlier process do not replace its already imported modules."
+      },
+      "runs": {
+        "soft": {
+          "parameters": 12802,
+          "progress": {
+            "adam_steps": 1500,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 611,
+            "status": "training_finished",
+            "elapsed_seconds": 554.2164267
+          },
+          "pde_rms": {
+            "continuity": 1.6142153459170563e-16,
+            "momentum_x": 0.19746891396407362,
+            "momentum_y": 0.12135189533018943
+          },
+          "max_flux_relative_error": 0.16475723662381145,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 0.011907763559544695,
+              "max_abs": 0.03421475455458611,
+              "p99_abs": 0.03296767452725023
+            },
+            "bottom_velocity": {
+              "rms": 0.017338058104993757,
+              "max_abs": 0.09496939713741197,
+              "p99_abs": 0.07874098202448644
+            },
+            "top_velocity": {
+              "rms": 0.015486278353508298,
+              "max_abs": 0.08992911580577449,
+              "p99_abs": 0.07301023759397428
+            },
+            "cylinder_velocity": {
+              "rms": 0.01066099439387865,
+              "max_abs": 0.028446711147725144,
+              "p99_abs": 0.02774940238180353
+            },
+            "outlet_traction": {
+              "rms": 0.024361433945865218,
+              "max_abs": 0.05490974351075783,
+              "p99_abs": 0.054544248454078126
+            }
+          },
+          "checkpoint_sha256": "0e5762c3837bd298d20d1c61bb6f854d58f0880b22eaa383d37efc0e30f83169",
+          "split_flux_relative_error": 0.1647571928553286
+        },
+        "cylinder_poiseuille": {
+          "parameters": 12803,
+          "progress": {
+            "adam_steps": 1500,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 619,
+            "status": "training_finished",
+            "elapsed_seconds": 1517.2716609
+          },
+          "pde_rms": {
+            "continuity": 3.161714387766209e-16,
+            "momentum_x": 0.19281914093404845,
+            "momentum_y": 0.1819049348886726
+          },
+          "max_flux_relative_error": 1.7482344439309968e-07,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 1.6549815258303938e-16,
+              "max_abs": 6.661338147750939e-16,
+              "p99_abs": 4.440892098500626e-16
+            },
+            "bottom_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "top_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "cylinder_velocity": {
+              "rms": 4.1040653245686733e-16,
+              "max_abs": 2.777649962208565e-15,
+              "p99_abs": 1.6168756539069953e-15
+            },
+            "outlet_traction": {
+              "rms": 0.029927185787046486,
+              "max_abs": 0.07821442123327274,
+              "p99_abs": 0.07497526359396312
+            }
+          },
+          "checkpoint_sha256": "65a908fbdeeb49a70a2c0602334a1e2fd2924b24cdaf0a50b2f8498a465b5ef9",
+          "split_flux_relative_error": 1.0831444142684456e-15,
+          "cylinder_streamfunction_constant": 1.8977616744026669
+        },
+        "zero": {
+          "parameters": 12802,
+          "progress": {
+            "adam_steps": 1500,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 852,
+            "status": "training_finished",
+            "elapsed_seconds": 1315.5997251
+          },
+          "pde_rms": {
+            "continuity": 1.0232723000647756e-17,
+            "momentum_x": 0.00023093946396112827,
+            "momentum_y": 0.00015986690968234162
+          },
+          "max_flux_relative_error": 1.000000000088172,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 0.7745021312940692,
+              "max_abs": 1.4999999999999998,
+              "p99_abs": 1.4993988275527952
+            },
+            "bottom_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "top_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "cylinder_velocity": {
+              "rms": 4.1146554247404246e-20,
+              "max_abs": 2.1914370053989003e-19,
+              "p99_abs": 1.4280766299612501e-19
+            },
+            "outlet_traction": {
+              "rms": 2.715721356143208e-05,
+              "max_abs": 0.00011994429729803957,
+              "p99_abs": 8.596850962411701e-05
+            }
+          },
+          "checkpoint_sha256": "3409543df0c1419c5a01307bd8d43453c82af357ab0ff1d4b4042548cdb4eafd",
+          "split_flux_relative_error": 1.0
+        },
+        "poiseuille": {
+          "parameters": 12802,
+          "progress": {
+            "adam_steps": 1500,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 653,
+            "status": "training_finished",
+            "elapsed_seconds": 948.9174585999995
+          },
+          "pde_rms": {
+            "continuity": 7.879373000003517e-18,
+            "momentum_x": 0.0023744482578268956,
+            "momentum_y": 0.0006408513511258782
+          },
+          "max_flux_relative_error": 0.358372581100674,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 1.6549815258303938e-16,
+              "max_abs": 6.661338147750939e-16,
+              "p99_abs": 4.440892098500626e-16
+            },
+            "bottom_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "top_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "cylinder_velocity": {
+              "rms": 1.0287613216416154,
+              "max_abs": 1.499999991602502,
+              "p99_abs": 1.499910324434285
+            },
+            "outlet_traction": {
+              "rms": 0.029898618357315745,
+              "max_abs": 0.07839304882583975,
+              "p99_abs": 0.0745602876952508
+            }
+          },
+          "checkpoint_sha256": "b9fbf685ecc486d8f73b253358e70b44bb499512fb51344a8b5d247d61ab91b5",
+          "split_flux_relative_error": 0.35838133515184056
+        }
+      }
+    },
+    "hard_boundary_refined_20261013": {
+      "comparison": "outputs_pinn\\cylinder\\hard_boundary_refined_20261013\\comparison.json",
+      "protocol": {
+        "adam_steps": 500,
+        "lbfgs_steps": 300,
+        "device": "cpu",
+        "threads_per_worker": 1,
+        "workers": 2,
+        "init_trial": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013",
+        "cylinder_refine_fraction": 0.5,
+        "cylinder_refine_radius": 1.5,
+        "extra_audit_seed": 20261014,
+        "requested_variants": [
+          "soft",
+          "cylinder_poiseuille"
+        ],
+        "n_interior": 2048,
+        "n_boundary_per_segment": 256,
+        "dtype": "float64",
+        "hard_inlet_length": 1.0,
+        "hard_cylinder_length": 1.0,
+        "train_cylinder_constant": true,
+        "momentum_acceptance": "Each component RMS no worse than the matched soft model on the same 20000 independent points",
+        "flux_acceptance": "Maximum relative error against prescribed H is <0.01",
+        "note": "Identical neural initialization, samples, weights and update counts; not equal time/FLOPs. Zero and raw Poiseuille are incompatible negative controls."
+      },
+      "assessment": {
+        "status": "complete_comparison",
+        "success": true,
+        "checks": {
+          "flux_below_one_percent": true,
+          "momentum_x_no_worse": true,
+          "momentum_y_no_worse": true,
+          "velocity_boundaries_exact": true,
+          "fresh_momentum_x_no_worse": true,
+          "fresh_momentum_y_no_worse": true
+        },
+        "criterion": "Both momentum component RMS values <= matched pure neural streamfunction; max cross-section flux error <1%; exact velocity boundaries.",
+        "sr_used": false
+      },
+      "provenance": {
+        "execution_source": "outputs_pinn\\cylinder\\hard_boundary_refined_20261013\\source",
+        "source_files_changed_on_disk_after_import": {},
+        "note": "Reproduce from the immutable source snapshot copied when this process started. Per-run environment files preserve hashes read from disk at that run's start; files edited during an earlier process do not replace its already imported modules."
+      },
+      "runs": {
+        "soft": {
+          "parameters": 12802,
+          "progress": {
+            "adam_steps": 500,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 613,
+            "status": "training_finished",
+            "elapsed_seconds": 671.2711088
+          },
+          "pde_rms": {
+            "continuity": 2.3850521604525517e-16,
+            "momentum_x": 0.15129534061157118,
+            "momentum_y": 0.37057023743421685
+          },
+          "max_flux_relative_error": 0.17389135032570688,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 0.015609044739205257,
+              "max_abs": 0.06313783944088414,
+              "p99_abs": 0.05792132603158379
+            },
+            "bottom_velocity": {
+              "rms": 0.012279647186558296,
+              "max_abs": 0.06900233365339867,
+              "p99_abs": 0.05352509022579299
+            },
+            "top_velocity": {
+              "rms": 0.02467875643444879,
+              "max_abs": 0.20517502826661904,
+              "p99_abs": 0.13788719721428502
+            },
+            "cylinder_velocity": {
+              "rms": 0.012663581813674524,
+              "max_abs": 0.036429761763001126,
+              "p99_abs": 0.03358629513513232
+            },
+            "outlet_traction": {
+              "rms": 0.02419637178243593,
+              "max_abs": 0.05262884241169735,
+              "p99_abs": 0.05252739980816135
+            }
+          },
+          "checkpoint_sha256": "fa87fa3d8a0e24fd71f29285ca849197ed961c76a5ba78779b53ee678652f12e",
+          "split_flux_relative_error": 0.1738913120914325,
+          "fresh_audit": {
+            "seed": 20261014,
+            "pde_rms": {
+              "continuity": 2.206359260033031e-16,
+              "momentum_x": 0.1562304064045031,
+              "momentum_y": 0.3691310262274445
+            },
+            "max_flux_relative_error": 0.17389135032570688
+          },
+          "warm_start": {
+            "checkpoint": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\soft\\checkpoint_last.pt",
+            "sha256": "0e5762c3837bd298d20d1c61bb6f854d58f0880b22eaa383d37efc0e30f83169",
+            "source_progress": {
+              "adam_steps": 1500,
+              "lbfgs_steps": 300,
+              "closure_evaluations": 611,
+              "status": "training_finished",
+              "elapsed_seconds": 554.2164267
+            },
+            "optimizer_state": "reset"
+          }
+        },
+        "cylinder_poiseuille": {
+          "parameters": 12803,
+          "progress": {
+            "adam_steps": 500,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 614,
+            "status": "training_finished",
+            "elapsed_seconds": 859.3753722
+          },
+          "pde_rms": {
+            "continuity": 4.1764426631114095e-16,
+            "momentum_x": 0.0842789820513466,
+            "momentum_y": 0.1671521439559775
+          },
+          "max_flux_relative_error": 2.1902835339464742e-07,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 1.373545258312908e-16,
+              "max_abs": 4.440892098500626e-16,
+              "p99_abs": 4.440892098500626e-16
+            },
+            "bottom_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "top_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "cylinder_velocity": {
+              "rms": 5.62402439709084e-16,
+              "max_abs": 3.5170880822140526e-15,
+              "p99_abs": 2.123080563442824e-15
+            },
+            "outlet_traction": {
+              "rms": 0.03006150661187096,
+              "max_abs": 0.08174894135299186,
+              "p99_abs": 0.07622047595554308
+            }
+          },
+          "checkpoint_sha256": "4d3f901918f6608540c806a1cdd383b4f15ccaef1ca4096a2b0095c1172f7cd4",
+          "split_flux_relative_error": 1.5164021799758237e-15,
+          "fresh_audit": {
+            "seed": 20261014,
+            "pde_rms": {
+              "continuity": 3.9207267516218826e-16,
+              "momentum_x": 0.08587412976483876,
+              "momentum_y": 0.16874901556140512
+            },
+            "max_flux_relative_error": 2.1902835339464742e-07
+          },
+          "warm_start": {
+            "checkpoint": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013\\cylinder_poiseuille\\checkpoint_last.pt",
+            "sha256": "65a908fbdeeb49a70a2c0602334a1e2fd2924b24cdaf0a50b2f8498a465b5ef9",
+            "source_progress": {
+              "adam_steps": 1500,
+              "lbfgs_steps": 300,
+              "closure_evaluations": 619,
+              "status": "training_finished",
+              "elapsed_seconds": 1517.2716609
+            },
+            "optimizer_state": "reset"
+          },
+          "cylinder_streamfunction_constant": 2.0384849077847806
+        }
+      }
+    },
+    "hard_boundary_inlet_refined_20261013": {
+      "comparison": "outputs_pinn\\cylinder\\hard_boundary_inlet_refined_20261013\\comparison.json",
+      "protocol": {
+        "adam_steps": 300,
+        "lbfgs_steps": 300,
+        "device": "cpu",
+        "threads_per_worker": 1,
+        "workers": 2,
+        "init_trial": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_refined_20261013",
+        "cylinder_refine_fraction": 0.25,
+        "cylinder_refine_radius": 1.5,
+        "inlet_refine_fraction": 0.25,
+        "inlet_refine_width": 1.0,
+        "extra_audit_seed": 20261015,
+        "requested_variants": [
+          "soft",
+          "cylinder_poiseuille"
+        ],
+        "n_interior": 2048,
+        "n_boundary_per_segment": 256,
+        "dtype": "float64",
+        "hard_inlet_length": 1.0,
+        "hard_cylinder_length": 1.0,
+        "train_cylinder_constant": true,
+        "momentum_acceptance": "Each component RMS no worse than the matched soft model on the same 20000 independent points",
+        "flux_acceptance": "Maximum relative error against prescribed H is <0.01",
+        "note": "Identical neural initialization, samples, weights and update counts; not equal time/FLOPs. Zero and raw Poiseuille are incompatible negative controls."
+      },
+      "assessment": {
+        "status": "complete_comparison",
+        "success": true,
+        "checks": {
+          "flux_below_one_percent": true,
+          "momentum_x_no_worse": true,
+          "momentum_y_no_worse": true,
+          "velocity_boundaries_exact": true,
+          "fresh_momentum_x_no_worse": true,
+          "fresh_momentum_y_no_worse": true,
+          "original_momentum_x_no_worse": true,
+          "original_fresh_momentum_x_no_worse": true,
+          "original_momentum_y_no_worse": true,
+          "original_fresh_momentum_y_no_worse": true
+        },
+        "criterion": "Both momentum component RMS values <= matched pure neural streamfunction; max cross-section flux error <1%; exact velocity boundaries. Also no worse than the original soft baseline on both uniform audits.",
+        "sr_used": false
+      },
+      "provenance": {
+        "execution_source": "outputs_pinn\\cylinder\\hard_boundary_inlet_refined_20261013\\source",
+        "source_files_changed_on_disk_after_import": {},
+        "note": "Reproduce from the immutable source snapshot copied when this process started. Per-run environment files preserve hashes read from disk at that run's start; files edited during an earlier process do not replace its already imported modules."
+      },
+      "runs": {
+        "soft": {
+          "parameters": 12802,
+          "progress": {
+            "adam_steps": 300,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 622,
+            "status": "training_finished",
+            "elapsed_seconds": 375.594023
+          },
+          "pde_rms": {
+            "continuity": 2.8344915691973714e-16,
+            "momentum_x": 0.06882919207085539,
+            "momentum_y": 0.05029529201455882
+          },
+          "max_flux_relative_error": 0.14784982826054233,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 0.007978260930076262,
+              "max_abs": 0.02411851920310526,
+              "p99_abs": 0.022473729557524254
+            },
+            "bottom_velocity": {
+              "rms": 0.013426772541558364,
+              "max_abs": 0.06989361227506795,
+              "p99_abs": 0.05882282068694678
+            },
+            "top_velocity": {
+              "rms": 0.010512393403143812,
+              "max_abs": 0.039785197088658755,
+              "p99_abs": 0.03248598592406529
+            },
+            "cylinder_velocity": {
+              "rms": 0.00947470716610828,
+              "max_abs": 0.038856939938362124,
+              "p99_abs": 0.033090704775114804
+            },
+            "outlet_traction": {
+              "rms": 0.024954929380690875,
+              "max_abs": 0.063976310471978,
+              "p99_abs": 0.06267866711742436
+            }
+          },
+          "checkpoint_sha256": "290832c76b338721f0483272c3a23f805b0034e3ac4f6678e846f997de56b786",
+          "split_flux_relative_error": 0.1478497829300758,
+          "fresh_audit": {
+            "seed": 20261015,
+            "pde_rms": {
+              "continuity": 2.358998342500619e-16,
+              "momentum_x": 0.06346365898764442,
+              "momentum_y": 0.04689731760955828
+            },
+            "max_flux_relative_error": 0.14784982826054233
+          },
+          "warm_start": {
+            "checkpoint": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_refined_20261013\\soft\\checkpoint_last.pt",
+            "sha256": "fa87fa3d8a0e24fd71f29285ca849197ed961c76a5ba78779b53ee678652f12e",
+            "source_progress": {
+              "adam_steps": 500,
+              "lbfgs_steps": 300,
+              "closure_evaluations": 613,
+              "status": "training_finished",
+              "elapsed_seconds": 671.2711088
+            },
+            "optimizer_state": "reset"
+          }
+        },
+        "cylinder_poiseuille": {
+          "parameters": 12803,
+          "progress": {
+            "adam_steps": 300,
+            "lbfgs_steps": 300,
+            "closure_evaluations": 616,
+            "status": "training_finished",
+            "elapsed_seconds": 567.5095861
+          },
+          "pde_rms": {
+            "continuity": 4.4068347742240716e-16,
+            "momentum_x": 0.0667173533517739,
+            "momentum_y": 0.047336981691576706
+          },
+          "max_flux_relative_error": 1.855405524613006e-07,
+          "boundary_errors": {
+            "inlet_velocity_error": {
+              "rms": 1.373545258312908e-16,
+              "max_abs": 4.440892098500626e-16,
+              "p99_abs": 4.440892098500626e-16
+            },
+            "bottom_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "top_velocity": {
+              "rms": 0.0,
+              "max_abs": 0.0,
+              "p99_abs": 0.0
+            },
+            "cylinder_velocity": {
+              "rms": 6.778496052967325e-16,
+              "max_abs": 4.019612684625448e-15,
+              "p99_abs": 2.521583068320175e-15
+            },
+            "outlet_traction": {
+              "rms": 0.030052606853379224,
+              "max_abs": 0.07906550307058684,
+              "p99_abs": 0.0762985067805512
+            }
+          },
+          "checkpoint_sha256": "3a52818cca86c74a70ebb911d01bfd82bc9f8f856a1a37115e8c9b974f24616d",
+          "split_flux_relative_error": 1.2997732971221347e-15,
+          "fresh_audit": {
+            "seed": 20261015,
+            "pde_rms": {
+              "continuity": 4.535370583972923e-16,
+              "momentum_x": 0.05037727870419487,
+              "momentum_y": 0.04233205274397429
+            },
+            "max_flux_relative_error": 1.855405524613006e-07
+          },
+          "warm_start": {
+            "checkpoint": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_refined_20261013\\cylinder_poiseuille\\checkpoint_last.pt",
+            "sha256": "4d3f901918f6608540c806a1cdd383b4f15ccaef1ca4096a2b0095c1172f7cd4",
+            "source_progress": {
+              "adam_steps": 500,
+              "lbfgs_steps": 300,
+              "closure_evaluations": 614,
+              "status": "training_finished",
+              "elapsed_seconds": 859.3753722
+            },
+            "optimizer_state": "reset"
+          },
+          "cylinder_streamfunction_constant": 1.963432302250887
+        }
+      }
+    }
+  },
+  "matched_config_checks": {
+    "hard_boundary_trial_20261013": true,
+    "hard_boundary_refined_20261013": true,
+    "hard_boundary_inlet_refined_20261013": true
+  },
+  "matched_config_fields": [
+    "case",
+    "reynolds",
+    "transient",
+    "channel_length",
+    "channel_height",
+    "cylinder_x",
+    "cylinder_y",
+    "seed",
+    "dtype",
+    "device",
+    "threads",
+    "hidden_layers",
+    "n_interior",
+    "n_boundary",
+    "learning_rate",
+    "adam_steps",
+    "lbfgs_steps",
+    "lbfgs_history",
+    "resample_every",
+    "weight_pde",
+    "weight_boundary",
+    "cylinder_refine_fraction",
+    "cylinder_refine_radius",
+    "inlet_refine_fraction",
+    "inlet_refine_width",
+    "hard_inlet_length",
+    "hard_cylinder_length"
+  ],
+  "verification": {
+    "pinn_tests_passed": 67,
+    "historical_checkpoint_max_absolute_difference": 1.7763568394002505e-15,
+    "test_command": "python -m pytest tests/test_pinn.py tests/test_pinn_streamfunction.py tests/test_pinn_hard_boundary.py -q"
+  },
+  "final_assessment": {
+    "status": "complete_comparison",
+    "success": true,
+    "checks": {
+      "flux_below_one_percent": true,
+      "momentum_x_no_worse": true,
+      "momentum_y_no_worse": true,
+      "velocity_boundaries_exact": true,
+      "fresh_momentum_x_no_worse": true,
+      "fresh_momentum_y_no_worse": true,
+      "original_momentum_x_no_worse": true,
+      "original_fresh_momentum_x_no_worse": true,
+      "original_momentum_y_no_worse": true,
+      "original_fresh_momentum_y_no_worse": true
+    },
+    "criterion": "Both momentum component RMS values <= matched pure neural streamfunction; max cross-section flux error <1%; exact velocity boundaries. Also no worse than the original soft baseline on both uniform audits.",
+    "sr_used": false
+  },
+  "original_soft_reference": {
+    "trial": "D:\\keyan\\cylinder_flow_pisr\\outputs_pinn\\cylinder\\hard_boundary_trial_20261013",
+    "checkpoint_sha256": "0e5762c3837bd298d20d1c61bb6f854d58f0880b22eaa383d37efc0e30f83169",
+    "pde_rms": {
+      "continuity": 1.6142153459170563e-16,
+      "momentum_x": 0.19746891396407362,
+      "momentum_y": 0.12135189533018943
+    },
+    "fresh_pde_rms": {
+      "continuity": 1.5603718083363646e-16,
+      "momentum_x": 0.17727249498300093,
+      "momentum_y": 0.11738244637209128
+    }
+  },
+  "total_optimizer_updates_per_valid_model": {
+    "adam": 2300,
+    "lbfgs": 900,
+    "optimizer_resets": 2
+  }
+}

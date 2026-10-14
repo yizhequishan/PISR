@@ -1,0 +1,6 @@
+{
+  "frozen_choices": 54,
+  "max_rebuilt_train_loss_error": 6.106226635438361e-16,
+  "all_expression_hashes_match": true,
+  "all_sparse_formulas_match_matrix_predictions": true
+}

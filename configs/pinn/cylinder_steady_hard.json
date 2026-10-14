@@ -1,0 +1,16 @@
+{
+  "case": "cylinder",
+  "reynolds": 20.0,
+  "architecture": "hard_streamfunction",
+  "hard_background": "cylinder_poiseuille",
+  "hard_inlet_length": 1.0,
+  "hard_cylinder_length": 1.0,
+  "hard_train_cylinder_constant": true,
+  "hidden_layers": [64, 64, 64, 64],
+  "adam_steps": 1500,
+  "lbfgs_steps": 300,
+  "seed": 42,
+  "dtype": "float64",
+  "device": "auto",
+  "eval_grid": 121
+}

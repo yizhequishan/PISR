@@ -1,0 +1,9 @@
+{
+  "maximum_metric_absolute_difference": 6.217248937900877e-15,
+  "block_weighted_mean_max_abs_difference": 1.5987211554602254e-14,
+  "closure_definition": "norm(T-M-K)/(norm(T)+norm(M)+norm(K))",
+  "mask_definitions": {
+    "p3_metrics_full": "inclusive_81x81",
+    "step_variant_metrics": "legacy_strict_80x80"
+  }
+}
